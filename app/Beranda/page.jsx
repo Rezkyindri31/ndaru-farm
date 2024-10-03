@@ -9,7 +9,7 @@ import Feedback from "@/app/Beranda/components/Komentar";
 import Profiles from "@/app/Beranda/components/Profile";
 import News from "@/components/Berita";
 import { useEffect, useRef } from "react";
-import { initializeAos } from "@/config/aosInit";
+import { initializeAos } from "@/components/aosInit";
 import { Toaster } from 'react-hot-toast';
 
 function Beranda() {

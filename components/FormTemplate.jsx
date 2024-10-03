@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Input, Button, Checkbox } from '@/app/MTailwind';
+import { Input, Button, Checkbox, Spinner } from '@/app/MTailwind';
 import Image from 'next/image';
 import { usePath } from '@/components/PathContext';
 import { Toaster } from 'react-hot-toast';
@@ -35,7 +35,7 @@ function AuthPage() {
         return null;
     }
     const { handleLoginWithGoogle } = useLoginWithGoogle();
-    const { handleLogin } = useLoginWithEmailPassword();
+    const { handleLogin, sedangMemuatLogin } = useLoginWithEmailPassword();
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
         await handleLogin(email, password);
@@ -108,8 +108,15 @@ function AuthPage() {
                                     <Checkbox id="remember" label="Keep me logged in" color="blue" />
                                     <a href="/LupaPassword" className="text-blue-500 text-sm">Lupa Password?</a>
                                 </div>
-                                <Button className="button-effect w-full my-5" type='submit'>
-                                    Log in
+                                <Button className="button-effect w-full my-5" type='submit' disabled={sedangMemuatLogin}>
+                                    {sedangMemuatLogin ? (
+                                        <>
+                                            <Spinner className="h-4 w-4" />
+                                            <span>Sedang masuk...</span>
+                                        </>
+                                    ) : (
+                                        'Login'
+                                    )}
                                 </Button>
                             </form>
                             <p className="mt-4 text-center text-gray-500">Tidak Punya Akun? <a href="/Signup" className="text-blue-500">Daftar</a></p>
@@ -130,7 +137,7 @@ function AuthPage() {
                                     variant="outlined"
                                     onClick={() => handleNavClick("/Beranda")}
                                 >
-                                    Lihat Sekarang
+                                    Cek Beranda
                                 </Button>
                             </div>
                             <Image className="w-80 h-80 mt-4" src={LoginIcon} />
@@ -180,7 +187,7 @@ function AuthPage() {
                                     variant="outlined"
                                     onClick={() => handleNavClick("/Beranda")}
                                 >
-                                    Lihat Sekarang
+                                    Cek Beranda
                                 </Button>
                             </div>
                             <Image className="w-80 h-80 mt-4" src={ForgotPasswordIcon} />

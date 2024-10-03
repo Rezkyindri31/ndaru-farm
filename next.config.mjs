@@ -4,10 +4,13 @@ const nextConfig = {
     return [
       {
         source: "/",
-        destination: "/Login",
+        destination: "/Beranda",
         permanent: true,
       },
     ];
+  },
+  images: {
+    domains: ["firebasestorage.googleapis.com"], // Add this line to allow images from Firebase Storage
   },
 };
 

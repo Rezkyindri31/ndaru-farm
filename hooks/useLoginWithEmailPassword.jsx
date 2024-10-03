@@ -1,12 +1,14 @@
+import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/config/firebase';
+import { auth } from '@/lib/firebaseConfig';
 import { getDocs, query, collection, where } from 'firebase/firestore';
-import { db } from '@/config/firebase';
+import { db } from '@/lib/firebaseConfig';
 import { useRouter } from "next/navigation";
 import toast from 'react-hot-toast';
 
 const useLoginWithEmailPassword = () => {
     const router = useRouter();
+    const [sedangMemuatLogin, setSedangMemuatLogin] = useState(false);
 
     const handleLogin = async (email, password) => {
         console.log('Attempting to log in with:', { email, password });
@@ -16,6 +18,8 @@ const useLoginWithEmailPassword = () => {
             });
             return;
         }
+
+        setSedangMemuatLogin(true);
         try {
             const userRef = query(
                 collection(db, "pengguna"),
@@ -42,11 +46,13 @@ const useLoginWithEmailPassword = () => {
             toast.error('Email tidak terdaftar', {
                 duration: 3000,
             });
+        } finally {
+            setSedangMemuatLogin(false);
         }
-    };
+    }
 
     return {
-        handleLogin
+        handleLogin, sedangMemuatLogin, setSedangMemuatLogin
     };
 };
 export default useLoginWithEmailPassword;

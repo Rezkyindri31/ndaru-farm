@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
     Card,
     CardBody,
@@ -8,64 +8,30 @@ import {
     Button,
     Input,
     Stepper,
-    Step
+    Step,
+    Spinner,
+    Dialog,
+    DialogHeader,
+    DialogBody,
+    DialogFooter
 } from "@/app/MTailwind";
 import Image from "next/image";
 import { GrContactInfo } from "react-icons/gr";
 import { FaPen, FaTrashAlt, FaUser, FaBuilding } from "react-icons/fa";
-import { auth, db } from "@/config/firebase";
-import { doc, getDoc } from "firebase/firestore";
 import toast, { Toaster } from 'react-hot-toast';
 import useProfileSetting from "@/hooks/useProfileSetting";
 import useStepper from '@/hooks/useStepper';
 import useValidationForm from '@/hooks/useValidationForm';
 import DeleteAccount from '@/hooks/useDeleteAccount';
 
+
 function ProfileSet() {
-    const { isEditing, setIsEditing,
-        avatarFile, setAvatarFile,
-        toggleEdit, handleFileChange, userDetails,
-        setUserDetails, Logo, DefaultProfile,
-        handleInputChange, handleSubmit, userDetailsLabels,
-        userDetailsLabels1, defaultValues, defaultValues1, getValue } = useProfileSetting();
-
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const handleOpenDialog = () => {
-        setIsDialogOpen(true);
-    };
-    const handleCloseDialog = () => {
-        setIsDialogOpen(false);
-    };
-
-    const { activeStep, setActiveStep, isLastStep,
-        setIsLastStep, isFirstStep, setIsFirstStep,
-        handleNext, handlePrev } = useStepper();
-
+    const { isEditing, avatarFile, toggleEdit, userDetails, handleInputChange, handleSubmit, userDetailsLabels,
+        userDetailsLabels1, defaultValues, defaultValues1, getValue, sedangUbahProfile, isDialogDeleteAccountOpen, handleOpenDialogDeleteAccount,
+        handleCloseDialogDeleteAccount, isImageVisible, handleChooseFileClick, fileInputRef, handleFileChange, fileName, fileSize, handleDelete,
+        handleOpenUpdateProfile, openUpdateProfile, selectedFile, handleUpload } = useProfileSetting();
+    const { activeStep, setActiveStep, isLastStep, setIsLastStep, isFirstStep, setIsFirstStep, handleNext, handlePrev } = useStepper();
     const { handleKeyPress } = useValidationForm();
-
-    const fetchUserData = async (user) => {
-        if (user) {
-            const docRef = doc(db, "pengguna", user.uid);
-            try {
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    setUserDetails(docSnap.data());
-                    console.log("Document data:", docSnap.data());
-                } else {
-                    console.log("No such document!");
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            }
-        } else {
-            setUserDetails(null);
-        }
-    };
-
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(fetchUserData);
-        return () => unsubscribe();
-    }, []);
 
     return (
         <div className="h-full m-16 relative">
@@ -79,24 +45,86 @@ function ProfileSet() {
                 <CardBody>
                     <div className="grid grid-cols-1 lg:gap-0 gap-6 justify-center items-center">
                         < div className="grid grid-cols-1 items-center justify-items-center gap-y-7 text-center relative group">
+
                             <Image
-                                src={avatarFile || DefaultProfile}
+                                src={userDetails?.Gambar_Profile || avatarFile}
                                 alt="avatar"
                                 variant="rounded"
                                 width={256}
                                 height={256}
                                 className="w-72 h-72 border rounded-lg border-blue-gray-400 shadow-xl shadow-gray-400/50 ring-4 ring-blue-gray-500/30 transition-all duration-300 ease-in-out group-hover:blur-sm"
                             />
-                            <div className="absolute top-1/3 items-center justify-center group-hover:flex hidden transition-opacity duration-300 ease-in-out">
-                                <label className="cursor-pointer flex items-center justify-center p-2 bg-white rounded-full shadow-lg">
+                            <form className="absolute top-1/3 items-center justify-center group-hover:flex hidden transition-opacity duration-300 ease-in-out">
+                                <label
+                                    className="cursor-pointer flex items-center justify-center p-2 bg-white rounded-full shadow-lg"
+                                    onClick={handleOpenUpdateProfile}
+                                >
                                     <FaPen className="text-gray-600" />
-                                    <input
-                                        type="file"
-                                        className="hidden"
-                                        onChange={handleFileChange}
-                                    />
                                 </label>
-                            </div>
+                                <Dialog open={openUpdateProfile} handler={handleOpenUpdateProfile} size="xl" className="min-w-[500px]">
+                                    <Toaster
+                                        position="top-right"
+                                        reverseOrder={false}
+                                    />
+                                    <DialogHeader>Upload Files</DialogHeader>
+                                    <DialogBody className="flex flex-col items-center">
+                                        <Typography variant="small" className="text-center mb-4">
+                                            Silahkan pilih file yang ingin diunggah sebagai foto profile.
+                                        </Typography>
+                                        <div className="border-2 border-dashed border-gray-300 p-6 w-full text-center rounded-lg">
+                                            <Typography variant="body2" className="text-gray-500 mb-4">
+                                                <a onClick={handleChooseFileClick} className="text-blue-500 ">
+                                                    Choose a Local File
+                                                </a>
+                                            </Typography>
+                                            <Typography variant="small" className="text-gray-400">
+                                                Supported formats: .png, .jpg, .svg
+                                            </Typography>
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                onChange={handleFileChange}
+                                                className="hidden"
+                                                accept=".png, .jpg, .svg"
+                                            />
+                                        </div>
+                                        {isImageVisible && (
+                                            <div className="w-full flex flex-wrap gap-4 mt-6">
+                                                <div className="border rounded-lg p-2 flex items-center justify-between w-1/2">
+                                                    <Image
+                                                        src={avatarFile}
+                                                        alt="avatar"
+                                                        width={256}
+                                                        height={256}
+                                                        className="w-40 h-32 border rounded-lg border-blue-gray-400 shadow-xl shadow-gray-400/50 ring-4 ring-blue-gray-500/30 transition-all duration-300 ease-in-out group-hover:blur-sm"
+                                                    />
+                                                    <div>
+                                                        <Typography variant="small">{fileName}</Typography>
+                                                        <Typography variant="small" className="text-gray-500">
+                                                            {fileSize}
+                                                        </Typography>
+                                                    </div>
+                                                    <Button
+                                                        variant="text"
+                                                        className="text-gray-500 hover:text-red-500 text-lg"
+                                                        onClick={handleDelete}
+                                                    >
+                                                        <FaTrashAlt />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </DialogBody>
+                                    <DialogFooter className="space-x-4">
+                                        <Button className="bg-red-500 text-white" variant="text" onClick={handleOpenUpdateProfile}>
+                                            Cancel
+                                        </Button>
+                                        <Button className="button-effect" variant="gradient" color="black" onClick={handleUpload} disabled={!selectedFile}>
+                                            Simpan
+                                        </Button>
+                                    </DialogFooter>
+                                </Dialog>
+                            </form>
                             {userDetails ? (
                                 <div>
                                     <Typography color="blue-gray" variant="h4">
@@ -122,7 +150,7 @@ function ProfileSet() {
                                 <Button
                                     variant="outlined"
                                     className="border-red-900 bg-red-800 flex items-center gap-3 text-sm text-white hover:bg-red-900"
-                                    onClick={handleOpenDialog}
+                                    onClick={handleOpenDialogDeleteAccount}
                                 >
                                     <span>Hapus Akun</span> <FaTrashAlt className="text-sm" />
                                 </Button>
@@ -391,7 +419,6 @@ function ProfileSet() {
                                     </div>
                                 )}
                                 <div className="mt-16 flex justify-between">
-                                    <p className="mt-4 text-center text-gray-500">Sudah punya akun? <a href="/Login" className="text-blue-500">Login</a></p>
                                     <Button className='bg-black text-white' onClick={handlePrev} hidden={isFirstStep}>
                                         Prev
                                     </Button>
@@ -399,8 +426,15 @@ function ProfileSet() {
                                         Next
                                     </Button>
                                     {activeStep === 1 && (
-                                        <Button className='button-effect' type='submit'>
-                                            Simpan Perubahan
+                                        <Button className='button-effect' type='submit' disabled={sedangUbahProfile}>
+                                            {sedangUbahProfile ? (
+                                                <>
+                                                    <Spinner className="h-4 w-4" />
+                                                    <span>Sedang Mengubah...</span>
+                                                </>
+                                            ) : (
+                                                'Simpan Perubahan'
+                                            )}
                                         </Button>
                                     )}
                                 </div>
@@ -408,7 +442,7 @@ function ProfileSet() {
                         </form>
                     )}
                     {/* Delete Dialog */}
-                    <DeleteAccount open={isDialogOpen} handleOpen={handleCloseDialog} />
+                    <DeleteAccount open={isDialogDeleteAccountOpen} handleOpen={handleCloseDialogDeleteAccount} />
                 </CardBody>
             </Card>
         </div >

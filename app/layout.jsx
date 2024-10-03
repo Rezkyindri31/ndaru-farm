@@ -1,5 +1,5 @@
 import "./globals.css";
-import { PathProvider } from '@/components/PathContext'; // Sesuaikan path jika perlu
+import { PathProvider } from '@/components/PathContext';
 
 export const metadata = {
   title: "E-Mart Ndaru Farm",

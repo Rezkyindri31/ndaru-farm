@@ -7,6 +7,7 @@ import {
     Navbar,
     Collapse,
     Typography,
+    Button,
     IconButton,
     Menu,
     MenuHandler,
@@ -21,12 +22,13 @@ import { FaHome, FaCartPlus, FaShoppingCart } from "react-icons/fa";
 import { FaMagnifyingGlass, FaGear } from "react-icons/fa6";
 import { MdHomeRepairService } from "react-icons/md";
 import { RiContactsBook2Fill } from "react-icons/ri";
-import { signOut } from 'firebase/auth';
-import { auth } from '@/config/firebase';
-
+import useLogoutAccount from "@/hooks/useLogout";
+import useAuth from '@/hooks/useVerifyLogin';
 function Navigation() {
     const Logo = require("@/assets/img/logo.png");
     const router = useRouter();
+    const { handleLogout } = useLogoutAccount();
+    const user = useAuth();
     const { setCurrentPath } = usePath();
     const [openNav, setOpenNav] = React.useState(false);
     const [navbarBg, setNavbarBg] = React.useState("bg-transparent");
@@ -81,15 +83,15 @@ function Navigation() {
         router.push(path);
     };
 
-    const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            console.log('User logged out successfully');
-            router.push('/Login');
-        } catch (err) {
-            console.error(err);
-        }
-    };
+    // const handleLogout = async () => {
+    //     try {
+    //         await signOut(auth);
+    //         console.log('User logged out successfully');
+    //         router.push('/Login');
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    // };
 
     const navList = (
         <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 uppercase">
@@ -152,47 +154,57 @@ function Navigation() {
                         E-Mart Ndaru Farm
                     </Typography>
                     <div className="hidden lg:block">{navList}</div>
-                    <div className="hidden sm:flex items-center gap-x-5">
-                        <Popover>
-                            <PopoverHandler>
-                                <a className="font-bold text-white hover:text-primary">
-                                    <FaMagnifyingGlass className="w-5 h-5" />
+                    {user ? (
+                        <div>
+                            <div className="hidden sm:flex items-center gap-x-5">
+                                <Popover>
+                                    <PopoverHandler>
+                                        <a className="font-bold text-white hover:text-primary">
+                                            <FaMagnifyingGlass className="w-5 h-5" />
+                                        </a>
+                                    </PopoverHandler>
+                                    <PopoverContent className="absolute z-50">
+                                        <div className="flex w-72 flex-col gap-6">
+                                            <Input
+                                                variant="standard"
+                                                label="Pencarian Kata Kunci"
+                                                placeholder="Cari Disini"
+                                                color="green"
+                                                className="text-blue-gray-500"
+                                            />
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+                                <a className="font-bold text-white hover:text-primary" onClick={() => handleNavClick("/Pemesanan")}>
+                                    <FaShoppingCart className="w-5 h-5" />
                                 </a>
-                            </PopoverHandler>
-                            <PopoverContent className="absolute z-50">
-                                <div className="flex w-72 flex-col gap-6">
-                                    <Input
-                                        variant="standard"
-                                        label="Pencarian Kata Kunci"
-                                        placeholder="Cari Disini"
-                                        color="green"
-                                        className="text-blue-gray-500"
-                                    />
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-                        <a className="font-bold text-white hover:text-primary" onClick={() => handleNavClick("/Pemesanan")}>
-                            <FaShoppingCart className="w-5 h-5" />
-                        </a>
-                        <Menu
-                            animate={{
-                                mount: { y: 5 },
-                                unmount: { y: 25 },
-                            }}
-                        >
-                            <MenuHandler>
-                                <a className="font-bold text-white hover:text-primary">
-                                    <FaGear className="w-5 h-5" />
-                                </a>
-                            </MenuHandler>
-                            <MenuList className="text-white text-base bg-primary border-2 border-white uppercase">
-                                <MenuItem onClick={() => handleNavClick("/ProfileSetting")}>Profile Saya</MenuItem>
-                                <MenuItem onClick={() => handleNavClick("/TrackingPesanan")}>Pesanan Saya</MenuItem>
-                                <hr className="my-1" />
-                                <MenuItem onClick={handleLogout}>Keluar</MenuItem>
-                            </MenuList>
-                        </Menu>
-                    </div>
+                                <Menu
+                                    animate={{
+                                        mount: { y: 5 },
+                                        unmount: { y: 25 },
+                                    }}
+                                >
+                                    <MenuHandler>
+                                        <a className="font-bold text-white hover:text-primary">
+                                            <FaGear className="w-5 h-5" />
+                                        </a>
+                                    </MenuHandler>
+                                    <MenuList className="text-white text-base bg-primary border-2 border-white uppercase">
+                                        <MenuItem onClick={() => handleNavClick("/ProfileSetting")}>Profile Saya</MenuItem>
+                                        <MenuItem onClick={() => handleNavClick("/TrackingPesanan")}>Pesanan Saya</MenuItem>
+                                        <hr className="my-1" />
+                                        <MenuItem onClick={handleLogout}>Keluar</MenuItem>
+                                    </MenuList>
+                                </Menu>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="hidden sm:flex items-center gap-x-5">
+                            <Button className="button-effect" onClick={() => handleNavClick("/Login")}>
+                                Login
+                            </Button>
+                        </div>
+                    )}
                     <IconButton
                         variant="text"
                         className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
@@ -232,7 +244,7 @@ function Navigation() {
                     </IconButton>
                 </div>
                 <Collapse open={openNav}>
-                    <div className="container mx-auto">
+                    <div className="container mx-auto hidden">
                         {navList}
                         <div className="flex justify-center items-center gap-x-20">
                             <Popover placement="bottom">
@@ -241,7 +253,7 @@ function Navigation() {
                                         <FaMagnifyingGlass className="w-5 h-5" />
                                     </a>
                                 </PopoverHandler>
-                                <PopoverContent className="absolute z-50 top-96" >
+                                <PopoverContent className="absolute z-50 top-96">
                                     <div className="flex w-80 flex-col gap-6">
                                         <Input
                                             variant="standard"
@@ -253,7 +265,7 @@ function Navigation() {
                                     </div>
                                 </PopoverContent>
                             </Popover>
-                            <a href="" className="font-bold text-white">
+                            <a href="#" className="font-bold text-white">
                                 <FaShoppingCart className="w-5 h-5" />
                             </a>
                             <Menu
@@ -277,8 +289,8 @@ function Navigation() {
                         </div>
                     </div>
                 </Collapse>
-            </Navbar>
-        </div>
+            </Navbar >
+        </div >
     );
 }
 

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "@/config/firebase";
+import { auth, db } from "@/lib/firebaseConfig";
+import { doc, deleteDoc } from "firebase/firestore";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { Dialog, DialogHeader, DialogBody, Typography, Input, Button, IconButton } from "@/app/MTailwind";
 import Image from "next/image";
 import toast, { Toaster } from 'react-hot-toast';
@@ -19,17 +21,19 @@ const AccountDeletionDialog = ({ open, handleOpen }) => {
             try {
                 const user = auth.currentUser;
                 if (user) {
+                    const userDocRef = doc(db, 'pengguna', user.uid);
+                    await deleteDoc(userDocRef);
                     await user.delete();
-                    console.log("Account successfully deleted!");
+                    console.log("Akun berhasil dihapus!");
                     toast.success("Akun Berhasil di Hapus");
                     router.push("/Login");
                 }
             } catch (error) {
                 console.error("Error deleting account: ", error);
-                toast.error("Gagal Menghapus Akun");
+                toast.error("Gagal Menghapus Akun. Pastikan Anda mengetikkan 'Hapus Akun' dengan benar.");
             }
         } else {
-            console.log("Confirmation input does not match.");
+            console.log("Input konfirmasi tidak sesuai.");
             toast.error("Konfirmasi Input Tidak Sesuai");
         }
     };

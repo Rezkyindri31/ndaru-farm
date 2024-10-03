@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import useStateForm from '@/hooks/useStateForm';
-import { Stepper, Step, Textarea, Alert, Typography, Input, Button } from '@/app/MTailwind';
+import { Stepper, Step, Textarea, Alert, Typography, Input, Button, Spinner } from '@/app/MTailwind';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/config/firebase';
+import { auth } from '@/lib/firebaseConfig';
 import { setDoc, doc } from 'firebase/firestore';
-import { db } from '@/config/firebase';
+import { db } from '@/lib/firebaseConfig';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { FaUser, FaBuilding } from "react-icons/fa";
@@ -26,11 +26,9 @@ function useRegisterWithEmailPassword() {
         nomorteleponpenerima, setNomorTeleponPenerima,
         alamattagihanpenerima, setAlamatTagihanPenerima,
         isValidPassword, hasUpperCase, hasLowerCase,
-        hasNumber, hasSpecialChar
+        hasNumber, hasSpecialChar, sedangMemuatRegister, setSedangMemuatRegister
     } = useStateForm();
     const router = useRouter();
-
-    const [sedangMemuatRegister, setSedangMemuatRegister] = useState(false);
 
     const { isPasswordVisible, isConfirmPasswordVisible,
         togglePasswordVisibility, toggleConfirmPasswordVisibility, handleKeyPress } = useValidationForm();
@@ -41,6 +39,7 @@ function useRegisterWithEmailPassword() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        setSedangMemuatRegister(true);
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
@@ -69,6 +68,8 @@ function useRegisterWithEmailPassword() {
             toast.error(`Gagal: ${err.message}`, {
                 duration: 3000,
             });
+        } finally {
+            setSedangMemuatRegister(false);
         }
     };
 
@@ -241,7 +242,7 @@ function useRegisterWithEmailPassword() {
                                 <button
                                     type="button"
                                     onClick={togglePasswordVisibility}
-                                    className={`absolute right-2 top-1/2 -translate-y-1/2 transform ${password.length > 0 && !isValidPassword ? 'top-5' : 'top-1/2'}`}
+                                    className={`absolute right-2 top-1/2 ${password.length > 0 && !isValidPassword ? 'top-3' : 'top-1/2'} transform translate-y-1/2`}
                                     aria-label={isPasswordVisible ? "Sembunyikan Password" : "Tampilkan Password"}
                                 >
                                     {isPasswordVisible ? (
@@ -250,6 +251,7 @@ function useRegisterWithEmailPassword() {
                                         <span role="img" aria-label="Show password"><IoMdEye /></span>
                                     )}
                                 </button>
+
                                 {password.length > 0 && !isValidPassword && (
                                     <div className="flex flex-col mt-2">
                                         <Alert className='py-1 px-5' variant="filled">
@@ -291,7 +293,7 @@ function useRegisterWithEmailPassword() {
                                 <button
                                     type="button"
                                     onClick={toggleConfirmPasswordVisibility}
-                                    className={`absolute right-2 -translate-y-1/2 transform ${confirmpassword.length > 0 && password !== confirmpassword ? 'top-5' : 'top-1/2'}`}
+                                    className={`absolute right-2 ${confirmpassword.length > 0 && password !== confirmpassword ? 'top-3' : 'top-1/2'} transform translate-y-1/2`}
                                     aria-label={isConfirmPasswordVisible ? "Sembunyikan Password" : "Tampilkan Password"}
                                 >
                                     {isConfirmPasswordVisible ? (
@@ -393,13 +395,20 @@ function useRegisterWithEmailPassword() {
                         Next
                     </Button>
                     {activeStep === 2 && (
-                        <Button className='button-effect' type='submit'>
-                            Daftar
+                        <Button className='button-effect' type='submit' disabled={sedangMemuatRegister}>
+                            {sedangMemuatRegister ? (
+                                <>
+                                    <Spinner className="h-4 w-4" />
+                                    <span>Sedang Mendaftar...</span>
+                                </>
+                            ) : (
+                                'Daftar'
+                            )}
                         </Button>
                     )}
                 </div>
             </div>
-        </form>
+        </form >
     )
 };
 export default useRegisterWithEmailPassword;

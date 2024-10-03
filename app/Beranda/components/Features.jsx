@@ -7,7 +7,7 @@ import {
 import { MdDiscount } from "react-icons/md";
 import { BiSolidPhoneCall } from "react-icons/bi";
 import { RiRefund2Fill } from "react-icons/ri";
-import { initializeAos } from "@/config/aosInit";
+import { initializeAos } from "@/components/aosInit";
 import { use, useEffect } from "react";
 
 function FeatureSection() {

@@ -12,6 +12,7 @@ const useStateForm = () => {
     const [namalengkappenerima, setNamaLengkapPenerima] = useState('');
     const [nomorteleponpenerima, setNomorTeleponPenerima] = useState('');
     const [alamattagihanpenerima, setAlamatTagihanPenerima] = useState('');
+    const [sedangMemuatRegister, setSedangMemuatRegister] = useState(false);
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
@@ -24,7 +25,7 @@ const useStateForm = () => {
         , email, setEmail, password, setPassword, confirmpassword, setConfirmPassword
         , namalengkappenerima, setNamaLengkapPenerima, nomorteleponpenerima, setNomorTeleponPenerima
         , alamattagihanpenerima, setAlamatTagihanPenerima, isValidPassword, hasUpperCase, hasLowerCase,
-        hasNumber, hasSpecialChar
+        hasNumber, hasSpecialChar, sedangMemuatRegister, setSedangMemuatRegister
     };
 }
 

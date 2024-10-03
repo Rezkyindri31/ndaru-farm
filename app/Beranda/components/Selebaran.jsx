@@ -2,7 +2,7 @@
 import FlyerJasa from "@/components/Jasa";
 import FlyerProduk from "@/components/Produk";
 import { useEffect, useRef } from "react";
-import { initializeAos } from "@/config/aosInit";
+import { initializeAos } from "@/components/aosInit";
 
 function Selebaran() {
     const flyerProdukRef = useRef(null);
