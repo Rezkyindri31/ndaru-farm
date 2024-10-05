@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import useStateForm from '@/hooks/useStateForm';
 import { Stepper, Step, Textarea, Alert, Typography, Input, Button, Spinner } from '@/app/MTailwind';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '@/lib/firebaseConfig';
 import { setDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebaseConfig';
@@ -43,6 +43,7 @@ function useRegisterWithEmailPassword() {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
+            const creationDate = new Date();
             console.log(user);
             if (user) {
                 await setDoc(doc(db, "pengguna", user.uid), {
@@ -56,14 +57,18 @@ function useRegisterWithEmailPassword() {
                     Confirmpassword: confirmpassword,
                     Nama_Lengkap_Penerima: namalengkappenerima,
                     Nomor_Telepon_Penerima: nomorteleponpenerima,
-                    Alamat_Tagihan_Penerima: alamattagihanpenerima
+                    Alamat_Tagihan_Penerima: alamattagihanpenerima,
+                    Tanggal_Pembuatan: creationDate,
+                    Tanggal_Verifikasi: null,
                 });
             }
-            console.log('User created successfully');
-            router.push('/Login');
-            toast.success('Pembuatan Akun Anda Berhasil. Silahkan Login', {
-                duration: 3000,
+            await sendEmailVerification(user);
+            console.log('Verification email sent');
+            toast.success('Pembuatan Akun Anda Berhasil. Silahkan verifikasi email Anda sebelum login.', {
+                duration: 4000,
             });
+
+            router.push('/Login');
         } catch (err) {
             toast.error(`Gagal: ${err.message}`, {
                 duration: 3000,

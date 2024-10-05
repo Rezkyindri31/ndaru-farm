@@ -158,11 +158,14 @@ function AuthPage() {
                         <div className='page-login'>
                             <h2 className="text-3xl font-semibold text-gray-800 mb-12 ">Lupa Password</h2>
                             <p className="text-center text-black font-bold mb-6">Masukkan Alamat Email Anda dibawah ini</p>
-                            <form>
+                            <form onSubmit={handleForgotPassword}>
                                 <div className="mb-4">
                                     <Input
                                         type="email" label="Email" color="blue"
-                                        placeholder="Email" required />
+                                        placeholder="Email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required />
                                 </div>
                                 <Button className="w-full" color="green" type="submit">
                                     Submit

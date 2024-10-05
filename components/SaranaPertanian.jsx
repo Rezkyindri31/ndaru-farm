@@ -2,24 +2,126 @@
 import React from "react";
 import Image from "next/image";
 import { Typography, Button, IconButton } from "@/app/MTailwind";
+import JasaImage from "../assets/img/Produk/jasa.jpeg";
 import { TiStarFullOutline, TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 import { BsCartPlusFill } from "react-icons/bs";
-import useStateJasa from "@/hooks/useStateJasa";
 import { usePath } from "@/components/PathContext";
+import Loader from "@/components/Loader"
+
+const services = [
+    {
+        name: "Paket Jasa 1",
+        image: JasaImage,
+        desc: "Untuk min. 10 orang",
+        price: "Rp 15.000",
+        rating: 5.0,
+    },
+    {
+        name: "Paket Jasa 2",
+        image: JasaImage,
+        desc: "Untuk min. 20 orang",
+        price: "Rp 12.000",
+        rating: 4.8,
+    },
+    {
+        name: "Paket Jasa 3",
+        image: JasaImage,
+        desc: "Untuk min. 30 orang",
+        price: "Rp 10.000",
+        rating: 4.7,
+    },
+    {
+        name: "Paket Jasa 3",
+        image: JasaImage,
+        desc: "Untuk min. 30 orang",
+        price: "Rp 10.000",
+        rating: 4.7,
+    },
+    {
+        name: "Paket Jasa 3",
+        image: JasaImage,
+        desc: "Untuk min. 30 orang",
+        price: "Rp 10.000",
+        rating: 4.7,
+    },
+    {
+        name: "Paket Jasa 3",
+        image: JasaImage,
+        desc: "Untuk min. 30 orang",
+        price: "Rp 10.000",
+        rating: 4.7,
+    },
+    {
+        name: "Paket Jasa 3",
+        image: JasaImage,
+        desc: "Untuk min. 30 orang",
+        price: "Rp 10.000",
+        rating: 4.7,
+    },
+    {
+        name: "Paket Jasa 3",
+        image: JasaImage,
+        desc: "Untuk min. 30 orang",
+        price: "Rp 10.000",
+        rating: 4.7,
+    },
+    {
+        name: "Paket Jasa 3",
+        image: JasaImage,
+        desc: "Untuk min. 30 orang",
+        price: "Rp 10.000",
+        rating: 4.7,
+    },
+    {
+        name: "Paket Jasa 3",
+        image: JasaImage,
+        desc: "Untuk min. 30 orang",
+        price: "Rp 10.000",
+        rating: 4.7,
+    },
+];
 
 function Jasa() {
+    const [activePage, setActivePage] = React.useState(1);
     const { currentPath } = usePath();
-    const { activePage,
-        totalPages,
-        getCurrentJasa,
-        getItemProps,
-        next,
-        prev,
-    } = useStateJasa();
+    if (!currentPath) {
+        return <Loader />;
+    }
+    const servicesPerPage = 9;
+    const isHomepage = currentPath === "/Beranda";
+    const displayedServices = isHomepage ? services.slice(0, 3) : services;
+    const totalPages = Math.ceil(displayedServices.length / servicesPerPage);
+    const getCurrentServices = () => {
+        if (isHomepage) {
+            return displayedServices;
+        }
+        const startIndex = (activePage - 1) * servicesPerPage;
+        const endIndex = startIndex + servicesPerPage;
+        return displayedServices.slice(startIndex, endIndex);
+    };
+
+    const getItemProps = (index) => ({
+        variant: activePage === index ? "filled" : "text",
+        color: "gray",
+        onClick: () => setActivePage(index),
+        className: "rounded-full text-secondary",
+    });
+
+    const next = () => {
+        if (activePage < totalPages) {
+            setActivePage(activePage + 1);
+        }
+    };
+
+    const prev = () => {
+        if (activePage > 1) {
+            setActivePage(activePage - 1);
+        }
+    };
 
     return (
         <div className="h-full my-16 z-10 relative">
-            {getCurrentJasa().length > 0 && (
+            {getCurrentServices().length > 0 && (
                 <>
                     <div className="flex items-center justify-center gap-4 uppercase font-black pt-2">
                         <h1 className="text-4xl text-secondary underline underline-offset-8">Jasa</h1>
@@ -31,33 +133,26 @@ function Jasa() {
                         </Typography>
                     </div>
                     <div className="jasa-container grid grid-cols-1 gap-1 py-6 lg:grid-cols-3 lg:gap-6 justify-items-center px-5 lg:px-36 lg:py-4">
-                        {getCurrentJasa().map((service) => (
-                            <div key={service.id} className="relative flex flex-col my-6 bg-white border border-gray rounded-lg shadow-lg mx-5 p-12 w-auto transition-transform duration-300 ease-in-out hover:shadow-none hover:border-none hover:scale-110">
+                        {getCurrentServices().map((service, index) => (
+                            <div key={index} className="relative flex flex-col my-6 bg-white border border-gray rounded-lg shadow-lg mx-5 p-12 w-auto transition-transform duration-300 ease-in-out hover:shadow-none hover:border-none hover:scale-110">
                                 <div className="relative h-72 m-2.5 overflow-hidden text-white rounded-md">
-                                    <Image src={service.Gambar}
-                                        alt={`${service.Nama}-image`}
-                                        layout="fill"
-                                        objectFit="cover"
-                                        className="rounded-md" />
+                                    <Image src={service.image} alt={`${service.name}-image`} />
                                 </div>
                                 <div className="p-4">
                                     <div className="flex items-center mb-2">
                                         <h6 className="text-slate-800 text-xl font-black">
-                                            {service.Nama}
+                                            {service.name}
                                         </h6>
                                         <div className="flex items-center gap-0.5 ml-auto">
                                             <TiStarFullOutline className="w-5 h-5 text-yellow-600" />
-                                            <span className="text-slate-600 ml-1.5 font-bold">1.4</span>
+                                            <span className="text-slate-600 ml-1.5 font-bold">{service.rating.toFixed(1)}</span>
                                         </div>
                                     </div>
                                     <p className="text-slate-600 leading-normal">
-                                        {service.Deskripsi}
+                                        {service.desc}
                                     </p>
                                     <p className="text-slate-600 leading-normal font-bold">
-                                        {service.Harga}
-                                    </p>
-                                    <p className="text-slate-600 leading-normal font-bold">
-                                        {service.Jangka_Waktu}
+                                        {service.price}
                                     </p>
                                 </div>
                                 <div className="px-4 pb-4 pt-0 mt-2 text-base">

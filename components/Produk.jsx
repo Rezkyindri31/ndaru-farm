@@ -2,124 +2,19 @@ import React from "react";
 import Image from "next/image";
 import { Typography, Button, IconButton } from "@/app/MTailwind";
 import { TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
-import { usePath } from "@/components/PathContext";
-import SeladaImage from "../assets/img/Produk/Selada.jpeg";
-import PokcoyImage from "../assets/img/Produk/Pokcoy.jpeg";
-import TomatImage from "../assets/img/Produk/Tomat.jpeg";
 import { TiStarFullOutline } from "react-icons/ti";
 import { BsCartPlusFill } from "react-icons/bs";
-import Loader from "@/components/Loader"
-
-const products = [
-    {
-        name: "Selada",
-        image: SeladaImage,
-        desc: "Per Kg",
-        price: "Rp 15.000",
-        rating: 5.0,
-    },
-    {
-        name: "Pokcoy",
-        image: PokcoyImage,
-        desc: "Per Kg",
-        price: "Rp 12.000",
-        rating: 4.8,
-    },
-    {
-        name: "Tomat",
-        image: TomatImage,
-        desc: "Per Kg",
-        price: "Rp 10.000",
-        rating: 4.7,
-    },
-    {
-        name: "Tomat",
-        image: TomatImage,
-        desc: "Per Kg",
-        price: "Rp 10.000",
-        rating: 4.7,
-    },
-    {
-        name: "Tomat",
-        image: TomatImage,
-        desc: "Per Kg",
-        price: "Rp 10.000",
-        rating: 4.7,
-    },
-    {
-        name: "Tomat",
-        image: TomatImage,
-        desc: "Per Kg",
-        price: "Rp 10.000",
-        rating: 4.7,
-    },
-    {
-        name: "Tomat",
-        image: TomatImage,
-        desc: "Per Kg",
-        price: "Rp 10.000",
-        rating: 4.7,
-    },
-    {
-        name: "Tomat",
-        image: TomatImage,
-        desc: "Per Kg",
-        price: "Rp 10.000",
-        rating: 4.7,
-    },
-    {
-        name: "Tomat",
-        image: TomatImage,
-        desc: "Per Kg",
-        price: "Rp 10.000",
-        rating: 4.7,
-    },
-    {
-        name: "Selada",
-        image: TomatImage,
-        desc: "Per Kg",
-        price: "Rp 10.000",
-        rating: 4.7,
-    },
-];
+import useStateProduk from "@/hooks/useStateProduk";
+import { usePath } from "@/components/PathContext";
 
 function Produk() {
-    const [activePage, setActivePage] = React.useState(1);
     const { currentPath } = usePath();
-    if (!currentPath) {
-        return <Loader />;
-    }
-    const productsPerPage = 9;
-    const isHomepage = currentPath === "/Beranda";
-    const displayedProducts = isHomepage ? products.slice(0, 3) : products;
-    const totalPages = Math.ceil(displayedProducts.length / productsPerPage);
-    const getCurrentProducts = () => {
-        if (isHomepage) {
-            return displayedProducts;
-        }
-        const startIndex = (activePage - 1) * productsPerPage;
-        const endIndex = startIndex + productsPerPage;
-        return displayedProducts.slice(startIndex, endIndex);
-    };
-
-    const getItemProps = (index) => ({
-        variant: activePage === index ? "filled" : "text",
-        color: "gray",
-        onClick: () => setActivePage(index),
-        className: "rounded-full text-secondary",
-    });
-
-    const next = () => {
-        if (activePage < totalPages) {
-            setActivePage(activePage + 1);
-        }
-    };
-
-    const prev = () => {
-        if (activePage > 1) {
-            setActivePage(activePage - 1);
-        }
-    };
+    const { activePage,
+        totalPages,
+        getCurrentProducts,
+        getItemProps,
+        next,
+        prev, } = useStateProduk();
 
     return (
         <div className="h-full my-16">
@@ -135,26 +30,33 @@ function Produk() {
                         </Typography>
                     </div>
                     <div className="produk-container grid grid-cols-1 gap-1 py-6 lg:grid-cols-3 lg:gap-6 justify-items-center px-5 lg:px-36 lg:py-4">
-                        {getCurrentProducts().map((product, index) => (
-                            <div key={index} className="relative flex flex-col my-6 bg-white border border-gray rounded-lg shadow-lg mx-5 p-12 w-auto transition-transform duration-300 ease-in-out hover:shadow-none hover:border-none hover:scale-110">
+                        {getCurrentProducts().map((product) => (
+                            <div key={product.id} className="relative flex flex-col my-6 bg-white border border-gray rounded-lg shadow-lg mx-5 p-12 w-auto transition-transform duration-300 ease-in-out hover:shadow-none hover:border-none hover:scale-110">
                                 <div className="relative h-72 m-2.5 overflow-hidden text-white rounded-md">
-                                    <Image src={product.image} alt={`${product.name}-image`} />
+                                    <Image src={product.Gambar}
+                                        alt={`${product.Nama}-image`}
+                                        layout="fill"
+                                        objectFit="cover"
+                                        className="rounded-md" />
                                 </div>
                                 <div className="p-4">
                                     <div className="flex items-center mb-2">
                                         <h6 className="text-slate-800 text-xl font-black">
-                                            {product.name}
+                                            {product.Nama}
                                         </h6>
                                         <div className="flex items-center gap-0.5 ml-auto">
                                             <TiStarFullOutline className="w-5 h-5 text-yellow-600" />
-                                            <span className="text-slate-600 ml-1.5 font-bold">{product.rating.toFixed(1)}</span>
+                                            <span className="text-slate-600 ml-1.5 font-bold">1.4</span>
                                         </div>
                                     </div>
                                     <p className="text-slate-600 leading-normal">
-                                        {product.desc}
+                                        {product.Deskripsi}
                                     </p>
                                     <p className="text-slate-600 leading-normal font-bold">
-                                        {product.price}
+                                        {product.Harga}
+                                    </p>
+                                    <p className="text-slate-600 leading-normal font-bold">
+                                        {product.Stok}
                                     </p>
                                 </div>
                                 <div className="px-4 pb-4 pt-0 mt-2 text-base">

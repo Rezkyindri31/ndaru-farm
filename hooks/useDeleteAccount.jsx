@@ -17,26 +17,33 @@ const AccountDeletionDialog = ({ open, handleOpen }) => {
     };
 
     const handleDeleteAccount = async () => {
-        if (confirmationInput === "Hapus Akun") {
+        if (confirmationInput.trim().toLowerCase() === "hapus akun") {
             try {
                 const user = auth.currentUser;
                 if (user) {
                     const userDocRef = doc(db, 'pengguna', user.uid);
                     await deleteDoc(userDocRef);
+                    console.log("User data deleted from Firestore!");
                     await user.delete();
-                    console.log("Akun berhasil dihapus!");
+                    console.log("User deleted from Firebase Authentication!");
                     toast.success("Akun Berhasil di Hapus");
                     router.push("/Login");
                 }
             } catch (error) {
                 console.error("Error deleting account: ", error);
-                toast.error("Gagal Menghapus Akun. Pastikan Anda mengetikkan 'Hapus Akun' dengan benar.");
+                if (error.code === "auth/requires-recent-login") {
+                    toast.error("Silakan login kembali untuk menghapus akun.");
+                } else {
+                    toast.error("Gagal Menghapus Akun. Pastikan Anda mengetikkan 'Hapus Akun' dengan benar.");
+                }
             }
         } else {
             console.log("Input konfirmasi tidak sesuai.");
             toast.error("Konfirmasi Input Tidak Sesuai");
         }
     };
+
+
 
     return (
         <div className="page-delete flex w-full m-10 items-center justify-center text-center">
