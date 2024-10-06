@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useStateForm from '@/hooks/useStateForm';
-import { Stepper, Step, Textarea, Alert, Typography, Input, Button, Spinner } from '@/app/MTailwind';
+import { Stepper, Step, Textarea, Alert, Typography, Input, Button, Spinner, Radio } from '@/app/MTailwind';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '@/lib/firebaseConfig';
 import { setDoc, doc } from 'firebase/firestore';
@@ -16,6 +16,7 @@ function useRegisterWithEmailPassword() {
     const {
         nik, setNik,
         namalengkap, setNamaLengkap,
+        jenisKelamin, setJenisKelamin,
         nomortelepon, setNomorTelepon,
         tanggallahir, setTanggalLahir,
         alamattagihan, setAlamatTagihan,
@@ -26,7 +27,8 @@ function useRegisterWithEmailPassword() {
         nomorteleponpenerima, setNomorTeleponPenerima,
         alamattagihanpenerima, setAlamatTagihanPenerima,
         isValidPassword, hasUpperCase, hasLowerCase,
-        hasNumber, hasSpecialChar, sedangMemuatRegister, setSedangMemuatRegister
+        hasNumber, hasSpecialChar, sedangMemuatRegister, setSedangMemuatRegister,
+        hitungUmur
     } = useStateForm();
     const router = useRouter();
 
@@ -44,14 +46,17 @@ function useRegisterWithEmailPassword() {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
             const creationDate = new Date();
+            const umur = hitungUmur(tanggallahir);
             console.log(user);
             if (user) {
                 await setDoc(doc(db, "pengguna", user.uid), {
                     Email: user.email,
                     NIK: nik,
                     Nama_Lengkap: namalengkap,
+                    Jenis_Kelamin: jenisKelamin,
                     Nomor_Telepon: nomortelepon,
                     Tanggal_Lahir: tanggallahir,
+                    Umur: umur,
                     Alamat_Tagihan: alamattagihan,
                     Password: password,
                     Confirmpassword: confirmpassword,
@@ -67,7 +72,6 @@ function useRegisterWithEmailPassword() {
             toast.success('Pembuatan Akun Anda Berhasil. Silahkan verifikasi email Anda sebelum login.', {
                 duration: 4000,
             });
-
             router.push('/Login');
         } catch (err) {
             toast.error(`Gagal: ${err.message}`, {
@@ -143,6 +147,23 @@ function useRegisterWithEmailPassword() {
                                     required
                                 />
                             </div>
+                            <div className="flex items-center gap-10 text-xs !border-2 !border-secondary rounded-lg px-4">
+                                <h1 className="whitespace-nowrap text-sm text-blue-gray-400">Jenis Kelamin</h1>
+                                <Radio
+                                    name="type"
+                                    label="Laki-laki"
+                                    value="Laki-laki"
+                                    checked={jenisKelamin === 'Laki-laki'}
+                                    onChange={(e) => setJenisKelamin(e.target.value)}
+                                />
+                                <Radio
+                                    name="type"
+                                    label="Perempuan"
+                                    value="Perempuan"
+                                    checked={jenisKelamin === 'Perempuan'}
+                                    onChange={(e) => setJenisKelamin(e.target.value)}
+                                />
+                            </div>
                             <div>
                                 <Input
                                     type="tel"
@@ -194,7 +215,6 @@ function useRegisterWithEmailPassword() {
                                     onChange={(e) => setTanggalLahir(e.target.value)}
                                     required
                                 />
-
                             </div>
                             <div>
                                 <Textarea

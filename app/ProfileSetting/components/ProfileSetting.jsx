@@ -13,7 +13,8 @@ import {
     Dialog,
     DialogHeader,
     DialogBody,
-    DialogFooter
+    DialogFooter,
+    Radio
 } from "@/app/MTailwind";
 import Image from "next/image";
 import { GrContactInfo } from "react-icons/gr";
@@ -52,7 +53,7 @@ function ProfileSet() {
                                 variant="rounded"
                                 width={256}
                                 height={256}
-                                className="w-72 h-72 border rounded-lg border-blue-gray-400 shadow-xl shadow-gray-400/50 ring-4 ring-blue-gray-500/30 transition-all duration-300 ease-in-out group-hover:blur-sm"
+                                className="w-72 h-96 border rounded-lg border-blue-gray-400 shadow-xl shadow-gray-400/50 ring-4 ring-blue-gray-500/30 transition-all duration-300 ease-in-out group-hover:blur-sm"
                             />
                             <form className="absolute top-1/3 items-center justify-center group-hover:flex hidden transition-opacity duration-300 ease-in-out">
                                 <label
@@ -305,6 +306,26 @@ function ProfileSet() {
                                                     required
                                                 />
                                             </div>
+                                            <div>
+                                                <div className="flex items-center gap-10 text-xs !border-2 !border-secondary rounded-lg px-4">
+                                                    <h1 className="whitespace-nowrap text-sm text-blue-gray-400">Jenis Kelamin</h1>
+                                                    <Radio
+                                                        name="Jenis_Kelamin"
+                                                        label="Laki-laki"
+                                                        value="Laki-laki"
+                                                        checked={userDetails.Jenis_Kelamin === 'Laki-laki'}
+                                                        onChange={handleInputChange}
+                                                    />
+                                                    <Radio
+                                                        name="Jenis_Kelamin"
+                                                        label="Perempuan"
+                                                        value="Perempuan"
+                                                        checked={userDetails.Jenis_Kelamin === 'Perempuan'}
+                                                        onChange={handleInputChange}
+                                                    />
+                                                </div>
+                                            </div>
+
                                             <div>
                                                 <Input
                                                     type="email"

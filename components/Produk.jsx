@@ -39,8 +39,8 @@ function Produk() {
                                         objectFit="cover"
                                         className="rounded-md" />
                                 </div>
-                                <div className="p-4">
-                                    <div className="flex items-center mb-2">
+                                <div className="p-4 space-y-2">
+                                    <div className="flex items-center">
                                         <h6 className="text-slate-800 text-xl font-black">
                                             {product.Nama}
                                         </h6>
@@ -52,12 +52,17 @@ function Produk() {
                                     <p className="text-slate-600 leading-normal">
                                         {product.Deskripsi}
                                     </p>
-                                    <p className="text-slate-600 leading-normal font-bold">
-                                        {product.Harga}
-                                    </p>
-                                    <p className="text-slate-600 leading-normal font-bold">
-                                        {product.Stok}
-                                    </p>
+                                    <div className="flex items-center mb-2">
+                                        <p className="text-slate-600 leading-normal font-bold">
+                                            Rp {product.Harga.toLocaleString('id-ID')} / {product.Berat} kg
+                                        </p>
+
+                                        <div className="flex items-center gap-0.5 ml-auto">
+                                            <p className="text-slate-600 leading-normal font-bold">
+                                                Stok : {product.Stok}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="px-4 pb-4 pt-0 mt-2 text-base">
                                     <button className="w-full bg-secondary text-white text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 hover:bg-white hover:text-secondary hover:scale-110" type="button">

@@ -8,17 +8,22 @@ const useAuth = () => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            setUser(user);
-            if (user && user.emailVerified) {
-                try {
-                    const verificationDate = new Date();
-                    await updateDoc(doc(db, 'pengguna', user.uid), {
-                        Tanggal_Verifikasi: verificationDate
-                    });
-                    console.log('Email verified and Tanggal_Verifikasi updated');
-                } catch (err) {
-                    console.error('Error updating verification date:', err);
+            if (user) {
+                setUser(user);
+                if (user.emailVerified && !user.verificationUpdated) {
+                    try {
+                        const verificationDate = new Date();
+                        await updateDoc(doc(db, 'pengguna', user.uid), {
+                            Tanggal_Verifikasi: verificationDate,
+                            verificationUpdated: true
+                        });
+                        console.log('Email verified and Tanggal_Verifikasi updated');
+                    } catch (err) {
+                        console.error('Error updating verification date:', err);
+                    }
                 }
+            } else {
+                setUser(null);
             }
         });
 

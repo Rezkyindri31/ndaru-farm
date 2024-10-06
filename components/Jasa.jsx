@@ -40,8 +40,8 @@ function Jasa() {
                                         objectFit="cover"
                                         className="rounded-md" />
                                 </div>
-                                <div className="p-4">
-                                    <div className="flex items-center mb-2">
+                                <div className="p-4 space-y-2">
+                                    <div className="flex items-center">
                                         <h6 className="text-slate-800 text-xl font-black">
                                             {service.Nama}
                                         </h6>
@@ -54,10 +54,7 @@ function Jasa() {
                                         {service.Deskripsi}
                                     </p>
                                     <p className="text-slate-600 leading-normal font-bold">
-                                        {service.Harga}
-                                    </p>
-                                    <p className="text-slate-600 leading-normal font-bold">
-                                        {service.Jangka_Waktu}
+                                        Rp {service.Harga.toLocaleString('id-ID')} / {service.Jangka_Waktu} Jam
                                     </p>
                                 </div>
                                 <div className="px-4 pb-4 pt-0 mt-2 text-base">

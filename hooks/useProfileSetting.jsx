@@ -136,6 +136,8 @@ const useProfileSetting = () => {
         NIK: "",
         Nama_Lengkap: "",
         Email: "",
+        Jenis_Kelamin: "",
+        Umur: "",
         Nomor_Telepon: "",
         Tanggal_Lahir: "",
         Alamat_Tagihan: "",
@@ -147,6 +149,8 @@ const useProfileSetting = () => {
     const userDetailsLabels = {
         NIK: "NIK",
         Nama_Lengkap: "Nama Lengkap",
+        Jenis_Kelamin: "Jenis Kelamin Pengguna",
+        Umur: "Umur Pengguna",
         Email: "Email Pengguna",
         Nomor_Telepon: "Nomor Telepon Pengguna",
         Tanggal_Lahir: "Tanggal Lahir Pengguna",
@@ -162,6 +166,8 @@ const useProfileSetting = () => {
     const defaultValues = {
         NIK: "Not Available",
         Nama_Lengkap: "Not Available",
+        Jenis_Kelamin: "Not Available",
+        Umur: "Not Available",
         Email: "Not Available",
         Nomor_Telepon: "Not Available",
         Tanggal_Lahir: "Not Available",
@@ -177,7 +183,6 @@ const useProfileSetting = () => {
     const getValue = (key) => {
         return userDetails?.[key] || "Not Available";
     };
-
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -207,21 +212,47 @@ const useProfileSetting = () => {
             }
         }
         if (name === "Tanggal_Lahir") {
-            const datePattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
-            if (datePattern.test(value) || value === '') {
+            const inputDate = new Date(value);
+            const today = new Date();
+
+            if (!isNaN(inputDate.getTime()) && inputDate <= today) {
                 updatedValue = value;
+                const age = calculateAge(inputDate, today);
+                updateUserAgeInDatabase(age);
             } else {
-                updatedValue = value;
+                updatedValue = '';
             }
         }
+
         if (name === "Alamat_Tagihan" || name === "Alamat_Tagihan_Penerima") {
             updatedValue = value;
         }
-
+        if (name === "Jenis_Kelamin") {
+            updatedValue = value;
+        }
         setUserDetails((prevDetails) => ({
             ...prevDetails,
             [name]: updatedValue,
         }));
+    };
+
+    const calculateAge = (birthDate, currentDate) => {
+        const ageDiff = currentDate - birthDate;
+        const ageInYears = ageDiff / (1000 * 60 * 60 * 24 * 365.25);
+        const roundedAge = Math.round(ageInYears);
+        return roundedAge;
+    };
+
+    const updateUserAgeInDatabase = async (age) => {
+        try {
+            const userRef = doc(db, 'pengguna', user.uid);
+            await updateDoc(userRef, {
+                Umur: age,
+            });
+            console.log("Umur berhasil diperbarui:", age);
+        } catch (error) {
+            console.error("Error memperbarui umur:", error);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -232,6 +263,8 @@ const useProfileSetting = () => {
             setSedangUbahProfile(true);
             try {
                 const docRef = doc(db, "pengguna", user.uid);
+                const age = calculateAge(new Date(userDetails.Tanggal_Lahir), new Date());
+                userDetails.Umur = age;
                 await updateDoc(docRef, userDetails);
                 console.log("Document successfully updated!");
                 toast.success('Data Berhasil di Perbaharui', {
@@ -242,7 +275,7 @@ const useProfileSetting = () => {
                 }, 1000);
             } catch (error) {
                 console.error("Error updating document: ", error);
-                toast.success('Data Gagal di Perbaharui', {
+                toast.error('Data Gagal di Perbaharui', {
                     duration: 3000,
                 });
             } finally {

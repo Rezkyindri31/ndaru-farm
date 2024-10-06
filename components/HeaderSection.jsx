@@ -14,6 +14,10 @@ function HeaderTemplate() {
             desc: 'Layanan Berkualitas',
             title: 'Etalase Jasa'
         },
+        '/SaranaPertanian': {
+            desc: 'Sarana Pertanian Bermutu',
+            title: 'Etalase Sarana Pertanian'
+        },
         '/Berita': {
             desc: 'Informasi Seputar Tanaman Organik',
             title: 'Artikel Berita'
