@@ -1,115 +1,38 @@
 "use client";
+import React, { useState } from "react";
 import Image from "next/image";
 import {
     Typography, CardBody,
-    CardFooter, Button
+    CardFooter, Button,
+    Dialog,
+    DialogHeader,
+    DialogBody,
+    DialogFooter,
 } from "@/app/MTailwind";
 import { FaLocationArrow } from "react-icons/fa";
 import { TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 import { IconButton } from "@/app/MTailwind";
-import News1 from "../assets/img/latest-news/news-bg-1.jpg";
-import News2 from "../assets/img/latest-news/news-bg-2.jpg";
-import News3 from "../assets/img/latest-news/news-bg-3.jpg";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { usePath } from "@/components/PathContext";
+import useStateBerita from "@/hooks/useStateBerita";
 import Loader from "@/components/Loader"
 
-const news = [
-    {
-        name: "Judul Berita 1",
-        image: News1,
-        desc: "Deskripsi Berita 1",
-    },
-    {
-        name: "Judul Berita 2",
-        image: News2,
-        desc: "Deskripsi Berita 2",
-    },
-    {
-        name: "Judul Berita 3",
-        image: News3,
-        desc: "Deskripsi Berita 3",
-    },
-    {
-        name: "Judul Berita 3",
-        image: News3,
-        desc: "Deskripsi Berita 3",
-    },
-    {
-        name: "Judul Berita 3",
-        image: News3,
-        desc: "Deskripsi Berita 3",
-    },
-    {
-        name: "Judul Berita 3",
-        image: News3,
-        desc: "Deskripsi Berita 3",
-    },
-    {
-        name: "Judul Berita 3",
-        image: News3,
-        desc: "Deskripsi Berita 3",
-    },
-    {
-        name: "Judul Berita 3",
-        image: News3,
-        desc: "Deskripsi Berita 3",
-    },
-    {
-        name: "Judul Berita 3",
-        image: News3,
-        desc: "Deskripsi Berita 3",
-    },
-    {
-        name: "Judul Berita 10",
-        image: News3,
-        desc: "Deskripsi Berita 10",
-    },
-];
-
 function Berita() {
-    const [activePage, setActivePage] = useState(1);
     const { currentPath } = usePath();
     if (!currentPath) {
         return <Loader />;
     }
     const pengarah = useRouter();
-    const newsPerPage = 9;
+    const { activePage,
+        totalPages,
+        getCurrentNews,
+        getItemProps,
+        next,
+        prev,
+        isHomepage } = useStateBerita();
+    const [open, setOpen] = useState(false);
 
-    const isHomepage = currentPath === "/Beranda";
-
-    const displayedNews = isHomepage ? news.slice(0, 3) : news;
-    const totalPages = Math.ceil(displayedNews.length / newsPerPage);
-
-    const getCurrentNews = () => {
-        if (isHomepage) {
-            return displayedNews;
-        }
-        const startIndex = (activePage - 1) * newsPerPage;
-        const endIndex = startIndex + newsPerPage;
-        return displayedNews.slice(startIndex, endIndex);
-    };
-
-    const getItemProps = (index) => ({
-        variant: activePage === index ? "filled" : "text",
-        color: "gray",
-        onClick: () => setActivePage(index),
-        className: "rounded-full text-secondary",
-    });
-
-    const next = () => {
-        if (activePage < totalPages) {
-            setActivePage(activePage + 1);
-        }
-    };
-
-    const prev = () => {
-        if (activePage > 1) {
-            setActivePage(activePage - 1);
-        }
-    };
-
+    const handleOpen = () => setOpen(!open);
     return (
         <div className="h-full my-16 z-10 relative">
             {getCurrentNews().length > 0 && (
@@ -124,28 +47,69 @@ function Berita() {
                         </Typography>
                     </div>
                     <div className="grid grid-cols-1 gap-1 py-6 lg:grid-cols-3 lg:gap-6 justify-items-center px-5 lg:px-36 lg:py-4">
-                        {getCurrentNews().map((newsinfo, index) => (
-                            <div key={index} className="relative flex flex-col my-6 bg-white border border-gray rounded-lg shadow-lg mx-5 p-5 w-auto transition-transform duration-300 ease-in-out hover:shadow-none hover:border-none hover:scale-110">
-                                <div className="relative h-52 m-1.5 overflow-hidden text-white rounded-md">
-                                    <Image src={newsinfo.image} alt={`${newsinfo.name}-image`} />
+                        {getCurrentNews().map((news) => (
+                            <div key={news.id} className="relative flex flex-col my-6 bg-white border border-gray rounded-lg shadow-lg mx-5 p-5 w-auto transition-transform duration-300 ease-in-out hover:shadow-none hover:border-none hover:scale-110">
+                                <div className="relative h-52  m-1.5 overflow-hidden text-white rounded-md">
+                                    <Image src={news.Gambar} alt={`${news.Judul}-image`}
+                                        layout="fill"
+                                        objectFit="cover"
+                                        className="rounded-md" />
                                 </div>
                                 <CardBody>
                                     <Typography variant="h5" color="blue-gray" className="mb-2">
-                                        {newsinfo.name}
+                                        {news.Judul}
                                     </Typography>
                                     <Typography>
-                                        {newsinfo.desc}
+                                        {news.Deskripsi}
+                                    </Typography>
+                                    <Typography className="mt-2 border-2 border-secondary text-base text-center rounded-full bg-secondary text-white mx-12">
+                                        {news.Kategori}
                                     </Typography>
                                 </CardBody>
                                 <CardFooter className="pt-0">
-                                    <Button className="w-56 bg-secondary text-white text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 hover:bg-white hover:text-secondary hover:scale-110">Baca Selengkapnya</Button>
+                                    <Button onClick={handleOpen} className="w-56 bg-secondary text-white text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 hover:bg-white hover:text-secondary hover:scale-110">Baca Selengkapnya</Button>
+                                    <>
+                                        <Dialog open={open} handler={handleOpen}>
+                                            <DialogHeader>{news.Judul}</DialogHeader>
+                                            <DialogBody className="relative h-auto w-auto flex justify-center items-center">
+                                                <div className="relative w-full h-full">
+                                                    <Image
+                                                        src={news.Gambar}
+                                                        alt={`${news.Judul}-image`}
+                                                        layout="fill"
+                                                        objectFit="cover"
+                                                        className="rounded-md"
+                                                    />
+                                                    <Typography>
+                                                        {news.Deskripsi}
+                                                    </Typography>
+                                                    <Typography className="mt-2 border-2 border-secondary text-base text-center rounded-full bg-secondary text-white mx-12">
+                                                        {news.Kategori}
+                                                    </Typography>
+                                                </div>
+                                            </DialogBody>
+                                            <DialogFooter>
+                                                <Button
+                                                    variant="text"
+                                                    color="red"
+                                                    onClick={handleOpen}
+                                                    className="mr-1"
+                                                >
+                                                    <span>Cancel</span>
+                                                </Button>
+                                                <Button variant="gradient" color="green" onClick={handleOpen}>
+                                                    <span>Confirm</span>
+                                                </Button>
+                                            </DialogFooter>
+                                        </Dialog>
+                                    </>
                                 </CardFooter>
                             </div>
                         ))}
                     </div>
                 </>
             )}
-            {!isHomepage && totalPages > 1 && (
+            {currentPath !== "/Beranda" && totalPages > 1 && (
                 <div className="flex items-center gap-4 justify-center">
                     <Button
                         variant="text"

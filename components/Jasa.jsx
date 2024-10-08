@@ -6,6 +6,7 @@ import { TiStarFullOutline, TiArrowLeftThick, TiArrowRightThick } from "react-ic
 import { BsCartPlusFill } from "react-icons/bs";
 import useStateJasa from "@/hooks/useStateJasa";
 import { usePath } from "@/components/PathContext";
+import useAuth from '@/hooks/useVerifyLogin';
 
 function Jasa() {
     const { currentPath } = usePath();
@@ -16,7 +17,7 @@ function Jasa() {
         next,
         prev,
     } = useStateJasa();
-
+    const user = useAuth();
     return (
         <div className="h-full my-16 z-10 relative">
             {getCurrentJasa().length > 0 && (
@@ -57,11 +58,19 @@ function Jasa() {
                                         Rp {service.Harga.toLocaleString('id-ID')} / {service.Jangka_Waktu} Jam
                                     </p>
                                 </div>
-                                <div className="px-4 pb-4 pt-0 mt-2 text-base">
-                                    <button className="w-full bg-secondary text-white text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 hover:bg-white hover:text-secondary hover:scale-110" type="button">
-                                        <BsCartPlusFill /> Masukkan Keranjang
-                                    </button>
-                                </div>
+                                {user ? (
+                                    <div className="px-4 pb-4 pt-0 mt-2 text-base">
+                                        <button className="w-full bg-secondary text-white text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 hover:bg-white hover:text-secondary hover:scale-110" type="button">
+                                            <BsCartPlusFill /> Masukkan Keranjang
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="px-4 pb-4 pt-0 mt-2 text-base hidden">
+                                        <button className="w-full bg-secondary text-white text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 hover:bg-white hover:text-secondary hover:scale-110" type="button">
+                                            <BsCartPlusFill /> Masukkan Keranjang
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>

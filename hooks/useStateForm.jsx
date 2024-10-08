@@ -13,6 +13,7 @@ const useStateForm = () => {
     const [nomorteleponpenerima, setNomorTeleponPenerima] = useState('');
     const [alamattagihanpenerima, setAlamatTagihanPenerima] = useState('');
     const [sedangMemuatRegister, setSedangMemuatRegister] = useState(false);
+    const hasMinLength = password.length >= 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
@@ -39,7 +40,7 @@ const useStateForm = () => {
         nomortelepon, setNomorTelepon, tanggallahir, setTanggalLahir, alamattagihan,
         setAlamatTagihan, email, setEmail, password, setPassword, confirmpassword, setConfirmPassword
         , namalengkappenerima, setNamaLengkapPenerima, nomorteleponpenerima, setNomorTeleponPenerima
-        , alamattagihanpenerima, setAlamatTagihanPenerima, isValidPassword, hasUpperCase, hasLowerCase,
+        , alamattagihanpenerima, setAlamatTagihanPenerima, isValidPassword, hasMinLength, hasUpperCase, hasLowerCase,
         hasNumber, hasSpecialChar, sedangMemuatRegister, setSedangMemuatRegister, hitungUmur
     };
 }

@@ -26,7 +26,7 @@ function useRegisterWithEmailPassword() {
         namalengkappenerima, setNamaLengkapPenerima,
         nomorteleponpenerima, setNomorTeleponPenerima,
         alamattagihanpenerima, setAlamatTagihanPenerima,
-        isValidPassword, hasUpperCase, hasLowerCase,
+        isValidPassword, hasMinLength, hasUpperCase, hasLowerCase,
         hasNumber, hasSpecialChar, sedangMemuatRegister, setSedangMemuatRegister,
         hitungUmur
     } = useStateForm();
@@ -267,7 +267,7 @@ function useRegisterWithEmailPassword() {
                                 <button
                                     type="button"
                                     onClick={togglePasswordVisibility}
-                                    className={`absolute right-2 top-1/2 ${password.length > 0 && !isValidPassword ? 'top-3' : 'top-1/2'} transform translate-y-1/2`}
+                                    className={`absolute right-2 transform ${password.length > 0 && !isValidPassword ? 'top-3 translate-y-1/2' : 'top-1/3'}`}
                                     aria-label={isPasswordVisible ? "Sembunyikan Password" : "Tampilkan Password"}
                                 >
                                     {isPasswordVisible ? (
@@ -276,11 +276,13 @@ function useRegisterWithEmailPassword() {
                                         <span role="img" aria-label="Show password"><IoMdEye /></span>
                                     )}
                                 </button>
-
                                 {password.length > 0 && !isValidPassword && (
                                     <div className="flex flex-col mt-2">
                                         <Alert className='py-1 px-5' variant="filled">
                                             <Typography className="font-normal text-sm text-gray-800">
+                                                {!hasMinLength && (
+                                                    <p className="text-red-500">✘ Minimal 8 karakter</p>
+                                                )}
                                                 {!hasUpperCase && (
                                                     <p className="text-red-500">✘ Harus memiliki satu huruf kapital</p>
                                                 )}
@@ -292,6 +294,9 @@ function useRegisterWithEmailPassword() {
                                                 )}
                                                 {!hasSpecialChar && (
                                                     <p className="text-red-500">✘ Harus memiliki satu karakter unik (.,_/@!#$%^&*)</p>
+                                                )}
+                                                {hasMinLength && (
+                                                    <p className="text-green-500">✔ Minimal 8 karakter</p>
                                                 )}
                                                 {hasUpperCase && <p className="text-green-500">✔ Harus memiliki satu huruf kapital</p>}
                                                 {hasLowerCase && <p className="text-green-500">✔ Harus memiliki satu huruf kecil</p>}
@@ -318,7 +323,7 @@ function useRegisterWithEmailPassword() {
                                 <button
                                     type="button"
                                     onClick={toggleConfirmPasswordVisibility}
-                                    className={`absolute right-2 ${confirmpassword.length > 0 && password !== confirmpassword ? 'top-3' : 'top-1/2'} transform translate-y-1/2`}
+                                    className={`absolute right-2 transform ${confirmpassword.length > 0 && password !== confirmpassword ? 'top-3 translate-y-1/2' : 'top-1/3'}  `}
                                     aria-label={isConfirmPasswordVisible ? "Sembunyikan Password" : "Tampilkan Password"}
                                 >
                                     {isConfirmPasswordVisible ? (
@@ -378,7 +383,7 @@ function useRegisterWithEmailPassword() {
                                             return;
                                         }
 
-                                        if (/^\d*$/.test(value) && value.length <= 12) {
+                                        if (/^\d*$/.test(value) && value.length <= 11) {
                                             setNomorTeleponPenerima('+62' + value);
                                         }
                                     }}

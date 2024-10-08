@@ -55,14 +55,12 @@ function AuthPage() {
                     <div className="w-1/2 p-8">
                         <div className='page-login'>
                             <h2 className="text-3xl font-semibold text-gray-800 mb-6">Silahkan Masuk</h2>
-
                             <Button
                                 onClick={handleLoginWithGoogle} className="w-full mb-4 !border-2 !border-secondary text-black text-sm flex items-center justify-center space-x-2"
                             >
                                 <FcGoogle />
                                 <span>Log in with Google</span>
                             </Button>
-
                             <p className="text-center text-black font-bold mb-6">OR LOGIN WITH EMAIL</p>
                             <form onSubmit={handleLoginSubmit}>
                                 <div className="mb-4">
@@ -74,7 +72,6 @@ function AuthPage() {
                                         labelProps={{
                                             className: "hidden",
                                         }}
-                                        required
                                     />
 
                                 </div>
@@ -88,7 +85,6 @@ function AuthPage() {
                                         labelProps={{
                                             className: "hidden",
                                         }}
-                                        required
                                     />
 
                                     <button
@@ -140,7 +136,7 @@ function AuthPage() {
                                     Cek Beranda
                                 </Button>
                             </div>
-                            <Image className="w-80 h-80 mt-4" src={LoginIcon} />
+                            <Image className="w-80 h-80 mt-4" src={LoginIcon} alt="Login Icon" />
                         </div>
                     </div>
                 )}
@@ -193,7 +189,7 @@ function AuthPage() {
                                     Cek Beranda
                                 </Button>
                             </div>
-                            <Image className="w-80 h-80 mt-4" src={ForgotPasswordIcon} />
+                            <Image className="w-80 h-80 mt-4" src={ForgotPasswordIcon} alt="Forgot Password Icon" />
                         </div>
                     </div>
                 )}
