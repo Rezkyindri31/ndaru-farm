@@ -27,10 +27,11 @@ import DeleteAccount from '@/hooks/useDeleteAccount';
 
 
 function ProfileSet() {
-    const { isEditing, avatarFile, toggleEdit, userDetails, handleInputChange, handleSubmit, userDetailsLabels,
+    const { isEditing, avatarFile, toggleEdit, userDetails, handleInputChange, handleSubmit,
         userDetailsLabels1, defaultValues, defaultValues1, getValue, sedangUbahProfile, isDialogDeleteAccountOpen, handleOpenDialogDeleteAccount,
         handleCloseDialogDeleteAccount, isImageVisible, handleChooseFileClick, fileInputRef, handleFileChange, fileName, fileSize, handleDelete,
-        handleOpenUpdateProfile, openUpdateProfile, selectedFile, handleUpload } = useProfileSetting();
+        handleOpenUpdateProfile, openUpdateProfile, selectedFile, handleUpload, userDetailsLabels,
+        userDetailsEntries } = useProfileSetting();
     const { activeStep, setActiveStep, isLastStep, setIsLastStep, isFirstStep, setIsFirstStep, handleNext, handlePrev } = useStepper();
     const { handleKeyPress } = useValidationForm();
 

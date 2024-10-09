@@ -47,7 +47,6 @@ function useRegisterWithEmailPassword() {
             const user = userCredential.user;
             const creationDate = new Date();
             const umur = hitungUmur(tanggallahir);
-            console.log(user);
             if (user) {
                 await setDoc(doc(db, "pengguna", user.uid), {
                     Email: user.email,
@@ -58,21 +57,20 @@ function useRegisterWithEmailPassword() {
                     Tanggal_Lahir: tanggallahir,
                     Umur: umur,
                     Alamat_Tagihan: alamattagihan,
-                    Password: password,
-                    Confirmpassword: confirmpassword,
                     Nama_Lengkap_Penerima: namalengkappenerima,
                     Nomor_Telepon_Penerima: nomorteleponpenerima,
                     Alamat_Tagihan_Penerima: alamattagihanpenerima,
                     Tanggal_Pembuatan: creationDate,
                     Tanggal_Verifikasi: null,
-                });
+                }, { merge: true });
             }
+
             await sendEmailVerification(user);
-            console.log('Verification email sent');
             toast.success('Pembuatan Akun Anda Berhasil. Silahkan verifikasi email Anda sebelum login.', {
                 duration: 4000,
             });
             router.push('/Login');
+
         } catch (err) {
             toast.error(`Gagal: ${err.message}`, {
                 duration: 3000,

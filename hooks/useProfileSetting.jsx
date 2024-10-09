@@ -7,18 +7,9 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const useProfileSetting = () => {
     const router = useRouter();
-    const Logo = require("@/assets/img/logo.png");
-    const DefaultProfile = require("@/assets/img/Icon/DefaultProfile.jpeg");
-    const [avatarFile, setAvatarFile] = useState(DefaultProfile);
-    const [isImageVisible, setIsImageVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [user, setUser] = useState(null);
-    const [fileName, setFileName] = useState('');
-    const [fileSize, setFileSize] = useState('');
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [fileUrl, setFileUrl] = useState("");
-    const fileInputRef = useRef(null);
-    const [sedangUbahProfile, setSedangUbahProfile] = useState(false);
+
+    // DIALOG HOOKS
     const [isDialogDeleteAccountOpen, setDeleteAccountOpen] = useState(false);
     const [openUpdateProfile, setOpenUpdateProfile] = useState(false);
     const handleOpenUpdateProfile = () => {
@@ -32,69 +23,78 @@ const useProfileSetting = () => {
     const handleCloseDialogDeleteAccount = () => {
         setDeleteAccountOpen(false);
     };
+    const [user, setUser] = useState(null);
+    const [sedangUbahProfile, setSedangUbahProfile] = useState(false);
 
+
+    // PROFILE PICTURE HOOKS
+    const Logo = require("@/assets/img/logo.png");
+    const DefaultProfile = require("@/assets/img/Icon/DefaultProfile.jpeg");
+    const fileInputRef = useRef(null);
+    const [fileName, setFileName] = useState('');
+    const [fileSize, setFileSize] = useState('');
+    const [fileUrl, setFileUrl] = useState("");
+    const [isImageVisible, setIsImageVisible] = useState(false);
+    const [avatarFile, setAvatarFile] = useState(DefaultProfile);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
     const handleChooseFileClick = () => {
-        console.log('Choose file button clicked');
         fileInputRef.current.click();
     };
-
     const handleFileChange = (event) => {
-        console.log('File input changed. Files:', event.target.files);
         const file = event.target.files[0];
         if (file) {
-            console.log('File selected:', file);
             setFileName(file.name);
             setFileSize((file.size / 1024).toFixed(2) + ' KB');
-            console.log(`File "${file.name}" of size ${file.size} bytes has been selected.`);
-
             const fileUrl = URL.createObjectURL(file);
             setAvatarFile(fileUrl);
             setSelectedFile(file);
-            console.log("selectedFile set to:", file);
             setIsImageVisible(true);
-        } else {
-            console.log('No file selected');
         }
     };
-
-    const handleDelete = () => {
-        setIsImageVisible(false);
-        fileInputRef.current.value = null;
-    };
-
     const handleUpload = async () => {
         if (selectedFile) {
             if (!user) {
                 toast.error('User not found. Please log in.', { duration: 1000 });
                 return;
             }
+            if (isUploading) {
+                toast.error('Upload already in progress', { duration: 1000 });
+                return;
+            }
+            setIsUploading(true);
 
             const storageRef = ref(storage, `Gambar_Profile/${user.uid}/${selectedFile.name}`);
 
             try {
                 const snapshot = await uploadBytes(storageRef, selectedFile);
-                console.log("File uploaded successfully!");
-                toast.success('File uploaded successfully!', { duration: 1000 });
-                setIsImageVisible(false);
-
                 const downloadURL = await getDownloadURL(snapshot.ref);
-                setFileUrl(downloadURL);
-                setAvatarFile(downloadURL);
-                console.log("File available at:", downloadURL);
+                if (downloadURL !== avatarFile) {
+                    const userRef = doc(db, "pengguna", user.uid);
+                    await updateDoc(userRef, {
+                        Gambar_Profile: downloadURL,
+                    });
+                    setAvatarFile(downloadURL);
+                    setFileUrl(downloadURL);
+                    toast.success('File uploaded successfully!', { duration: 1000 });
+                } else {
+                    toast.error('The same image is already uploaded', { duration: 1000 });
+                }
 
-                const userRef = doc(db, "pengguna", user.uid);
-                await updateDoc(userRef, {
-                    Gambar_Profile: downloadURL,
-                });
-                console.log("User document updated with gambar_profile!");
-                window.location.reload();
+                setIsImageVisible(false);
             } catch (error) {
                 console.error("Error uploading file:", error);
                 toast.error(`Error uploading file: ${error.message}`, { duration: 1000 });
+            } finally {
+                setIsUploading(false);
             }
         } else {
             toast.error('Please select a file first!', { duration: 1000 });
         }
+    };
+    const handleDelete = () => {
+        setIsImageVisible(false);
+        fileInputRef.current.value = null;
     };
 
     useEffect(() => {

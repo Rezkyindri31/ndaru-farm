@@ -11,35 +11,33 @@ const useLoginWithEmailPassword = () => {
     const [sedangMemuatLogin, setSedangMemuatLogin] = useState(false);
 
     const handleLogin = async (email, password) => {
-        console.log('Attempting to log in with:', { email, password });
-        if (!email || !password) {
+        const sanitizedEmail = email.trim();
+        const sanitizedPassword = password.trim();
+
+        console.log('Attempting to log in with:', { email: sanitizedEmail, password: sanitizedPassword });
+
+        if (!sanitizedEmail || !sanitizedPassword) {
             toast.error('Email dan Password harus diisi', {
                 duration: 3000,
             });
             return;
         }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(sanitizedEmail)) {
+            toast.error('Format email tidak valid', {
+                duration: 3000,
+            });
+            return;
+        }
+
         setSedangMemuatLogin(true);
+
         try {
-            const userRef = query(
-                collection(db, "pengguna"),
-                where("Email", "==", email)
-            );
-            const userSnap = await getDocs(userRef);
-
-            if (userSnap.empty) {
-                console.log('Email tidak ditemukan di Firestore');
-                throw new Error('auth/user-not-found');
-            } else {
-                console.log('Email ditemukan di Firestore');
-            }
-
-            // Firebase Authentication login
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            console.log('Login berhasil di Firebase Authentication');
-
+            const userCredential = await signInWithEmailAndPassword(auth, sanitizedEmail, sanitizedPassword);
             const user = userCredential.user;
+            console.log('Login berhasil di Firebase Authentication:', user.email);
 
-            // Redirect ke halaman Beranda
             router.push('/Beranda');
             toast.success(`Selamat Datang ${user.email}`, {
                 duration: 3000,
@@ -47,22 +45,20 @@ const useLoginWithEmailPassword = () => {
 
         } catch (error) {
             console.error('Error logging in:', error.message);
-
-            // Logging untuk error code dari Firebase
             console.log('Error code:', error.code);
-
-            if (error.message === 'auth/user-not-found') {
-                console.log('Email tidak terdaftar.');
+            if (error.code === 'auth/invalid-credential') {
+                toast.error('Email atau password tidak valid', {
+                    duration: 3000,
+                });
+            } else if (error.code === 'auth/user-not-found') {
                 toast.error('Email tidak terdaftar', {
                     duration: 3000,
                 });
             } else if (error.code === 'auth/wrong-password') {
-                console.log('Password salah.');
                 toast.error('Password salah', {
                     duration: 3000,
                 });
             } else {
-                console.log('Error tidak diketahui:', error.message);
                 toast.error('Terjadi kesalahan. Coba lagi.', {
                     duration: 3000,
                 });
@@ -71,6 +67,8 @@ const useLoginWithEmailPassword = () => {
             setSedangMemuatLogin(false);
         }
     };
+
+
 
 
     return {
