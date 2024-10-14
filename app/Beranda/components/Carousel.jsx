@@ -35,7 +35,7 @@ function CarouselSection() {
             <div className="relative">
                 <Image
                     src={Slider1}
-                    alt="image 1"
+                    alt="Seasonal sale banner offering big discounts in December"
                     className="h-screen w-full object-cover brightness-50"
                 />
                 <div className="absolute top-1/2 right-0 transform -translate-y-1/2 me-2 lg:me-36 p-4 text-white text-xl font-bold animate-slide-fade-in">
@@ -48,7 +48,7 @@ function CarouselSection() {
             <div className="relative">
                 <Image
                     src={Slider2}
-                    alt="image 2"
+                    alt="New innovations and updates from E-Mart Ndaru Farm"
                     className="h-screen w-full object-cover brightness-50"
                 />
                 <div className="absolute top-1/2 right-0 transform -translate-y-1/2 me-2 lg:me-36 p-4 text-white text-xl font-bold animate-slide-fade-in">
@@ -61,7 +61,7 @@ function CarouselSection() {
             <div className="relative">
                 <Image
                     src={Slider3}
-                    alt="image 3"
+                    alt="Welcome back banner from Ndaru Farm"
                     className="h-screen w-full object-cover brightness-50"
                 />
                 <div className="absolute top-1/2 right-0 transform -translate-y-1/2 me-2 lg:me-36 p-4 text-white text-xl font-bold">

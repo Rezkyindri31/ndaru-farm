@@ -13,7 +13,7 @@ function EventsSection() {
         <div className="mt-10 py-20 lg:py-32 z-10 relative bg-gray">
             <div className="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-10 lg:items-center lg:justify-end lg:gap-2 ">
                 <div className="flex items-center justify-center w-96 h-96 bg-transparent shadow-lg backdrop-blur-sm border border-white border-opacity-20 rounded-lg mx-auto ">
-                    <Image src={Logo}></Image>
+                    <Image src={Logo} alt="Ndaru Farm Logo"></Image>
                 </div>
                 <div className="text-center lg:text-left lg:space-y-4 mx-6 lg:mx-12 lg:mr-80 ">
                     <Typography variant="lead" className='text-blue-gray-400 font-black'>Sejak Tahun 2018</Typography>

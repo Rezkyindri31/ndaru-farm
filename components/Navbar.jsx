@@ -78,7 +78,6 @@ function Navigation() {
     }, []);
 
     const handleNavClick = (path) => {
-        console.log("Navigating to:", path);
         setActiveNav(path);
         router.push(path);
     };
@@ -150,7 +149,7 @@ function Navigation() {
                         className="mr-4 cursor-pointer py-1.5 text-white flex items-center gap-x-2 uppercase font-bold"
                         onClick={() => handleNavClick("/Beranda")}
                     >
-                        <Image src={Logo} alt="" className="w-14 lg:w-20 h-14 lg:h-20" />
+                        <Image src={Logo} alt="" className="w-14 lg:w-20 h-14 lg:h-20" priority />
                         E-Mart Ndaru Farm
                     </Typography>
                     <div className="hidden lg:block">{navList}</div>

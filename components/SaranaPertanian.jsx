@@ -5,8 +5,10 @@ import { Typography, Button, IconButton } from "@/app/MTailwind";
 import { TiStarFullOutline, TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 import { BsCartPlusFill } from "react-icons/bs";
 import useStateSaranaPertanian from "@/hooks/useStateSaranaPertanian";
-import { usePath } from "@/components/PathContext";
+import useCart from '@/hooks/useCart';
 import useAuth from '@/hooks/useVerifyLogin';
+import toast, { Toaster } from "react-hot-toast";
+import { usePath } from "@/components/PathContext";
 
 function Jasa() {
     const { currentPath } = usePath();
@@ -18,8 +20,15 @@ function Jasa() {
         prev,
     } = useStateSaranaPertanian();
     const user = useAuth();
+    const { handleAddToCart } = useCart();
     return (
-        <div className="h-full my-16 z-10 relative">
+        <div className="h-full my-16">
+            <div className="text-base justify-center text-center font-bold" >
+                <Toaster
+                    position="top-right"
+                    reverseOrder={false}
+                />
+            </div>
             {getCurrentFacilites().length > 0 && (
                 <>
                     <div className="flex items-center justify-center gap-4 uppercase font-black pt-2">
@@ -37,9 +46,9 @@ function Jasa() {
                                 <div className="relative h-72 m-2.5 overflow-hidden text-white rounded-md">
                                     <Image src={facility.Gambar}
                                         alt={`${facility.Nama}-image`}
-                                        layout="fill"
-                                        objectFit="cover"
-                                        className="rounded-md" />
+                                        fill
+                                        className="rounded-md object-cover"
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
                                 </div>
                                 <div className="p-4 space-y-2">
                                     <div className="flex items-center">
@@ -68,7 +77,10 @@ function Jasa() {
                                 </div>
                                 {user ? (
                                     <div className="px-4 pb-4 pt-0 mt-2 text-base">
-                                        <button className="w-full bg-secondary text-white text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 hover:bg-white hover:text-secondary hover:scale-110" type="button">
+                                        <button
+                                            className="w-full bg-secondary text-white text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 hover:bg-white hover:text-secondary hover:scale-110"
+                                            type="button"
+                                            onClick={() => handleAddToCart(facility)}>
                                             <BsCartPlusFill /> Masukkan Keranjang
                                         </button>
                                     </div>

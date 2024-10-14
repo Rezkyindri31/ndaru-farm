@@ -55,13 +55,7 @@ function AuthPage() {
                     <div className="w-1/2 p-8">
                         <div className='page-login'>
                             <h2 className="text-3xl font-semibold text-gray-800 mb-6">Silahkan Masuk</h2>
-                            <Button
-                                onClick={handleLoginWithGoogle} className="w-full mb-4 !border-2 !border-secondary text-black text-sm flex items-center justify-center space-x-2"
-                            >
-                                <FcGoogle />
-                                <span>Log in with Google</span>
-                            </Button>
-                            <p className="text-center text-black font-bold mb-6">OR LOGIN WITH EMAIL</p>
+
                             <form onSubmit={handleLoginSubmit}>
                                 <div className="mb-4">
                                     <Input
@@ -115,6 +109,13 @@ function AuthPage() {
                                     )}
                                 </Button>
                             </form>
+                            <p className="text-center text-black font-bold mb-6">OR</p>
+                            <Button
+                                onClick={handleLoginWithGoogle} className="w-full mb-4 !border-2 !border-secondary text-black text-sm flex items-center justify-center space-x-2"
+                            >
+                                <FcGoogle />
+                                <span>Continue with Google</span>
+                            </Button>
                             <p className="mt-4 text-center text-gray-500">Tidak Punya Akun? <a href="/Signup" className="text-blue-500">Daftar</a></p>
                         </div>
                     </div>
@@ -136,7 +137,7 @@ function AuthPage() {
                                     Cek Beranda
                                 </Button>
                             </div>
-                            <Image className="w-80 h-80 mt-4" src={LoginIcon} alt="Login Icon" />
+                            <Image className="w-80 h-80 mt-4" src={LoginIcon} alt="Login Icon" priority />
                         </div>
                     </div>
                 )}
@@ -154,7 +155,7 @@ function AuthPage() {
                         <div className='page-login'>
                             <h2 className="text-3xl font-semibold text-gray-800 mb-12 ">Lupa Password</h2>
                             <p className="text-center text-black font-bold mb-6">Masukkan Alamat Email Anda dibawah ini</p>
-                            <form onSubmit={handleForgotPassword}>
+                            <form >
                                 <div className="mb-4">
                                     <Input
                                         type="email" label="Email" color="blue"
@@ -189,7 +190,7 @@ function AuthPage() {
                                     Cek Beranda
                                 </Button>
                             </div>
-                            <Image className="w-80 h-80 mt-4" src={ForgotPasswordIcon} alt="Forgot Password Icon" />
+                            <Image className="w-80 h-80 mt-4" src={ForgotPasswordIcon} alt="Forgot Password Icon" priority />
                         </div>
                     </div>
                 )}

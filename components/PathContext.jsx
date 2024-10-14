@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Loader from '@/components/Loader';
-
 const PathContext = createContext();
 
 export function PathProvider({ children }) {
@@ -24,7 +23,6 @@ export function PathProvider({ children }) {
                 setCurrentPath(pathname);
                 setLoading(false);
             }, 300);
-
             return () => clearTimeout(timer);
         }
     }, [pathname]);

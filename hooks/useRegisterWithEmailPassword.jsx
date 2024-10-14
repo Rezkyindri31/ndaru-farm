@@ -3,7 +3,7 @@ import useStateForm from '@/hooks/useStateForm';
 import { Stepper, Step, Textarea, Alert, Typography, Input, Button, Spinner, Radio } from '@/app/MTailwind';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '@/lib/firebaseConfig';
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, writeBatch } from 'firebase/firestore';
 import { db } from '@/lib/firebaseConfig';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -30,6 +30,7 @@ function useRegisterWithEmailPassword() {
         hasNumber, hasSpecialChar, sedangMemuatRegister, setSedangMemuatRegister,
         hitungUmur
     } = useStateForm();
+
     const router = useRouter();
 
     const { isPasswordVisible, isConfirmPasswordVisible,
@@ -42,13 +43,17 @@ function useRegisterWithEmailPassword() {
     const handleRegister = async (e) => {
         e.preventDefault();
         setSedangMemuatRegister(true);
+
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
             const creationDate = new Date();
             const umur = hitungUmur(tanggallahir);
+
             if (user) {
-                await setDoc(doc(db, "pengguna", user.uid), {
+                const batch = writeBatch(db);
+                const userDocRef = doc(db, "pengguna", user.uid);
+                batch.set(userDocRef, {
                     Email: user.email,
                     NIK: nik,
                     Nama_Lengkap: namalengkap,
@@ -61,16 +66,15 @@ function useRegisterWithEmailPassword() {
                     Nomor_Telepon_Penerima: nomorteleponpenerima,
                     Alamat_Tagihan_Penerima: alamattagihanpenerima,
                     Tanggal_Pembuatan: creationDate,
-                    Tanggal_Verifikasi: null,
                 }, { merge: true });
-            }
 
+                await batch.commit();
+            }
             await sendEmailVerification(user);
             toast.success('Pembuatan Akun Anda Berhasil. Silahkan verifikasi email Anda sebelum login.', {
                 duration: 4000,
             });
             router.push('/Login');
-
         } catch (err) {
             toast.error(`Gagal: ${err.message}`, {
                 duration: 3000,

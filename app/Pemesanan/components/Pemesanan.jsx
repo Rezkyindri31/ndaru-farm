@@ -1,226 +1,111 @@
-import React, { useState } from 'react';
-import { Card, Typography, Button } from '@/app/MTailwind';
-import { FaTrash } from "react-icons/fa6";
+import useCart from "@/hooks/useCart";
 import { useRouter } from "next/navigation";
-import "@/app/globals.css";
+import { Typography, Button } from '@/app/MTailwind';
+import { FaTrash } from "react-icons/fa6";
+import toast, { Toaster } from "react-hot-toast";
 
-function PemesananProduk() {
+const PemesananProduk = () => {
     const pengarah = useRouter();
-    const HeaderPesanan = ["Nama", "Harga", "Kuantitas", "Total", ""];
-    const [contentPesanan, setContentPesanan] = useState([
-        {
-            productname: "Selada",
-            harga: "Rp 15.000",
-            hargaNumerical: 15000,
-            kuantitas: 1,
-            total: "Rp 15.000",
-        },
-        {
-            productname: "Tomat",
-            harga: "Rp 10.000",
-            hargaNumerical: 10000,
-            kuantitas: 1,
-            total: "Rp 10.000",
-        },
-        {
-            productname: "Cabai",
-            harga: "Rp 12.000",
-            hargaNumerical: 12000,
-            kuantitas: 1,
-            total: "Rp 12.000",
-        },
-        {
-            productname: "Kubis",
-            harga: "Rp 10.000",
-            hargaNumerical: 10000,
-            kuantitas: 1,
-            total: "Rp 10.000",
-        },
-        {
-            productname: "Bawang Bombai",
-            harga: "Rp 12.000",
-            hargaNumerical: 12000,
-            kuantitas: 1,
-            total: "Rp 12.000",
-        },
-    ]);
+    const HeaderPesanan = ["Nama", "Harga", "Kuantitas", "Jenis Produk", "Total", "Action"];
+    const { cartContent, isLoading, clearCart, handleRemoveItem, handleQuantityChange } = useCart();
 
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR'
-        }).format(value);
-    };
-
-    const handleQuantityChange = (index, value) => {
-        const updatedContent = [...contentPesanan];
-        const newQuantity = value < 1 ? 1 : value;
-        updatedContent[index].kuantitas = newQuantity;
-        updatedContent[index].total = formatCurrency(updatedContent[index].hargaNumerical * newQuantity);
-        setContentPesanan(updatedContent);
-    };
-
-    const handleRemove = (index) => {
-        const updatedContent = contentPesanan.filter((_, i) => i !== index);
-        setContentPesanan(updatedContent);
-    };
-
-    const calculateTotals = () => {
-        const subtotal = contentPesanan.reduce((sum, item) => sum + item.hargaNumerical * item.kuantitas, 0);
-        const shippingCost = 150000;
-        const total = subtotal + shippingCost;
-        return {
-            subtotal: formatCurrency(subtotal),
-            shipping: formatCurrency(shippingCost),
-            total: formatCurrency(total)
-        };
-    };
-
-    const { subtotal, shipping, total } = calculateTotals();
-
-    const HeaderCount = ["Nama", "Harga"];
-    const CountTotal = [
-        { desc: "Subtotal", harga: subtotal },
-        { desc: "Biaya Pengiriman", harga: shipping },
-        { desc: "Total", harga: total },
-    ];
+    const totalPrice = cartContent.reduce((total, item) => total + item.Total_perItem, 0);
+    const formattedTotalPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPrice);
 
     return (
         <div className="mt-10 py-20 lg:py-10 z-10 relative">
-            <div className="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-10 lg:items-center lg:justify-end lg:gap-2">
-                <div className="flex flex-col items-start justify-center w-auto h-full ml-auto mr-0 text-center leading-relaxed overflow-auto">
-                    <Card className="h-full w-full overflow-scroll">
-                        <table className="w-full min-w-max table-auto">
-                            <thead>
+            <div className="text-base justify-center text-center font-bold" >
+                <Toaster
+                    position="top-right"
+                    reverseOrder={false}
+                />
+            </div>
+            <div className="grid grid-cols-1 justify-center items-center gap-10 lg:gap-2 space-y-10">
+                <div className="flex flex-col items-center justify-center w-full h-full mx-auto text-center leading-relaxed px-4 lg:px-80 overflow-auto">
+                    <div className="flex justify-end w-full mb-4">
+                        <button className="flex items-center p-2 bg-red-800 text-white border-2 border-white rounded-lg text-sm" onClick={clearCart}>
+                            <FaTrash className="text-white mr-2" />
+                            <span>Kosongkan Keranjang</span>
+                        </button>
+                    </div>
+                    <table className="w-full min-w-max table-fixed mx-auto bg-white rounded-2xl">
+                        <thead>
+                            <tr>
+                                <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center w-10">
+                                    <Typography variant="h6" className="text-black font-black leading-none opacity-70">No</Typography>
+                                </th>
+                                {HeaderPesanan.map((head) => (
+                                    <th key={head} className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center w-40">
+                                        <Typography variant="h6" className="text-black font-black leading-none opacity-70">{head}</Typography>
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {isLoading ? (
                                 <tr>
-                                    {HeaderPesanan.map((head) => (
-                                        <th
-                                            key={head}
-                                            className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center w-40"
-                                        >
-                                            <Typography
-                                                variant="h6"
-                                                className="text-black font-black leading-none opacity-70"
-                                            >
-                                                {head}
-                                            </Typography>
-                                        </th>
-                                    ))}
+                                    <td colSpan={HeaderPesanan.length + 1} className="text-center p-4">Loading...</td>
                                 </tr>
-                            </thead>
-                            <tbody className='text-center'>
-                                {contentPesanan.map(({ productname, harga, kuantitas, total }, index) => {
-                                    const isLast = index === contentPesanan.length - 1;
-                                    const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50 w-40";
-                                    return (
-                                        <tr key={productname}>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="h6"
-                                                    color="blue-gray"
-                                                    className="font-normal"
-                                                >
-                                                    {productname}
-                                                </Typography>
-                                            </td>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="h6"
-                                                    color="blue-gray"
-                                                    className="font-normal"
-                                                >
-                                                    {harga}
-                                                </Typography>
-                                            </td>
-                                            <td className={classes}>
-                                                <input
-                                                    type="number"
-                                                    value={kuantitas}
-                                                    min="1"
-                                                    onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
-                                                    className="p-2 w-full border border-gray-300 rounded"
-                                                />
-                                            </td>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="h6"
-                                                    color="blue-gray"
-                                                    className="font-normal"
-                                                >
-                                                    {total}
-                                                </Typography>
-                                            </td>
-                                            <td className={classes}>
-                                                <button className="p-2" onClick={() => handleRemove(index)}>
-                                                    <FaTrash className="text-red-500" />
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </Card>
+                            ) : cartContent.length > 0 ? (
+                                cartContent.map(({ Nama, Harga, Jumlah_Pesanan, Kategori, Total_perItem }, index) => (
+                                    <tr key={index}>
+                                        <td className="p-4 text-center">{index + 1}</td>
+                                        <td className="p-4">{Nama}</td>
+                                        <td className="p-4">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(Harga)}</td>
+                                        <td className="p-4">
+                                            <input
+                                                type="number"
+                                                value={Jumlah_Pesanan}
+                                                min="1"
+                                                className="p-2 w-full border border-gray-300 rounded"
+                                                onChange={(e) => handleQuantityChange(index, e.target.value)}
+                                            />
+                                        </td>
+                                        <td className="p-4">{Kategori}</td>
+                                        <td className="p-4">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(Total_perItem)}</td>
+                                        <td className="p-4">
+                                            <button className="p-2" type="button" onClick={() => handleRemoveItem(index)}>
+                                                <FaTrash className="text-red-500" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={HeaderPesanan.length + 1} className="text-center p-4">Keranjang kosong</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
-                <div className="flex flex-col items-start justify-center w-auto h-full mx-auto text-center leading-relaxed overflow-auto">
-                    <Card className="h-full w-full overflow-hidden">
-                        <table className="w-full min-w-max table-auto">
-                            <thead>
+                <div className="flex flex-col items-center justify-center w-full h-full mx-auto text-center leading-relaxed overflow-auto">
+                    <div className="flex flex-col items-center justify-center w-full h-full mx-auto text-center leading-relaxed px-96 overflow-auto">
+                        <table className="w-full min-w-max table-auto bg-secondary text-white rounded-2xl shadow-2xl">
+                            <thead className="text-center ">
                                 <tr>
-                                    {HeaderCount.map((head) => (
-                                        <th
-                                            key={head}
-                                            className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center w-44"
-                                        >
-                                            <Typography
-                                                variant="h6"
-                                                className="text-black font-black leading-none opacity-70"
-                                            >
-                                                {head}
-                                            </Typography>
-                                        </th>
-                                    ))}
+                                    <td className="p-4 border-b border-blue-gray-50 w-44 uppercase">
+                                        <Typography variant="h6" className="font-extrabold">
+                                            Total Harga
+                                        </Typography>
+                                    </td>
+                                    <td className="p-4 border-b border-blue-gray-50 w-44">
+                                        <Typography variant="h6" className="font-normal">
+                                            {formattedTotalPrice}
+                                        </Typography>
+                                    </td>
                                 </tr>
                             </thead>
-                            <tbody className='text-center'>
-                                {CountTotal.map(({ desc, harga }, index) => {
-                                    const isLast = index === CountTotal.length - 1;
-                                    const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50 w-44";
-                                    return (
-                                        <tr key={desc}>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="h6"
-                                                    color="blue-gray"
-                                                    className="font-extrabold"
-                                                >
-                                                    {desc}
-                                                </Typography>
-                                            </td>
-                                            <td className={classes}>
-                                                <Typography
-                                                    variant="h6"
-                                                    color="blue-gray"
-                                                    className="font-normal"
-                                                >
-                                                    {harga}
-                                                </Typography>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
                         </table>
-                        <div className="flex justify-start mt-4 mx-3">
+                        <div className="flex justify-start mt-10 mx-3">
                             <Button className="button-effect" type="button" onClick={() => pengarah.push("/KonfirmasiPesanan")}>
                                 <span>Lanjutkan Pemesanan</span>
                             </Button>
                         </div>
-                    </Card>
+                    </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
-}
+};
 
 export default PemesananProduk;

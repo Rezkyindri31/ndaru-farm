@@ -3,7 +3,9 @@ import { auth, db, storage } from "@/lib/firebaseConfig";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import toast from 'react-hot-toast';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import DefaultProfile from "@/assets/img/Icon/DefaultProfile.jpeg";
+
 
 const useProfileSetting = () => {
     const router = useRouter();
@@ -29,18 +31,19 @@ const useProfileSetting = () => {
 
     // PROFILE PICTURE HOOKS
     const Logo = require("@/assets/img/logo.png");
-    const DefaultProfile = require("@/assets/img/Icon/DefaultProfile.jpeg");
     const fileInputRef = useRef(null);
     const [fileName, setFileName] = useState('');
     const [fileSize, setFileSize] = useState('');
-    const [fileUrl, setFileUrl] = useState("");
+    const [fileUrl, setFileUrl] = useState(""); // Cached URL from Firestore
     const [isImageVisible, setIsImageVisible] = useState(false);
     const [avatarFile, setAvatarFile] = useState(DefaultProfile);
     const [selectedFile, setSelectedFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
+
     const handleChooseFileClick = () => {
         fileInputRef.current.click();
     };
+
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -52,6 +55,28 @@ const useProfileSetting = () => {
             setIsImageVisible(true);
         }
     };
+
+    const fetchCurrentAvatarUrl = async () => {
+        if (!user) {
+            toast.error('User not found. Please log in.', { duration: 1000 });
+            return;
+        }
+
+        const userRef = doc(db, "pengguna", user.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setFileUrl(userData.Gambar_Profile || "");
+        }
+    };
+
+    useEffect(() => {
+        if (user) {
+            fetchCurrentAvatarUrl();
+        }
+    }, [user]);
+
     const handleUpload = async () => {
         if (selectedFile) {
             if (!user) {
@@ -69,14 +94,15 @@ const useProfileSetting = () => {
             try {
                 const snapshot = await uploadBytes(storageRef, selectedFile);
                 const downloadURL = await getDownloadURL(snapshot.ref);
-                if (downloadURL !== avatarFile) {
+                if (downloadURL !== fileUrl) {
                     const userRef = doc(db, "pengguna", user.uid);
-                    await updateDoc(userRef, {
-                        Gambar_Profile: downloadURL,
-                    });
+                    await updateDoc(userRef, { Gambar_Profile: downloadURL });
                     setAvatarFile(downloadURL);
                     setFileUrl(downloadURL);
                     toast.success('File uploaded successfully!', { duration: 1000 });
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
                 } else {
                     toast.error('The same image is already uploaded', { duration: 1000 });
                 }
@@ -92,6 +118,7 @@ const useProfileSetting = () => {
             toast.error('Please select a file first!', { duration: 1000 });
         }
     };
+
     const handleDelete = () => {
         setIsImageVisible(false);
         fileInputRef.current.value = null;
@@ -125,7 +152,6 @@ const useProfileSetting = () => {
                 setAvatarFile(DefaultProfile);
             }
         });
-
         return () => {
             unsubscribe();
         };

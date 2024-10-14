@@ -59,6 +59,7 @@ function HeaderTemplate() {
                 src={require("@/assets/img/breadcrumb-bg.jpg")}
                 alt="image 2"
                 className="h-110 w-full object-cover brightness-50"
+                priority
             />
             <div className="absolute top-0 left-0 w-full h-full bg-[rgba(7,33,46,0.8)] blur-[10px] z-2"></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 text-white text-xl font-bold animate-slide-fade-in">

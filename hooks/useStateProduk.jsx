@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { usePath } from "@/components/PathContext";
 import { db } from "@/lib/firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 
 const useStateProduk = () => {
     const { currentPath } = usePath();
@@ -39,22 +39,22 @@ const useStateProduk = () => {
         }
     };
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, "sayuran"));
+        const unsubscribe = onSnapshot(
+            collection(db, "sayuran"),
+            (querySnapshot) => {
                 const productsData = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data(),
                 }));
                 setProducts(productsData);
-            } catch (err) {
+                setLoading(false);
+            },
+            (err) => {
                 setError(err.message);
-            } finally {
                 setLoading(false);
             }
-        };
-
-        fetchProducts();
+        );
+        return () => unsubscribe();
     }, []);
 
     return {
