@@ -1,6 +1,6 @@
 "use client";
-import FlyerJasa from "@/components/Jasa";
-import FlyerProduk from "@/components/Produk";
+import FlyerJasa from "@/app/Jasa/components/Jasa";
+import FlyerProduk from "@/app/Produk/components/Produk";
 import { useEffect, useRef } from "react";
 import { initializeAos } from "@/components/aosInit";
 

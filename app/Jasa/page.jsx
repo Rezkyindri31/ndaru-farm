@@ -1,15 +1,15 @@
 "use client"
 import Navigation from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import HeaderProduk from "@/components/HeaderSection"
-import JasaTemplate from "@/components/Jasa";
+import HeaderJasa from "@/components/HeaderSection"
+// import TampilanJasa from "@/app/Jasa/components/Jasa";
 
 function Jasa() {
     return (
         <div className="position-relative top-0">
             <Navigation />
-            <HeaderProduk />
-            <JasaTemplate />
+            <HeaderJasa />
+            {/* <TampilanJasa /> */}
             <Footer />
         </div>
     );

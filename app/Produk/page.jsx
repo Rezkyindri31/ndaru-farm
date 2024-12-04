@@ -2,14 +2,14 @@
 import Navigation from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeaderProduk from "@/components/HeaderSection"
-import ProdukTemplate from "@/components/Produk";
+import TampilanProduk from "@/app/Produk/components/Produk";
 
 function Produk() {
     return (
         <div className="position-relative top-0">
             <Navigation />
             <HeaderProduk />
-            <ProdukTemplate />
+            <TampilanProduk />
             <Footer />
         </div>
     );

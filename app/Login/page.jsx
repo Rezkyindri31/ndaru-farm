@@ -1,5 +1,5 @@
 "use client"
-import TemplateLogin from "@/components/FormTemplate";
+import TemplateLogin from "@/app/Login/components/Login";
 
 
 function Login() {

@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { usePath } from '@/components/PathContext';
 import Image from "next/image";
 import {
     Navbar,
@@ -13,126 +12,71 @@ import {
     MenuHandler,
     MenuList,
     MenuItem,
-    Popover,
-    PopoverHandler,
-    PopoverContent,
-    Input,
 } from "@/app/MTailwind";
 import { FaHome, FaCartPlus, FaShoppingCart } from "react-icons/fa";
-import { FaMagnifyingGlass, FaGear } from "react-icons/fa6";
+import { FaGear } from "react-icons/fa6";
 import { MdHomeRepairService } from "react-icons/md";
 import { RiContactsBook2Fill, RiToolsFill } from "react-icons/ri";
-import useLogoutAccount from "@/hooks/useLogout";
-import useAuth from '@/hooks/useVerifyLogin';
+import useVerifikasiLogin from '@/hooks/Backend/useVerifikasiLogin';
+import useNavbarEfek from "@/hooks/Frontend/useNavbarEfek";
+import useNavbarAktif from "@/hooks/Frontend/useNavbarAktif";
+import useKeluarAkun from "@/hooks/Backend/useKeluarAkun";
+
 function Navigation() {
     const Logo = require("@/assets/img/logo.png");
-    const router = useRouter();
-    const { handleLogout } = useLogoutAccount();
-    const user = useAuth();
-    const { setCurrentPath } = usePath();
+    const { isLoggedIn, loading } = useVerifikasiLogin();
+    const { handleLogout } = useKeluarAkun();
+    const { navbarBg } = useNavbarEfek();
+    const { navbarAktif, handlenavbarAktif } = useNavbarAktif();
+
     const [openNav, setOpenNav] = React.useState(false);
-    const [navbarBg, setNavbarBg] = React.useState("bg-transparent");
-    const [activeNav, setActiveNav] = React.useState("/Beranda");
-
-    React.useEffect(() => {
-        const handlePathnameUpdate = () => {
-            const currentPath = window.location.pathname;
-            console.log("Current Path:", currentPath);
-            setActiveNav(currentPath);
-        };
-
-        handlePathnameUpdate();
-        window.addEventListener("popstate", handlePathnameUpdate);
-
-        return () => {
-            window.removeEventListener("popstate", handlePathnameUpdate);
-        };
-    }, []);
-
-    React.useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 50) {
-                setNavbarBg("bg-secondary");
-            } else {
-                setNavbarBg("bg-transparent");
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
-
-    React.useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth >= 960) setOpenNav(false);
-        };
-
-        window.addEventListener("resize", handleResize);
-
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
-    }, []);
-
-    const handleNavClick = (path) => {
-        setActiveNav(path);
-        router.push(path);
-    };
 
     const navList = (
         <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 uppercase">
             <Typography
                 as="li"
-                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl ${activeNav === "/Beranda" ? "text-primary" : "text-white"
+                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl cursor-pointer ${navbarAktif === "/Beranda" ? "text-primary" : "text-white"
                     }`}
+                onClick={() => handlenavbarAktif("/Beranda")}
             >
                 <FaHome />
-                <a className="flex items-center" onClick={() => handleNavClick("/Beranda")}>
-                    Beranda
-                </a>
+                Beranda
             </Typography>
             <Typography
                 as="li"
-                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl ${activeNav === "/Produk" ? "text-primary" : "text-white"
+                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl cursor-pointer ${navbarAktif === "/Produk" ? "text-primary" : "text-white"
                     }`}
+                onClick={() => handlenavbarAktif("/Produk")}
             >
                 <FaCartPlus />
-                <a className="flex items-center" onClick={() => handleNavClick("/Produk")}>
-                    Produk
-                </a>
+                Produk
             </Typography>
             <Typography
                 as="li"
-                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl ${activeNav === "/Jasa" ? "text-primary" : "text-white"
+                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl cursor-pointer ${navbarAktif === "/Jasa" ? "text-primary" : "text-white"
                     }`}
+                onClick={() => handlenavbarAktif("/Jasa")}
             >
                 <MdHomeRepairService />
-                <a className="flex items-center" onClick={() => handleNavClick("/Jasa")}>
-                    Jasa
-                </a>
+                Jasa
             </Typography>
             <Typography
                 as="li"
-                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl ${activeNav === "/SaranaPertanian" ? "text-primary" : "text-white"
+                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl cursor-pointer ${navbarAktif === "/SaranaPertanian" ? "text-primary" : "text-white"
                     }`}
+                onClick={() => handlenavbarAktif("/SaranaPertanian")}
             >
                 <RiToolsFill />
-                <a className="flex items-center" onClick={() => handleNavClick("/SaranaPertanian")}>
-                    Sarana Pertanian
-                </a>
+                Sarana Pertanian
             </Typography>
             <Typography
                 as="li"
-                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl ${activeNav === "/KontakKami" ? "text-primary" : "text-white"
+                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl cursor-pointer ${navbarAktif === "/KontakKami" ? "text-primary" : "text-white"
                     }`}
+                onClick={() => handlenavbarAktif("/KontakKami")}
             >
                 <RiContactsBook2Fill />
-                <a className="flex items-center" onClick={() => handleNavClick("/KontakKami")}>
-                    Kontak Kami
-                </a>
+                Kontak Kami
             </Typography>
         </ul>
     );
@@ -147,34 +91,23 @@ function Navigation() {
                         as="a"
                         href="#"
                         className="mr-4 cursor-pointer py-1.5 text-white flex items-center gap-x-2 uppercase font-bold"
-                        onClick={() => handleNavClick("/Beranda")}
+                        onClick={() => handlenavbarAktif("/Beranda")}
                     >
                         <Image src={Logo} alt="" className="w-14 lg:w-20 h-14 lg:h-20" priority />
                         E-Mart Ndaru Farm
                     </Typography>
                     <div className="hidden lg:block">{navList}</div>
-                    {user ? (
-                        <div>
+                    <div>
+                        {/* Conditionally render based on login status */}
+                        {loading ? (
+                            <p></p>
+                        ) : isLoggedIn ? (
                             <div className="hidden sm:flex items-center gap-x-5">
-                                <Popover>
-                                    <PopoverHandler>
-                                        <a className="font-bold text-white hover:text-primary">
-                                            <FaMagnifyingGlass className="w-5 h-5" />
-                                        </a>
-                                    </PopoverHandler>
-                                    <PopoverContent className="absolute z-50">
-                                        <div className="flex w-72 flex-col gap-6">
-                                            <Input
-                                                variant="standard"
-                                                label="Pencarian Kata Kunci"
-                                                placeholder="Cari Disini"
-                                                color="green"
-                                                className="text-blue-gray-500"
-                                            />
-                                        </div>
-                                    </PopoverContent>
-                                </Popover>
-                                <a className="font-bold text-white hover:text-primary" onClick={() => handleNavClick("/Pemesanan")}>
+                                <a
+                                    className={`font-bold text-white hover:text-primary ${navbarAktif === "/Pemesanan" ? "text-primary" : "text-white"
+                                        }`}
+                                    onClick={() => handlenavbarAktif("/Pemesanan")}
+                                >
                                     <FaShoppingCart className="w-5 h-5" />
                                 </a>
                                 <Menu
@@ -184,26 +117,44 @@ function Navigation() {
                                     }}
                                 >
                                     <MenuHandler>
-                                        <a className="font-bold text-white hover:text-primary">
-                                            <FaGear className="w-5 h-5" />
+                                        <a>
+                                            <FaGear
+                                                className={`w-5 h-5 font-bold hover:text-primary ${["/ProfileSetting", "/TrackingPesanan"].includes(navbarAktif)
+                                                    ? "text-primary"
+                                                    : "text-white"
+                                                    }`}
+                                            />
                                         </a>
                                     </MenuHandler>
                                     <MenuList className="text-white text-base bg-primary border-2 border-white uppercase">
-                                        <MenuItem onClick={() => handleNavClick("/ProfileSetting")}>Profile Saya</MenuItem>
-                                        <MenuItem onClick={() => handleNavClick("/TrackingPesanan")}>Pesanan Saya</MenuItem>
+                                        <MenuItem
+                                            className={`font-bold text-white hover:text-primary ${navbarAktif === "/ProfileSetting" ? "text-primary bg-white" : "text-white"
+                                                }`}
+                                            onClick={() => handlenavbarAktif("/ProfileSetting")}>
+                                            Profile Saya
+                                        </MenuItem>
+                                        <MenuItem
+                                            className={`font-bold text-white hover:text-primary ${navbarAktif === "/TrackingPesanan" ? "text-primary bg-white" : "text-white"
+                                                }`}
+                                            onClick={() => handlenavbarAktif("/TrackingPesanan")}>
+                                            Pesanan Saya
+                                        </MenuItem>
                                         <hr className="my-1" />
                                         <MenuItem onClick={handleLogout}>Keluar</MenuItem>
                                     </MenuList>
                                 </Menu>
                             </div>
-                        </div>
-                    ) : (
-                        <div className="hidden sm:flex items-center gap-x-5">
-                            <Button className="border-2 border-white uppercase font-bold bg-secondary rounded-full" onClick={() => handleNavClick("/Login")}>
-                                Login
-                            </Button>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="hidden sm:flex items-center gap-x-5">
+                                <Button
+                                    className="border-2 border-white uppercase font-bold bg-secondary rounded-full"
+                                    onClick={() => handlenavbarAktif("/Login")}
+                                >
+                                    Login
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                     <IconButton
                         variant="text"
                         className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
@@ -219,11 +170,7 @@ function Navigation() {
                                 stroke="currentColor"
                                 strokeWidth={2}
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         ) : (
                             <svg
@@ -233,71 +180,16 @@ function Navigation() {
                                 stroke="currentColor"
                                 strokeWidth={2}
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M4 6h16M4 12h16M4 18h16"
-                                />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         )}
                     </IconButton>
                 </div>
                 <Collapse open={openNav}>
-                    <div className="container mx-auto hidden">
-                        {navList}
-                        user ? (
-                        <div className="flex justify-center items-center gap-x-20">
-                            <Popover placement="bottom">
-                                <PopoverHandler>
-                                    <a className="font-bold text-white">
-                                        <FaMagnifyingGlass className="w-5 h-5" />
-                                    </a>
-                                </PopoverHandler>
-                                <PopoverContent className="absolute z-50 top-96">
-                                    <div className="flex w-80 flex-col gap-6">
-                                        <Input
-                                            variant="standard"
-                                            label="Pencarian Kata Kunci"
-                                            placeholder="Cari Disini"
-                                            color="green"
-                                            className="text-blue-gray-500"
-                                        />
-                                    </div>
-                                </PopoverContent>
-                            </Popover>
-                            <a className="font-bold text-white hover:text-primary" onClick={() => handleNavClick("/Pemesanan")}>
-                                <FaShoppingCart className="w-5 h-5" />
-                            </a>
-                            <Menu
-                                animate={{
-                                    mount: { y: 30 },
-                                    unmount: { y: 50 },
-                                }}
-                            >
-                                <MenuHandler>
-                                    <a className="font-bold text-white">
-                                        <FaGear className="w-5 h-5" />
-                                    </a>
-                                </MenuHandler>
-                                <MenuList className="text-white text-base bg-primary border-2 border-white uppercase">
-                                    <MenuItem onClick={() => handleNavClick("/ProfileSetting")}>Profile Saya</MenuItem>
-                                    <MenuItem onClick={() => handleNavClick("/TrackingPesanan")}>Pesanan Saya</MenuItem>
-                                    <hr className="my-1" />
-                                    <MenuItem onClick={handleLogout}>Keluar</MenuItem>
-                                </MenuList>
-                            </Menu>
-                        </div>
-                        ) : (
-                        <div className="flex justify-center items-center gap-x-20">
-                            <Button className="button-effect" onClick={() => handleNavClick("/Login")}>
-                                Login
-                            </Button>
-                        </div>
-                        )
-                    </div>
+                    <div className="container mx-auto">{navList}</div>
                 </Collapse>
-            </Navbar >
-        </div >
+            </Navbar>
+        </div>
     );
 }
 

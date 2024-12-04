@@ -23,11 +23,6 @@ function EventsSection() {
                     <Typography variant="paragraph" className='text-justify'>
                         Ndaru Farm terletak di Batujajar, Kabupaten Bandung Barat. Awalnya berupa sawah, lahan ini kemudian dialihfungsikan menjadi tempat budidaya akuaponik oleh pengelolanya, Nano, dan kakaknya sebagai pemilik. Menggunakan teknologi akuaponik yang menggabungkan akuakultur dan hidroponik, Ndaru Farm mengoptimalkan penggunaan air dan ruang untuk budidaya ikan dan tanaman hidroponik.
                     </Typography>
-                    <div className="flex justify-center mt-4">
-                        <Button className="button-effect" type="button" onClick={() => pengarah.push("/TentangKami")}>
-                            <FaLocationArrow /> <span>Ketahui Lebih Banyak</span>
-                        </Button>
-                    </div>
                 </div>
             </div>
         </div>

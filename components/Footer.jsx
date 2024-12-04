@@ -1,21 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React from "react";
 import { Typography } from "@/app/MTailwind";
 import { FaChevronRight } from "react-icons/fa";
+import useNavbarAktif from "@/hooks/Frontend/useNavbarAktif";
 
 function Footer() {
-    const router = useRouter();
-    const [activeNav, setActiveNav] = useState("/Beranda");
-
-    useEffect(() => {
-        const currentPath = window.location.pathname;
-        setActiveNav(currentPath);
-    }, []);
-
-    const handleNavClick = (path) => {
-        setActiveNav(path);
-        router.push(path);
-    };
+    const { navbarAktif, handlenavbarAktif } = useNavbarAktif();
 
     return (
         <footer className="bg-darkgray text-white py-20  z-10 relative">
@@ -51,29 +40,36 @@ function Footer() {
                     <hr className="border-t-2 border-primary w-full mx-auto lg:mx-0 mb-4" />
                     <ul className="text-base space-y-2 text-left lg:ml-40">
                         <li
-                            className={`flex items-center hover:text-secondary hover:translate-y-1 ${activeNav === "/Beranda" ? "text-primary" : ""}`}
-                            onClick={() => handleNavClick("/Beranda")}
+                            className={`flex items-center hover:text-secondary hover:translate-y-1 ${navbarAktif === "/Beranda" ? "text-primary" : ""}`}
+                            onClick={() => handlenavbarAktif("/Beranda")}
                         >
                             <FaChevronRight className="mr-2 text-secondary" />
                             <span>Beranda</span>
                         </li>
                         <li
-                            className={`flex items-center hover:text-secondary hover:translate-y-1 ${activeNav === "/Produk" ? "text-primary" : ""}`}
-                            onClick={() => handleNavClick("/Produk")}
+                            className={`flex items-center hover:text-secondary hover:translate-y-1 ${navbarAktif === "/Produk" ? "text-primary" : ""}`}
+                            onClick={() => handlenavbarAktif("/Produk")}
                         >
                             <FaChevronRight className="mr-2 text-secondary" />
                             <span>Produk</span>
                         </li>
                         <li
-                            className={`flex items-center hover:text-secondary hover:translate-y-1 ${activeNav === "/Jasa" ? "text-primary" : ""}`}
-                            onClick={() => handleNavClick("/Jasa")}
+                            className={`flex items-center hover:text-secondary hover:translate-y-1 ${navbarAktif === "/Jasa" ? "text-primary" : ""}`}
+                            onClick={() => handlenavbarAktif("/Jasa")}
                         >
                             <FaChevronRight className="mr-2 text-secondary" />
                             <span>Jasa</span>
                         </li>
                         <li
-                            className={`flex items-center hover:text-secondary hover:translate-y-1 ${activeNav === "/KontakKami" ? "text-primary" : ""}`}
-                            onClick={() => handleNavClick("/KontakKami")}
+                            className={`flex items-center hover:text-secondary hover:translate-y-1 ${navbarAktif === "/SaranaPertanian" ? "text-primary" : ""}`}
+                            onClick={() => handlenavbarAktif("/SaranaPertanian")}
+                        >
+                            <FaChevronRight className="mr-2 text-secondary" />
+                            <span>Sarana Pertanian</span>
+                        </li>
+                        <li
+                            className={`flex items-center hover:text-secondary hover:translate-y-1 ${navbarAktif === "/KontakKami" ? "text-primary" : ""}`}
+                            onClick={() => handlenavbarAktif("/KontakKami")}
                         >
                             <FaChevronRight className="mr-2 text-secondary" />
                             <span>Kontak Kami</span>
@@ -84,7 +80,7 @@ function Footer() {
             <div className="border-t border-primary mt-10 pt-4">
                 <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
                     <Typography variant='h6' className="">
-                        Copyrights © 2024 - <span className="font-semibold text-secondary">Syntax Squad</span>. All Rights Reserved.
+                        Copyrights © 2024 - <span className="font-semibold text-secondary mr-2">Bhineka Dev.</span> All Rights Reserved.
                     </Typography>
                     <div className="flex space-x-4 mt-4 md:mt-0">
                         <i className="fab fa-instagram"></i>

@@ -10,31 +10,20 @@ import {
     Stepper,
     Step,
     Spinner,
-    Dialog,
-    DialogHeader,
-    DialogBody,
-    DialogFooter,
+    // Dialog,
+    // DialogHeader,
+    // DialogBody,
+    // DialogFooter,
     Radio
 } from "@/app/MTailwind";
 import Image from "next/image";
 import { GrContactInfo } from "react-icons/gr";
 import { FaPen, FaTrashAlt, FaUser, FaBuilding } from "react-icons/fa";
 import toast, { Toaster } from 'react-hot-toast';
-import useProfileSetting from "@/hooks/useProfileSetting";
-import useStepper from '@/hooks/useStepper';
-import useValidationForm from '@/hooks/useValidationForm';
-import DeleteAccount from '@/hooks/useDeleteAccount';
-
+import useTampilanProfile from "@/hooks/Backend/useTampilanPengguna";
 
 function ProfileSet() {
-    const { isEditing, avatarFile, toggleEdit, userDetails, handleInputChange, handleSubmit,
-        userDetailsLabels1, defaultValues, defaultValues1, getValue, sedangUbahProfile, isDialogDeleteAccountOpen, handleOpenDialogDeleteAccount,
-        handleCloseDialogDeleteAccount, isImageVisible, handleChooseFileClick, fileInputRef, handleFileChange, fileName, fileSize, handleDelete,
-        handleOpenUpdateProfile, openUpdateProfile, selectedFile, handleUpload, userDetailsLabels,
-        userDetailsEntries } = useProfileSetting();
-    const { activeStep, setActiveStep, isLastStep, setIsLastStep, isFirstStep, setIsFirstStep, handleNext, handlePrev } = useStepper();
-    const { handleKeyPress } = useValidationForm();
-
+    const { detailPengguna } = useTampilanProfile();
     return (
         <div className="h-full m-16 relative">
             <div className="text-base justify-center text-center font-bold" >
@@ -48,7 +37,7 @@ function ProfileSet() {
                     <div className="grid grid-cols-1 lg:gap-0 gap-6 justify-center items-center">
                         < div className="grid grid-cols-1 items-center justify-items-center gap-y-7 text-center relative group">
 
-                            <Image
+                            {/* <Image
                                 src={userDetails?.Gambar_Profile || avatarFile}
                                 alt="avatar"
                                 variant="rounded"
@@ -126,28 +115,17 @@ function ProfileSet() {
                                         </Button>
                                     </DialogFooter>
                                 </Dialog>
-                            </form>
-                            {userDetails ? (
-                                <div>
-                                    <Typography color="blue-gray" variant="h4">
-                                        {userDetails.Nama_Lengkap}
-                                    </Typography>
-                                    <Typography variant="h5" className="font-normal text-gray-600 italic">
-                                        {userDetails.Email}
-                                    </Typography>
-                                </div>
-                            ) : (
-                                <div>
-                                    <Typography color="blue-gray" variant="h4">
-                                        Null
-                                    </Typography>
-                                    <Typography variant="h5" className="font-normal text-gray-600 italic">
-                                        Null
-                                    </Typography>
-                                </div>
-                            )}
+                            </form> */}
+                            <div>
+                                <Typography color="blue-gray" variant="h4">
+                                    {detailPengguna.Nama_Lengkap}
+                                </Typography>
+                                <Typography variant="h5" className="font-normal text-gray-600 italic">
+                                    {detailPengguna.Email}
+                                </Typography>
+                            </div>
                         </div>
-                        < div className="flex flex-row-reverse items-end justify-items-end text-end gap-10">
+                        {/* < div className="flex flex-row-reverse items-end justify-items-end text-end gap-10">
                             <div>
                                 <Button
                                     variant="outlined"
@@ -178,10 +156,9 @@ function ProfileSet() {
                                     </Button>
                                 </div>
                             )}
-                        </div>
+                        </div> */}
                     </div>
-                    {/* Profile Page */}
-                    {!isEditing && (
+                    {/* {!isEditing && (
                         <div className="page-profile m-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div className="space-y-6 px-20 mt-8">
                                 <div className="flex items-center gap-6 text-center justify-center text-2xl text-secondary font-semibold uppercase shadow-lg border-b-4 border-secondary p-1.5 rounded-lg">
@@ -254,9 +231,9 @@ function ProfileSet() {
                                 )}
                             </div>
                         </div>
-                    )}
+                    )} */}
 
-                    {/* Edit Page */}
+                    {/* Edit Page
                     {isEditing && (
                         <form onSubmit={handleSubmit}>
                             <div className="w-full px-24 py-4 ">
@@ -463,8 +440,8 @@ function ProfileSet() {
                             </div>
                         </form>
                     )}
-                    {/* Delete Dialog */}
-                    <DeleteAccount open={isDialogDeleteAccountOpen} handleOpen={handleCloseDialogDeleteAccount} />
+                    Delete Dialog */}
+                    {/* <DeleteAccount open={isDialogDeleteAccountOpen} handleOpen={handleCloseDialogDeleteAccount} /> */}
                 </CardBody>
             </Card>
         </div >

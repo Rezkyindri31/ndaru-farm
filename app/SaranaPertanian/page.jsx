@@ -2,7 +2,7 @@
 import Navigation from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeaderProduk from "@/components/HeaderSection"
-import SaranaPertanianTemplate from "@/components/SaranaPertanian";
+import SaranaPertanianTemplate from "@/app/SaranaPertanian/components/SaranaPertanian";
 
 function Jasa() {
     return (

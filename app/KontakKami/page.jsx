@@ -2,7 +2,7 @@
 import Navigation from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeaderTentangKami from "@/components/HeaderSection"
-import Question from "@/app/KontakKami/components/Questioner";
+import Kontak from "@/app/KontakKami/components/KontakKami";
 import Feature from "@/app/Beranda/components/Features";
 
 
@@ -12,7 +12,7 @@ function KontakKami() {
             <Navigation />
             <HeaderTentangKami />
             <Feature />
-            <Question />
+            <Kontak />
             <Footer />
         </div>
 

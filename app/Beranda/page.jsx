@@ -4,10 +4,7 @@ import Footer from "@/components/Footer";
 import Carousel from "@/app/Beranda/components/Carousel";
 import Feature from "@/app/Beranda/components/Features";
 import Flyer from "@/app/Beranda/components/Selebaran";
-import Promosi from "@/app/Beranda/components/Promo";
-import Feedback from "@/app/Beranda/components/Komentar";
 import Profiles from "@/app/Beranda/components/Profile";
-import News from "@/components/Berita";
 import { useEffect, useRef } from "react";
 import { initializeAos } from "@/components/aosInit";
 import { Toaster } from 'react-hot-toast';
@@ -33,15 +30,8 @@ function Beranda() {
             <Navigation />
             <Carousel />
             <Feature />
-            <Flyer />
-            <div ref={PromosiRef} data-aos="fade-right" data-aos-duration="1000" data-aos-easing="ease-in-sine">
-                <Promosi />
-            </div>
-            <div ref={FeedbackRef} data-aos="fade-left" data-aos-duration="1000" data-aos-easing="ease-in-sine" >
-                <Feedback />
-            </div>
+            {/* <Flyer /> */}
             <Profiles />
-            <News />
             <Footer />
         </div>
     );
