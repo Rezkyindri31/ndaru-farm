@@ -108,7 +108,7 @@ function Navigation() {
                                         }`}
                                     onClick={() => handlenavbarAktif("/Pemesanan")}
                                 >
-                                    <FaShoppingCart className="w-5 h-5" />
+                                    <FaShoppingCart className="w-5 h-5 cursor-pointer" />
                                 </a>
                                 <Menu
                                     animate={{
@@ -119,7 +119,7 @@ function Navigation() {
                                     <MenuHandler>
                                         <a>
                                             <FaGear
-                                                className={`w-5 h-5 font-bold hover:text-primary ${["/ProfileSetting", "/TrackingPesanan"].includes(navbarAktif)
+                                                className={`w-5 h-5 font-bold cursor-pointer hover:text-primary ${["/ProfileSetting", "/TrackingPesanan"].includes(navbarAktif)
                                                     ? "text-primary"
                                                     : "text-white"
                                                     }`}
