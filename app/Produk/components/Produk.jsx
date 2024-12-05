@@ -7,7 +7,7 @@ import {
     FaCircleInfo,
 } from "react-icons/fa6";
 import { BsCartPlusFill } from "react-icons/bs";
-import useStateProduk from "@/hooks/Backend/useTampilanProduk";
+import useStateProduk from "@/hooks/Frontend/useTampilanProduk";
 import useVerifikasiLogin from "@/hooks/Backend/useVerifikasiLogin";
 import toast, { Toaster } from "react-hot-toast";
 
