@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { firestore } from "@/lib/firebaseConfig";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import toast from "react-hot-toast";
 
 const useSubmitBiodata = () => {
@@ -12,11 +13,21 @@ const useSubmitBiodata = () => {
         setError(null);
 
         try {
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (!user) {
+                throw new Error("User is not authenticated");
+            }
+
+            const email = user.email;
+
             const userRef = doc(firestore, "pengguna", penggunaID);
             await setDoc(userRef, {
                 ...formDataPengguna,
                 Kelengkapan_Data_Profile: true,
                 Pembuatan_Akun: new Date(),
+                Email: email,
             });
 
             toast.success("Selamat datang di Aplikasi Ndaru Farm.");

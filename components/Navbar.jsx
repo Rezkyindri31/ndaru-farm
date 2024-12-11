@@ -53,15 +53,6 @@ function Navigation() {
             </Typography>
             <Typography
                 as="li"
-                className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl cursor-pointer ${navbarAktif === "/Jasa" ? "text-primary" : "text-white"
-                    }`}
-                onClick={() => handlenavbarAktif("/Jasa")}
-            >
-                <MdHomeRepairService />
-                Jasa
-            </Typography>
-            <Typography
-                as="li"
                 className={`flex items-center gap-x-2 p-1 font-bold hover:translate-y-1 lg:text-xl cursor-pointer ${navbarAktif === "/SaranaPertanian" ? "text-primary" : "text-white"
                     }`}
                 onClick={() => handlenavbarAktif("/SaranaPertanian")}

@@ -1,372 +1,99 @@
 "use client";
-import React, { useState } from 'react';
-import {
-    Card, Typography, Button, Accordion,
-    AccordionHeader,
-    AccordionBody, Input, Textarea, Radio
-} from '@/app/MTailwind';
-import ValidationInput from '@/components/Validation';
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaCheckCircle } from "react-icons/fa";
 import "@/app/globals.css";
+import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
+import { Open_Sans } from "next/font/google";
 
-function Icon({ id, open }) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={5}
-            stroke="#738e5b"
-            className={`${id === open ? "rotate-180" : ""} h-5 w-5 transition-transform`}
-        >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-    );
-}
+const openSans = Open_Sans({
+    subsets: ["latin"],
+    weight: ["400", "500", "700"],
+});
 
+const formatRupiah = (number) => {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+    }).format(number);
+};
 
 function KonfirmasiPemesanan() {
-    const pengarah = useRouter();
-    const [open, setOpen] = React.useState(0);
-    const handleOpen = (value) => setOpen(open === value ? 0 : value);
-    const [open1, setOpen1] = React.useState(1);
-    const handleOpen1 = (value) => setOpen1(open === value ? 1 : value);
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
-    const [subject, setSubject] = useState('');
-    const [message, setMessage] = useState('');
+    const router = useRouter();
+    const { detailPengguna } = useTampilanPengguna();
 
-    const HeaderCount = ["Total", "Harga"];
-    const CountTotal = [
-        {
-            desc: "Subtotal",
-            harga: "Rp 15.000",
-        },
-        {
-            desc: "Biaya Pengiriman",
-            harga: "Rp 10.000",
-
-        },
-        {
-            desc: "Total",
-            harga: "Rp 12.000",
-        },
+    const barangPesanan = [
+        { nama: "Bayam", jumlah: 4, harga: 15000 },
+        { nama: "Selada", jumlah: 2, harga: 15000 },
+        { nama: "Packchuoy", jumlah: 4, harga: 15000 },
     ];
+
+    const subtotal = barangPesanan.reduce((total, item) => total + item.harga * item.jumlah, 0);
+    const biayaPengiriman = 0;
+    const total = subtotal + biayaPengiriman;
+    const handleBuatPesanan = () => {
+        router.push('/TrackingPesanan');
+    };
+
+
     return (
-        <div className="mt-10 py-20 lg:py-10 z-10 relative">
-            <form action="post">
-                <div className="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-10 lg:items-center lg:justify-end lg:gap-2 ">
-                    <div className="flex flex-col items-start justify-start px-2 ml-10 mr-0 w-auto h-full space-y-6 text-center leading-relaxe">
-                        <Accordion open={open === 1} icon={<Icon id={1} open={open} />} >
-                            <AccordionHeader
-                                onClick={() => handleOpen(1)}
-                                className='bg-gray px-2 border-2 border-gray rounded-lg text-start'>
-                                <div className="flex items-center">
-                                    <FaCheckCircle className="text-secondary mx-4" />
-                                    <span>Alamat Tagihan</span>
-                                </div>
-                            </AccordionHeader>
-                            <AccordionBody
-                                className={`px-5 border-2 border-gray rounded-s-lg rounded-e-lg 
-                            ${open === 1 ? 'accordion-enter-active' : 'accordion-exit'}`}
+        <div className={`my-10 py-10 px-4 lg:px-20 ${openSans.className}`}>
+            <h1 className={`text-3xl font-bold mb-8 ${openSans.className}`}>Konfirmasi Pesanan</h1>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md border border-black">
+                    <h2 className={`text-xl font-semibold mb-4 ${openSans.className}`}>Detail Pesanan</h2>
+                    <ul className="space-y-4">
+                        {barangPesanan.map((item, index) => (
+                            <li
+                                key={index}
+                                className={`flex justify-between text-sm text-gray-700 ${openSans.className}`}
                             >
-                                <div className="space-y-6">
-                                    <div className="grid gap-6 lg:grid-cols-1 my-2 ">
-                                        <div>
-                                            <ValidationInput
-                                                type="text"
-                                                value={name}
-                                                onChange={setName}
-                                                placeholder="Nama"
-                                            />
-                                        </div>
-                                        <div>
-                                            <ValidationInput
-                                                type="email"
-                                                value={email}
-                                                onChange={setEmail}
-                                                placeholder="Email"
-                                            />
-                                        </div>
-                                        <div>
-                                            <ValidationInput
-                                                type="tel"
-                                                value={phone}
-                                                onChange={setPhone}
-                                                placeholder="Nomor Telepon (+62)"
-                                            />
-                                        </div>
-                                        <div>
-                                            <Textarea
-                                                type="text"
-                                                placeholder="Alamat Tagihan"
-                                                className="!border-2 !border-secondary bg-blue-gray-100 text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                                value={address}
-                                                onChange={(e) => setAddress(e.target.value)}
-                                                containerProps={{ className: "min-w-[100px] h-[150px]" }}
-                                            />
-                                        </div>
-                                        <div>
-                                            <ValidationInput
-                                                type="text"
-                                                value={subject}
-                                                onChange={setSubject}
-                                                placeholder="Subjek"
-                                            />
-                                        </div>
-                                        <div>
-                                            <Textarea
-                                                type="text"
-                                                placeholder="Pesan"
-                                                className="!border-2 !border-secondary bg-blue-gray-100 text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                                value={message}
-                                                onChange={(e) => setMessage(e.target.value)}
-                                                containerProps={{ className: "min-w-[100px] h-[150px]" }}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </AccordionBody>
-                        </Accordion>
-                        <Accordion open={open === 2} icon={<Icon id={2} open={open} />} >
-                            <AccordionHeader
-                                onClick={() => handleOpen(2)}
-                                className='bg-gray px-2 border-2 border-gray rounded-lg'>
-                                <div className="flex items-center">
-                                    <FaCheckCircle className="text-secondary mx-4" />
-                                    <span>Alamat Pengiriman</span>
-                                </div>
-                            </AccordionHeader>
-                            <AccordionBody
-                                className={`px-5 border-2 border-gray rounded-s-lg rounded-e-lg 
-                            ${open === 1 ? 'accordion-enter-active' : 'accordion-exit'}`}
-                            >
-                                <div className="space-y-6">
-                                    <div className="grid gap-6 lg:grid-cols-1 my-2 ">
-                                        <div>
-                                            <ValidationInput
-                                                type="text"
-                                                value={name}
-                                                onChange={setName}
-                                                placeholder="Nama"
-                                            />
-                                        </div>
-                                        <div>
-                                            <ValidationInput
-                                                type="email"
-                                                value={email}
-                                                onChange={setEmail}
-                                                placeholder="Email"
-                                            />
-                                        </div>
-                                        <div>
-                                            <ValidationInput
-                                                type="tel"
-                                                value={phone}
-                                                onChange={setPhone}
-                                                placeholder="Nomor Telepon (+62)"
-                                            />
-                                        </div>
-                                        <div>
-                                            <Textarea
-                                                type="text"
-                                                placeholder="Alamat Pengiriman"
-                                                className="!border-2 !border-secondary bg-blue-gray-100 text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                                value={address}
-                                                onChange={(e) => setAddress(e.target.value)}
-                                                containerProps={{ className: "min-w-[100px] h-[150px]" }}
-                                            />
-                                        </div>
-                                        <div>
-                                            <ValidationInput
-                                                type="text"
-                                                value={subject}
-                                                onChange={setSubject}
-                                                placeholder="Subjek"
-                                            />
-                                        </div>
-                                        <div>
-                                            <Textarea
-                                                type="text"
-                                                placeholder="Pesan"
-                                                className="!border-2 !border-secondary bg-blue-gray-100 text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                                value={message}
-                                                onChange={(e) => setMessage(e.target.value)}
-                                                containerProps={{ className: "min-w-[100px] h-[150px]" }}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </AccordionBody>
-                        </Accordion>
-                        <Accordion open={open === 3} icon={<Icon id={3} open={open} />} >
-                            <AccordionHeader
-                                onClick={() => handleOpen(3)}
-                                className='bg-gray px-2 border-2 border-gray rounded-lg'>
-                                <div className="flex items-center">
-                                    <FaCheckCircle className="text-secondary mx-4" />
-                                    <span>Pilih Tipe Pembayaran</span>
-                                </div>
-                            </AccordionHeader>
-                            <AccordionBody
-                                className={`px-5 border-2 border-gray rounded-s-lg rounded-e-lg 
-                            ${open === 3 ? 'accordion-enter-active' : 'accordion-exit'}`}
-                            >
-                                <>
-                                    <Accordion open={open1 === 1}>
-                                        <AccordionHeader onClick={() => handleOpen1(1)}>Via Transfer Antar Bank</AccordionHeader>
-                                        <AccordionBody>
-                                            <div className="flex flex-col gap-2 ml-3">
-                                                <Radio
-                                                    name="terms"
-                                                    label={
-                                                        <Typography
-                                                            as="a"
-                                                            color="blue-gray"
-                                                            className="hover:text-blueg-gray-900 font-medium transition-colors"
-                                                        >
-                                                            Via Bank Mandiri
-                                                        </Typography>
-                                                    }
-                                                />
-                                                <Radio
-                                                    name="terms"
-                                                    label={
-                                                        <Typography
-                                                            as="a"
-                                                            color="blue-gray"
-                                                            className="hover:text-blueg-gray-900 font-medium transition-colors"
-                                                        >
-                                                            Via Bank BCA
-                                                        </Typography>
-                                                    }
-                                                />
-                                                <Radio
-                                                    name="terms"
-                                                    label={
-                                                        <Typography
-                                                            as="a"
-                                                            color="blue-gray"
-                                                            className="hover:text-blueg-gray-900 font-medium transition-colors"
-                                                        >
-                                                            Via Bank BRI
-                                                        </Typography>
-                                                    }
-                                                />
-                                            </div>
-                                        </AccordionBody>
-                                    </Accordion>
-                                    <Accordion open={open1 === 2}>
-                                        <AccordionHeader onClick={() => handleOpen1(2)}>
-                                            Via Virtual Account
-                                        </AccordionHeader>
-                                        <AccordionBody>
-                                            <div className="flex flex-col gap-2 ml-3">
-                                                <Radio
-                                                    name="terms"
-                                                    label={
-                                                        <Typography
-                                                            as="a"
-                                                            color="blue-gray"
-                                                            className="hover:text-blueg-gray-900 font-medium transition-colors"
-                                                        >
-                                                            Via Bank Mandiri
-                                                        </Typography>
-                                                    }
-                                                />
-                                                <Radio
-                                                    name="terms"
-                                                    label={
-                                                        <Typography
-                                                            as="a"
-                                                            color="blue-gray"
-                                                            className="hover:text-blueg-gray-900 font-medium transition-colors"
-                                                        >
-                                                            Via Bank BCA
-                                                        </Typography>
-                                                    }
-                                                />
-                                                <Radio
-                                                    name="terms"
-                                                    label={
-                                                        <Typography
-                                                            as="a"
-                                                            color="blue-gray"
-                                                            className="hover:text-blueg-gray-900 font-medium transition-colors"
-                                                        >
-                                                            Via Bank BRI
-                                                        </Typography>
-                                                    }
-                                                />
-                                            </div>
-                                        </AccordionBody>
-                                    </Accordion>
-                                </>
-                            </AccordionBody>
-                        </Accordion>
-                    </div>
-                    <div className="flex flex-col items-start justify-center w-auto h-full mx-auto text-center leading-relaxed overflow-auto py-3">
-                        <Card className="h-full w-full">
-                            <table className="w-full min-w-max table-auto">
-                                <thead>
-                                    <tr>
-                                        {HeaderCount.map((head) => (
-                                            <th
-                                                key={head}
-                                                className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center w-44"
-                                            >
-                                                <Typography
-                                                    variant="h6"
-                                                    className="text-black font-black leading-none opacity-70"
-                                                >
-                                                    {head}
-                                                </Typography>
-                                            </th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody className='text-start'>
-                                    {CountTotal.map(({ desc, harga }, index) => {
-                                        const isLast = index === CountTotal.length - 1;
-                                        const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50 w-44";
-                                        return (
-                                            <tr key={desc}>
-                                                <td className={classes}>
-                                                    <Typography
-                                                        variant="h6"
-                                                        color="blue-gray"
-                                                        className="font-extrabold"
-                                                    >
-                                                        {desc}
-                                                    </Typography>
-                                                </td>
-                                                <td className={classes}>
-                                                    <Typography
-                                                        variant="h6"
-                                                        color="blue-gray"
-                                                        className="font-normal"
-                                                    >
-                                                        {harga}
-                                                    </Typography>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </Card>
-                        <div className="flex justify-start mt-4 mx-3">
-                            <Button className="button-effect" type="button" onClick={() => pengarah.push("/Beranda")}>
-                                <span>Selesaikan Pemesanan</span>
-                            </Button>
+                                <span className="w-3/4">{item.nama}</span>
+                                <span className="text-gray-500">x{item.jumlah}</span>
+                                <span>{formatRupiah(item.harga * item.jumlah)}</span>
+                            </li>
+                        ))}
+                    </ul>
+                    <div className="border-t mt-4 pt-4 space-y-2 text-sm">
+                        <div className={`flex justify-between ${openSans.className}`}>
+                            <span>Subtotal</span>
+                            <span>{formatRupiah(subtotal)}</span>
+                        </div>
+                        <div className={`flex justify-between ${openSans.className}`}>
+                            <span>Biaya Pengiriman</span>
+                            <span>{formatRupiah(biayaPengiriman)}</span>
+                        </div>
+                        <div className={`flex justify-between font-semibold text-lg ${openSans.className}`}>
+                            <span>Total</span>
+                            <span>{formatRupiah(total)}</span>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div >
+
+                <div>
+                    <h2 className={`text-xl font-semibold mb-4 ${openSans.className}`}>Alamat Penerima</h2>
+                    <div className="space-y-4 shadow-md">
+                        <div className="p-4 border rounded-lg border-black">
+                            <div className={`flex items-center justify-between ${openSans.className}`}>
+                                <span className="text-xl font-bold">Rumah</span>
+                            </div>
+                            <p className={`mt-2 text-lg ${openSans.className}`}>
+                                Nama: {detailPengguna.Nama_Lengkap_Penerima || "Tidak tersedia"}
+                            </p>
+                            {/* <p className={`mt-1 text-lg ${openSans.className}`}>
+                                Telepon: {detailPengguna?.No_Telepon_Penerima || "Tidak tersedia"}
+                            </p>
+                            <p className={`mt-1 text-lg ${openSans.className}`}>
+                                Alamat: {detailPengguna?.Alamat_Penerima || "Tidak tersedia"}
+                            </p> */}
+                        </div>
+                    </div>
+                    <div className="flex mt-4 justify-end items-center ml-6">
+                        <button onClick={handleBuatPesanan} className={`w-full mx-5 py-2 bg-green-700 rounded-md font-bold text-white ${openSans.className} hover:bg-white hover:text-green-700 hover:border hover:border-green700 transition duration-300 ease-in-out `}>Buat Pesanan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
 

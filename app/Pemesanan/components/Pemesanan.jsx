@@ -1,109 +1,91 @@
-// import { useRouter } from "next/navigation";
-// import { Typography, Button } from '@/app/MTailwind';
-// import { FaTrash } from "react-icons/fa6";
-// import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { RxCross2 } from "react-icons/rx";
+import toast, { Toaster } from "react-hot-toast";
+import Image from 'next/image';
 
-// const PemesananProduk = () => {
-//     const pengarah = useRouter();
-//     const HeaderPesanan = ["Nama", "Harga", "Kuantitas", "Jenis Produk", "Total", "Action"];
+import Selada from '@/assets/img/Produk/Selada.jpeg';
 
-//     const totalPrice = cartContent.reduce((total, item) => total + item.Total_perItem, 0);
-//     const formattedTotalPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalPrice);
+const PemesananProduk = () => {
+    const router = useRouter();
 
-//     return (
-//         <div className="mt-10 py-20 lg:py-10 z-10 relative">
-//             <div className="text-base justify-center text-center font-bold" >
-//                 <Toaster
-//                     position="top-right"
-//                     reverseOrder={false}
-//                 />
-//             </div>
-//             <div className="grid grid-cols-1 justify-center items-center gap-10 lg:gap-2 space-y-10">
-//                 <div className="flex flex-col items-center justify-center w-full h-full mx-auto text-center leading-relaxed px-4 lg:px-80 overflow-auto">
-//                     <div className="flex justify-end w-full mb-4">
-//                         <button className="flex items-center p-2 bg-red-800 text-white border-2 border-white rounded-lg text-sm" onClick={clearCart}>
-//                             <FaTrash className="text-white mr-2" />
-//                             <span>Kosongkan Keranjang</span>
-//                         </button>
-//                     </div>
-//                     <table className="w-full min-w-max table-fixed mx-auto bg-white rounded-2xl">
-//                         <thead>
-//                             <tr>
-//                                 <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center w-10">
-//                                     <Typography variant="h6" className="text-black font-black leading-none opacity-70">No</Typography>
-//                                 </th>
-//                                 {HeaderPesanan.map((head) => (
-//                                     <th key={head} className="border-b border-blue-gray-100 bg-blue-gray-50 p-4 text-center w-40">
-//                                         <Typography variant="h6" className="text-black font-black leading-none opacity-70">{head}</Typography>
-//                                     </th>
-//                                 ))}
-//                             </tr>
-//                         </thead>
-//                         <tbody>
-//                             {isLoading ? (
-//                                 <tr>
-//                                     <td colSpan={HeaderPesanan.length + 1} className="text-center p-4">Loading...</td>
-//                                 </tr>
-//                             ) : cartContent.length > 0 ? (
-//                                 cartContent.map(({ Nama, Harga, Jumlah_Pesanan, Kategori, Total_perItem }, index) => (
-//                                     <tr key={index}>
-//                                         <td className="p-4 text-center">{index + 1}</td>
-//                                         <td className="p-4">{Nama}</td>
-//                                         <td className="p-4">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(Harga)}</td>
-//                                         <td className="p-4">
-//                                             <input
-//                                                 type="number"
-//                                                 value={Jumlah_Pesanan}
-//                                                 min="1"
-//                                                 className="p-2 w-full border border-gray-300 rounded"
-//                                                 onChange={(e) => handleQuantityChange(index, e.target.value)}
-//                                             />
-//                                         </td>
-//                                         <td className="p-4">{Kategori}</td>
-//                                         <td className="p-4">{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(Total_perItem)}</td>
-//                                         <td className="p-4">
-//                                             <button className="p-2" type="button" onClick={() => handleRemoveItem(index)}>
-//                                                 <FaTrash className="text-red-500" />
-//                                             </button>
-//                                         </td>
-//                                     </tr>
-//                                 ))
-//                             ) : (
-//                                 <tr>
-//                                     <td colSpan={HeaderPesanan.length + 1} className="text-center p-4">Keranjang kosong</td>
-//                                 </tr>
-//                             )}
-//                         </tbody>
-//                     </table>
-//                 </div>
-//                 <div className="flex flex-col items-center justify-center w-full h-full mx-auto text-center leading-relaxed overflow-auto">
-//                     <div className="flex flex-col items-center justify-center w-full h-full mx-auto text-center leading-relaxed px-96 overflow-auto">
-//                         <table className="w-full min-w-max table-auto bg-secondary text-white rounded-2xl shadow-2xl">
-//                             <thead className="text-center ">
-//                                 <tr>
-//                                     <td className="p-4 border-b border-blue-gray-50 w-44 uppercase">
-//                                         <Typography variant="h6" className="font-extrabold">
-//                                             Total Harga
-//                                         </Typography>
-//                                     </td>
-//                                     <td className="p-4 border-b border-blue-gray-50 w-44">
-//                                         <Typography variant="h6" className="font-normal">
-//                                             {formattedTotalPrice}
-//                                         </Typography>
-//                                     </td>
-//                                 </tr>
-//                             </thead>
-//                         </table>
-//                         <div className="flex justify-start mt-10 mx-3">
-//                             <Button className="button-effect" type="button" onClick={() => pengarah.push("/KonfirmasiPesanan")}>
-//                                 <span>Lanjutkan Pemesanan</span>
-//                             </Button>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div >
-//     );
-// };
+    const products = [
+        { id: 1, name: 'Produk 1', price: 100, quantity: 2, imageUrl: Selada },
+        { id: 2, name: 'Produk 2', price: 150, quantity: 1, imageUrl: Selada },
+        { id: 3, name: 'Produk 3', price: 200, quantity: 3, imageUrl: Selada },
+    ];
 
-// export default PemesananProduk;
+    const subtotal = products.reduce((total, product) => total + product.price * product.quantity, 0);
+    const shippingCost = 50;
+    const total = subtotal + shippingCost;
+    const handleKonfirmasi = () => {
+        router.push('/KonfirmasiPesanan');
+    };
+
+    return (
+        <div className="z-10 relative mt-8">
+            <div className="text-base justify-center text-center font-bold">
+                <Toaster position="top-right" reverseOrder={false} />
+            </div>
+            <div className="w-full justify-center flex items-center">
+                <table className="w-full table-auto text-left mx-64 shadow-lg rounded-xl">
+                    <thead className="bg-[#738E5BCC] rounded-t-xl">
+                        <tr>
+                            <th className="font-bold px-6 py-4 text-center" colSpan={2}>Nama Produk</th>
+                            <th className="font-bold px-6 py-4 text-center">Harga</th>
+                            <th className="font-bold px-6 py-4 text-center">Kuantitas</th>
+                            <th className="font-bold px-6 py-4 text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {products.map((product) => (
+                            <tr key={product.id} className="">
+                                <td className="px-6 py-4">
+                                    <div className="w-6 h-6 bg-lightgray bg-opacity-40 items-center justify-center flex rounded-lg cursor-pointer">
+                                        <RxCross2 size={12} color="black" className="w-4 h-4" />
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 flex items-center">
+                                    <Image src={product.imageUrl} alt={product.name} className="w-12 h-12 object-cover mr-4" />
+                                    {product.name}
+                                </td>
+                                <td className="px-6 py-4 text-center">{product.price}</td>
+                                <td className="px-6 py-4 text-center">{product.quantity}</td>
+                                <td className="px-6 py-4 text-end">{product.price * product.quantity}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <div className="w-full my-4 flex justify-end">
+                <div className="w-[400px] mr-64">
+                    <div className="w-full max-w-4xl bg-white shadow-md p-4 rounded-lg">
+                        <div className="flex justify-between items-center pb-3">
+                            <span className="font-medium text-lg">Subtotal</span>
+                            <span className="font-bold">{subtotal}</span>
+                        </div>
+                        <div className="flex justify-between items-center border-b py-3">
+                            <span className="font-medium text-lg">Biaya Kirim</span>
+                            <span className="font-bold">{shippingCost}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-3">
+                            <span className="font-medium text-lg">Total</span>
+                            <span className="font-bold text-xl">{total}</span>
+                        </div>
+                        <div className="mt-4 flex justify-end">
+                            <button
+                                onClick={handleKonfirmasi}
+                                className="px-6 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition"
+                            >
+                                Checkout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    );
+};
+
+export default PemesananProduk;

@@ -8,7 +8,6 @@ import useSubmitBiodata from "@/hooks/Backend/useFormBiodata";
 import { formatNoIdentitas } from "@/utils/utilsNoIdentitas";
 import { formatHuruf } from "@/utils/utilsHanyaHuruf";
 import { formatNoTelepon } from '@/utils/utilsNoTelepon';
-import { formatEmail } from '@/utils/utilsEmail';
 
 function FormBiodataPengguna() {
     const pengarah = useRouter();
@@ -20,7 +19,6 @@ function FormBiodataPengguna() {
         Nama_Lengkap: "",
         No_Telepon: "",
         Jenis_Kelamin: "",
-        Email: "",
         Tanggal_Lahir: "",
         Alamat: "",
         Nama_Lengkap_Penerima: "",
@@ -34,7 +32,6 @@ function FormBiodataPengguna() {
             "Nama_Lengkap",
             "No_Telepon",
             "Jenis_Kelamin",
-            "Email",
             "Tanggal_Lahir",
             "Alamat",
             "Nama_Lengkap_Penerima",
@@ -68,14 +65,7 @@ function FormBiodataPengguna() {
             }));
             return;
         }
-        if (name === "Email") {
-            const formattedInput = formatEmail(value);
-            setFormDataPengguna((prev) => ({
-                ...prev,
-                [name]: formattedInput,
-            }));
-            return;
-        }
+
         if (["Nama_Lengkap_Penerima", "Nama_Lengkap"].includes(name)) {
             const formattedInput = formatHuruf(value);
             setFormDataPengguna((prev) => ({
@@ -170,21 +160,6 @@ function FormBiodataPengguna() {
                                     }}
                                     containerProps={{ className: "min-w-[100px]" }}
                                     value={formDataPengguna.No_Telepon}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <Input
-                                    type="email"
-                                    placeholder="Email Pengguna"
-                                    name="Email"
-                                    className="!border-2 !border-secondary bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                    labelProps={{
-                                        className: "hidden",
-                                    }}
-                                    containerProps={{ className: "min-w-[100px]" }}
-                                    value={formDataPengguna.Email}
                                     onChange={handleInputChange}
                                     required
                                 />

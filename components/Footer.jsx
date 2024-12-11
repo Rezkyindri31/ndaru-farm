@@ -54,13 +54,6 @@ function Footer() {
                             <span>Produk</span>
                         </li>
                         <li
-                            className={`flex items-center hover:text-secondary hover:translate-y-1 ${navbarAktif === "/Jasa" ? "text-primary" : ""}`}
-                            onClick={() => handlenavbarAktif("/Jasa")}
-                        >
-                            <FaChevronRight className="mr-2 text-secondary" />
-                            <span>Jasa</span>
-                        </li>
-                        <li
                             className={`flex items-center hover:text-secondary hover:translate-y-1 ${navbarAktif === "/SaranaPertanian" ? "text-primary" : ""}`}
                             onClick={() => handlenavbarAktif("/SaranaPertanian")}
                         >
