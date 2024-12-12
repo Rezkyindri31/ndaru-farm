@@ -7,7 +7,6 @@ import { BsCartPlusFill } from "react-icons/bs";
 import useStateSaranaPertanian from "@/hooks/Frontend/useTampilkanSaranaPertanian";
 import useVerifikasiLogin from '@/hooks/Backend/useVerifikasiLogin';
 import useMasukanKeKeranjangSaranaPertanian from "@/hooks/Backend/useMasukanKeKeranjangSaranaPertanian";
-import toast, { Toaster } from "react-hot-toast";
 
 function SaranaPertanian() {
     const { isLoggedIn, loading: loadingLogin } = useVerifikasiLogin();
@@ -23,7 +22,6 @@ function SaranaPertanian() {
     const currentSarana = getCurrentFasilitas() || [];
     return (
         <div className="h-full my-16">
-            <Toaster position="top-right" reverseOrder={false} />
             {currentSarana.length > 0 ? (
                 <>
                     <div className="flex items-center justify-center gap-4 uppercase font-black pt-2">
@@ -58,12 +56,6 @@ function SaranaPertanian() {
                                         <p className="text-slate-600 leading-normal font-bold">
                                             Rp {fasilitas.Harga.toLocaleString('id-ID')}
                                         </p>
-
-                                        <div className="flex items-center gap-0.5 ml-auto">
-                                            <p className="text-slate-600 leading-normal font-bold">
-                                                Stok : {fasilitas.Stok}
-                                            </p>
-                                        </div>
                                     </div>
                                 </div>
                                 <div className="px-4 pb-4 pt-0 mt-2 text-base">

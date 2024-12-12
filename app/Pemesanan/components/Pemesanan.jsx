@@ -1,31 +1,27 @@
-import { useRouter } from "next/navigation";
-import { RxCross2 } from "react-icons/rx";
-import toast, { Toaster } from "react-hot-toast";
 import Image from 'next/image';
-
-import Selada from '@/assets/img/Produk/Selada.jpeg';
+import { RxCross2 } from "react-icons/rx";
+import { Typography } from "@material-tailwind/react";
+import useNavbarAktif from "@/hooks/Frontend/useNavbarAktif";
+import useAmbilKeranjang from "@/hooks/Backend/useAmbilKeranjang";
 
 const PemesananProduk = () => {
-    const router = useRouter();
-
-    const products = [
-        { id: 1, name: 'Produk 1', price: 100, quantity: 2, imageUrl: Selada },
-        { id: 2, name: 'Produk 2', price: 150, quantity: 1, imageUrl: Selada },
-        { id: 3, name: 'Produk 3', price: 200, quantity: 3, imageUrl: Selada },
-    ];
-
-    const subtotal = products.reduce((total, product) => total + product.price * product.quantity, 0);
-    const shippingCost = 50;
-    const total = subtotal + shippingCost;
-    const handleKonfirmasi = () => {
-        router.push('/KonfirmasiPesanan');
+    const { handlenavbarAktif } = useNavbarAktif();
+    const { keranjang, memuat, hapusItemKeranjang, updateKuantitasKeranjang } = useAmbilKeranjang();
+    const handleKuantitasChange = (value, product, index) => {
+        const kuantitasBaru = parseInt(value, 10) || 0;
+        updateKuantitasKeranjang(index, kuantitasBaru, product.Harga);
     };
+
+    // if (memuat) {
+    //     return <Typography variant="h1">Loading keranjang...</Typography>;
+    // }
+
+    if (!keranjang || (!keranjang.Sayuran?.length && !keranjang.Sarana_Pertanian?.length)) {
+        return <Typography variant="h1">Keranjang Anda kosong.</Typography>;
+    }
 
     return (
         <div className="z-10 relative mt-8">
-            <div className="text-base justify-center text-center font-bold">
-                <Toaster position="top-right" reverseOrder={false} />
-            </div>
             <div className="w-full justify-center flex items-center">
                 <table className="w-full table-auto text-left mx-64 shadow-lg rounded-xl">
                     <thead className="bg-[#738E5BCC] rounded-t-xl">
@@ -37,22 +33,46 @@ const PemesananProduk = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {products.map((product) => (
-                            <tr key={product.id} className="">
-                                <td className="px-6 py-4">
-                                    <div className="w-6 h-6 bg-lightgray bg-opacity-40 items-center justify-center flex rounded-lg cursor-pointer">
-                                        <RxCross2 size={12} color="black" className="w-4 h-4" />
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 flex items-center">
-                                    <Image src={product.imageUrl} alt={product.name} className="w-12 h-12 object-cover mr-4" />
-                                    {product.name}
-                                </td>
-                                <td className="px-6 py-4 text-center">{product.price}</td>
-                                <td className="px-6 py-4 text-center">{product.quantity}</td>
-                                <td className="px-6 py-4 text-end">{product.price * product.quantity}</td>
-                            </tr>
-                        ))}
+                        {['Sayuran', 'Sarana_Pertanian']
+                            .flatMap((kategori) => keranjang[kategori] || [])
+                            .map((product, index) => (
+                                <tr key={index} className="">
+                                    <td className="px-6 py-4">
+                                        <div
+                                            className="w-6 h-6 bg-lightgray bg-opacity-40 items-center justify-center flex rounded-lg cursor-pointer"
+                                            onClick={() => hapusItemKeranjang(index)}
+                                        >
+                                            <RxCross2 size={12} color="black" className="w-4 h-4" />
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 flex items-center">
+                                        <Image
+                                            src={product.Gambar}
+                                            alt={product.Nama}
+                                            width={48}
+                                            height={48}
+                                            className="object-cover mr-4"
+                                        />
+                                        {product.Nama}
+                                    </td>
+                                    <td className="px-6 py-4 text-center">
+                                        {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(product.Harga).replace(',00', '')}
+                                    </td>
+                                    <td className="px-6 py-4 text-center">
+                                        <input
+                                            type="number"
+                                            value={product.Kuantitas}
+                                            min={1}
+                                            max={100}
+                                            className="w-16 text-center border border-gray-300 rounded"
+                                            onChange={(e) => handleKuantitasChange(e.target.value, product, index)}
+                                        />
+                                    </td>
+                                    <td className="px-6 py-4 text-end">{
+                                        new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(product.Total_Harga).replace(',00', '')}
+                                    </td>
+                                </tr>
+                            ))}
                     </tbody>
                 </table>
             </div>
@@ -62,19 +82,24 @@ const PemesananProduk = () => {
                     <div className="w-full max-w-4xl bg-white shadow-md p-4 rounded-lg">
                         <div className="flex justify-between items-center pb-3">
                             <span className="font-medium text-lg">Subtotal</span>
-                            <span className="font-bold">{subtotal}</span>
+                            <span className="font-bold">
+                                {
+                                    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(keranjang.Sub_Total).replace(',00', '')}
+                            </span>
                         </div>
                         <div className="flex justify-between items-center border-b py-3">
                             <span className="font-medium text-lg">Biaya Kirim</span>
-                            <span className="font-bold">{shippingCost}</span>
+                            <span className="font-bold"> {
+                                new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(keranjang.Biaya_Pengiriman).replace(',00', '')}</span>
                         </div>
                         <div className="flex justify-between items-center py-3">
                             <span className="font-medium text-lg">Total</span>
-                            <span className="font-bold text-xl">{total}</span>
+                            <span className="font-bold text-xl"> {
+                                new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(keranjang.Total).replace(',00', '')}</span>
                         </div>
                         <div className="mt-4 flex justify-end">
                             <button
-                                onClick={handleKonfirmasi}
+                                onClick={() => handlenavbarAktif("/KonfirmasiPesanan")}
                                 className="px-6 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition"
                             >
                                 Checkout

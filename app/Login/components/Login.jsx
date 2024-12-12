@@ -5,7 +5,7 @@ import { Button } from '@/app/MTailwind';
 import Image from 'next/image';
 import { Toaster } from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
-import useLoginWithGoogle from '@/hooks/Backend/useLoginWithGoogle';
+import useLoginWithGoogle from '@/hooks/Backend/useMasukDenganGoogle';
 import useNavbarAktif from '@/hooks/Frontend/useNavbarAktif';
 
 function LoginForm() {

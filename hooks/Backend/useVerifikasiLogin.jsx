@@ -29,7 +29,7 @@ const useVerifyLogin = () => {
             return;
         }
         try {
-            toast.success("User is logged in!");
+            toast.success("Selamat datang di Ndaru Farm!");
         } catch (err) {
             setError(err);
             toast.error("Error verifying login status.");

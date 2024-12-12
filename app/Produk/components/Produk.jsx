@@ -10,7 +10,6 @@ import { BsCartPlusFill } from "react-icons/bs";
 import useStateProduk from "@/hooks/Frontend/useTampilanProduk";
 import useVerifikasiLogin from "@/hooks/Backend/useVerifikasiLogin";
 import useMasukanKeKeranjangSayuran from "@/hooks/Backend/useMasukanKeKeranjangSayuran";
-import toast, { Toaster } from "react-hot-toast";
 
 function Produk() {
     const { isLoggedIn, loading: loadingLogin } = useVerifikasiLogin();
@@ -27,7 +26,6 @@ function Produk() {
     const currentProducts = getCurrentProducts() || [];
     return (
         <div className="h-full my-16">
-            <Toaster position="top-right" reverseOrder={false} />
             {currentProducts.length > 0 ? (
                 <>
                     <div className="produk-container grid grid-cols-1 gap-1 py-6 lg:grid-cols-3 lg:gap-6 justify-items-center px-5 lg:px-36 lg:py-4">
@@ -71,11 +69,6 @@ function Produk() {
                                         <p className="text-slate-600 leading-normal font-bold">
                                             Rp {product.Harga.toLocaleString("id-ID")}
                                         </p>
-                                        <div className="flex items-center gap-0.5 ml-auto">
-                                            <p className="text-slate-600 leading-normal font-bold">
-                                                Stok : {product.Stok}
-                                            </p>
-                                        </div>
                                     </div>
                                 </div>
                                 <div className="px-4 pb-4 pt-0 mt-2 text-base">

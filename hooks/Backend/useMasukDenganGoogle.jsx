@@ -21,8 +21,7 @@ const useMasukDenganGoogle = () => {
             const hasil = await signInWithPopup(auth, googleProvider);
             const pengguna = hasil.user;
             localStorage.setItem("ID", pengguna.uid);
-            setEmail(pengguna.email);
-            toast.success("Berhasil masuk dengan Google!");
+            toast.success("Selamat datang di Ndaru Farm!");
 
             const id = pengguna.uid;
             const docRefPengguna = doc(firestore, "pengguna", id);

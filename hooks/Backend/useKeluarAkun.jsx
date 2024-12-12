@@ -9,7 +9,7 @@ const useKeluarAkun = () => {
         try {
             await signOut(auth);
             localStorage.removeItem("ID");
-            toast.success("Anda sudah keluar dari Akun.");
+            toast.success("Selamat tinggal dan Sampai Bertemu Kembali.");
             pengarah.push("/Login");
         } catch (err) {
             toast.error("Error logging out.");

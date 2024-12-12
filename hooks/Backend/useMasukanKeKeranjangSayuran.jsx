@@ -47,6 +47,7 @@ const useMasukanKeKeranjangSayuran = () => {
                 Nama: dataSayuran.Nama,
                 Harga: dataSayuran.Harga,
                 Berat: dataSayuran.Berat,
+                Gambar: dataSayuran.Gambar,
                 Kuantitas: 1,
                 Total_Harga: dataSayuran.Harga,
             });
@@ -62,6 +63,7 @@ const useMasukanKeKeranjangSayuran = () => {
                             Nama: dataSayuran.Nama,
                             Harga: dataSayuran.Harga,
                             Berat: dataSayuran.Berat,
+                            Gambar: dataSayuran.Gambar,
                             Kuantitas: 1,
                             Total_Harga: dataSayuran.Harga,
                         },

@@ -95,11 +95,15 @@ function Navigation() {
                         ) : isLoggedIn ? (
                             <div className="hidden sm:flex items-center gap-x-5">
                                 <a
-                                    className={`font-bold text-white hover:text-primary ${navbarAktif === "/Pemesanan" ? "text-primary" : "text-white"
-                                        }`}
+                                    className="font-bold text-white hover:text-primary"
                                     onClick={() => handlenavbarAktif("/Pemesanan")}
                                 >
-                                    <FaShoppingCart className="w-5 h-5 cursor-pointer" />
+                                    <FaShoppingCart
+                                        className={`w-5 h-5 cursor-pointer ${navbarAktif === "/Pemesanan" || navbarAktif === "/KonfirmasiPesanan"
+                                            ? "text-primary"
+                                            : "text-white"
+                                            }`}
+                                    />
                                 </a>
                                 <Menu
                                     animate={{
