@@ -4,15 +4,14 @@ import Image from "next/image";
 import { Typography, Button, IconButton } from "@/app/MTailwind";
 import { TiStarFullOutline, TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 import { BsCartPlusFill } from "react-icons/bs";
-import {
-    FaCircleInfo,
-} from "react-icons/fa6";
 import useStateSaranaPertanian from "@/hooks/Frontend/useTampilkanSaranaPertanian";
 import useVerifikasiLogin from '@/hooks/Backend/useVerifikasiLogin';
+import useMasukanKeKeranjangSaranaPertanian from "@/hooks/Backend/useMasukanKeKeranjangSaranaPertanian";
 import toast, { Toaster } from "react-hot-toast";
 
 function SaranaPertanian() {
-    const { isLoggedIn, loading } = useVerifikasiLogin();
+    const { isLoggedIn, loading: loadingLogin } = useVerifikasiLogin();
+    const { memuatMasukKeKeranjangSaranaPertanian, masukanKeKeranjangSaranaPertanian } = useMasukanKeKeranjangSaranaPertanian();
     const { activePage,
         totalPages,
         getCurrentFasilitas,
@@ -22,7 +21,6 @@ function SaranaPertanian() {
     } = useStateSaranaPertanian();
 
     const currentSarana = getCurrentFasilitas() || [];
-    console.log(currentSarana);
     return (
         <div className="h-full my-16">
             <Toaster position="top-right" reverseOrder={false} />
@@ -52,10 +50,6 @@ function SaranaPertanian() {
                                         <h6 className="text-slate-800 text-xl font-black">
                                             {fasilitas.Nama}
                                         </h6>
-                                        <div className="flex items-center gap-0.5 ml-auto">
-                                            <TiStarFullOutline className="w-5 h-5 text-yellow-600" />
-                                            <span className="text-slate-600 ml-1.5 font-bold">1.4</span>
-                                        </div>
                                     </div>
                                     <p className="text-slate-600 leading-normal">
                                         {fasilitas.Deskripsi}
@@ -74,14 +68,15 @@ function SaranaPertanian() {
                                 </div>
                                 <div className="px-4 pb-4 pt-0 mt-2 text-base">
                                     <button
-                                        className={`w-full text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 ${isLoggedIn
+                                        className={`w-full text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 cursor-pointer ${isLoggedIn
                                             ? "bg-secondary text-white hover:bg-white hover:text-secondary hover:scale-110"
                                             : "bg-gray-400 text-gray-200 cursor-not-allowed"
                                             }`}
                                         type="button"
-                                        disabled={!isLoggedIn || loading}
+                                        onClick={() => masukanKeKeranjangSaranaPertanian(fasilitas.id)}
+                                        disabled={!isLoggedIn || loadingLogin || memuatMasukKeKeranjangSaranaPertanian}
                                     >
-                                        {loading ? (
+                                        {memuatMasukKeKeranjangSaranaPertanian ? (
                                             <span>Loading...</span>
                                         ) : (
                                             <>

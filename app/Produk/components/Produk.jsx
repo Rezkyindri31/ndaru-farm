@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { Typography, Button, IconButton, Popover, PopoverHandler, PopoverContent } from "@/app/MTailwind"; // Import Popover components
+import { Typography, Button, IconButton, Popover, PopoverHandler, PopoverContent } from "@/app/MTailwind";
 import { TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 import {
     FaCircleInfo,
@@ -9,10 +9,12 @@ import {
 import { BsCartPlusFill } from "react-icons/bs";
 import useStateProduk from "@/hooks/Frontend/useTampilanProduk";
 import useVerifikasiLogin from "@/hooks/Backend/useVerifikasiLogin";
+import useMasukanKeKeranjangSayuran from "@/hooks/Backend/useMasukanKeKeranjangSayuran";
 import toast, { Toaster } from "react-hot-toast";
 
 function Produk() {
-    const { isLoggedIn, loading } = useVerifikasiLogin();
+    const { isLoggedIn, loading: loadingLogin } = useVerifikasiLogin();
+    const { memuatMasukKeKeranjangSayuran, masukanKeKeranjangSayuran } = useMasukanKeKeranjangSayuran();
     const {
         activePage,
         totalPages,
@@ -23,8 +25,6 @@ function Produk() {
     } = useStateProduk();
 
     const currentProducts = getCurrentProducts() || [];
-    console.log(currentProducts);
-
     return (
         <div className="h-full my-16">
             <Toaster position="top-right" reverseOrder={false} />
@@ -80,14 +80,15 @@ function Produk() {
                                 </div>
                                 <div className="px-4 pb-4 pt-0 mt-2 text-base">
                                     <button
-                                        className={`w-full text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 ${isLoggedIn
+                                        className={`w-full text-sm border-none rounded-full px-8 py-2 font-semibold uppercase transition-transform duration-300 ease-in-out flex justify-center items-center gap-2 cursor-pointer ${isLoggedIn
                                             ? "bg-secondary text-white hover:bg-white hover:text-secondary hover:scale-110"
                                             : "bg-gray-400 text-gray-200 cursor-not-allowed"
                                             }`}
                                         type="button"
-                                        disabled={!isLoggedIn || loading}
+                                        onClick={() => masukanKeKeranjangSayuran(product.id)}
+                                        disabled={!isLoggedIn || loadingLogin || memuatMasukKeKeranjangSayuran}
                                     >
-                                        {loading ? (
+                                        {memuatMasukKeKeranjangSayuran ? (
                                             <span>Loading...</span>
                                         ) : (
                                             <>

@@ -164,7 +164,7 @@ function PengaturanProfile() {
                             </div>
                             <div className="p-5 w-full">
                                 <Typography variant="h6" color="blue-gray" className={`mb-2 font-bold ${openSans.className}`}>
-                                    Nomor Telepon
+                                    Nomor Telepon Penerima
                                 </Typography>
                                 <Input
                                     type="number"
