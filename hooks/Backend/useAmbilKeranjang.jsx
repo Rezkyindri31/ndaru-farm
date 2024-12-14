@@ -44,7 +44,6 @@ const useAmbilKeranjang = () => {
                     Total,
                 });
             } else {
-                toast.error("Keranjang tidak ditemukan.");
             }
         } catch (error) {
             console.error("Gagal mengambil keranjang:", error);

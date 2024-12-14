@@ -10,13 +10,13 @@ import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
 import Selada from "@/assets/img/Produk/Selada.jpeg";
 import Pokcoy from "@/assets/img/Produk/Pokcoy.jpeg";
 
-const DialogDetailPesanan = ({ isOpen, handleClose }) => {
+const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData }) => {
     const { detailPengguna } = useTampilanPengguna();
 
     return (
         <Dialog open={isOpen} size="lg" handler={handleClose}>
             <div className="flex justify-between items-center p-2">
-                <DialogHeader>Detail Pesanan</DialogHeader>
+                <DialogHeader>Detail Pesanan {pemesananData?.ID_Pemesanan}</DialogHeader>
                 <button
                     onClick={() => handleClose(false)}
                     className="text-gray-600 hover:text-gray-900"
@@ -24,7 +24,7 @@ const DialogDetailPesanan = ({ isOpen, handleClose }) => {
                     <FaTimes className="mr-3 w-6 h-6" size={18} />
                 </button>
             </div>
-            <DialogBody className="mb-8 max-h-[600px] overflow-y-auto"> {/* Make it scrollable */}
+            <DialogBody className="mb-8 max-h-[600px] overflow-y-auto">
                 <h2 className="font-semibold text-lg mb-7 text-center">
                     Status Pengiriman
                 </h2>
@@ -63,47 +63,37 @@ const DialogDetailPesanan = ({ isOpen, handleClose }) => {
                     <div className="lg:col-span-1 bg-blue-gray-800 bg-opacity-15 shadow-lg p-6 rounded-lg">
                         <h2 className="text-xl font-semibold mb-4 text-black">Detail Pesanan</h2>
                         <ul className="space-y-4">
-                            <li className="flex justify-between items-center text-sm text-gray-700">
-                                <div className="flex items-center space-x-2">
-                                    <Image
-                                        src={Selada}
-                                        alt="Selada"
-                                        className="rounded-lg w-16 h-16 border border-green-500"
-                                    />
-                                    <div>
-                                        <span className="w-3/4 text-black">Selada</span>
-                                        <p className="text-gray-500 text-black">x4</p>
+                            {pemesananData?.Data_Pesanan?.map((item, index) => (
+                                <li key={index} className="flex justify-between items-center text-sm text-gray-700">
+                                    <div className="flex items-center space-x-2">
+                                        <Image
+                                            src={item.Gambar}
+                                            alt={item.Nama}
+                                            width={60}
+                                            height={60}
+                                            className="rounded-lg w-16 h-16 border border-green-500"
+                                        />
+                                        <div>
+                                            <span className="w-3/4 text-black">{item.Nama}</span>
+                                            <p className="text-gray-500 text-black">x{item.Kuantitas}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <span className="text-black">Rp15.000</span>
-                            </li>
-                            <li className="flex justify-between items-center text-sm text-gray-700">
-                                <div className="flex items-center space-x-2">
-                                    <Image
-                                        src={Pokcoy}
-                                        alt="Pokcoy"
-                                        className="rounded-lg w-16 h-16 border border-green-500"
-                                    />
-                                    <div>
-                                        <span className="w-3/4 text-black">Pakcoy</span>
-                                        <p className="text-gray-500 text-black">x4</p>
-                                    </div>
-                                </div>
-                                <span className="text-black text-center">Rp15.000</span>
-                            </li>
+                                    <span className="text-black">Rp{item.Harga.toLocaleString()}</span>
+                                </li>
+                            ))}
                         </ul>
                         <div className="border-t mt-4 pt-4 space-y-2 text-sm">
                             <div className="flex justify-between">
                                 <span className="text-black">Subtotal</span>
-                                <span className="text-black">Rp120.000</span>
+                                <span className="text-black">Rp{pemesananData?.Sub_Total?.toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span className="text-black">Biaya Pengiriman</span>
-                                <span className="text-black">Rp20.000</span>
+                                <span className="text-black">Rp{pemesananData?.Biaya_Pengiriman?.toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between font-semibold text-lg">
                                 <span className="text-black">Total</span>
-                                <span className="text-black">Rp140.000</span>
+                                <span className="text-black">Rp{pemesananData?.Total?.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
@@ -115,31 +105,31 @@ const DialogDetailPesanan = ({ isOpen, handleClose }) => {
                             <ul className="mt-2 text-md text-black space-y-1">
                                 <li className="flex justify-between">
                                     <span className="font-semibold text-start w-1/3">Nama</span>
-                                    <span className="text-start w-2/3">:{detailPengguna?.Nama_Lengkap || "Tidak tersedia"}</span>
+                                    <span className="text-start w-2/3">:{detailPengguna.Nama_Lengkap || "Tidak tersedia"}</span>
                                 </li>
                                 <li className="flex justify-between">
                                     <span className="font-semibold text-start w-1/3">Penerima:</span>
-                                    <span className="text-start w-2/3">:{detailPengguna?.Nama_Lengkap_Penerima || "Tidak tersedia"}</span>
+                                    <span className="text-start w-2/3">:{detailPengguna.Nama_Lengkap_Penerima || "Tidak tersedia"}</span>
                                 </li>
                                 <li className="flex justify-between">
                                     <span className="font-semibold text-start w-1/3">Email</span>
-                                    <span className="text-start w-2/3">:{detailPengguna?.Email || "Tidak tersedia"}</span>
+                                    <span className="text-start w-2/3">:{detailPengguna.Email || "Tidak tersedia"}</span>
                                 </li>
                                 <li className="flex justify-between">
                                     <span className="font-semibold text-start w-1/3">Telepon</span>
-                                    <span className="text-start w-2/3">:{detailPengguna?.No_Telepon || "Tidak tersedia"}</span>
+                                    <span className="text-start w-2/3">:{detailPengguna.No_Telepon || "Tidak tersedia"}</span>
                                 </li>
                                 <li className="flex justify-between">
                                     <span className="font-semibold text-start w-1/3">No Penerima</span>
-                                    <span className="text-start w-2/3">:{detailPengguna?.No_Telepon_Penerima || "Tidak tersedia"}</span>
+                                    <span className="text-start w-2/3">:{detailPengguna.No_Telepon_Penerima || "Tidak tersedia"}</span>
                                 </li>
                                 <li className="flex justify-between">
                                     <span className="font-semibold text-start w-1/3">Alamat</span>
-                                    <span className="text-start w-2/3">:{detailPengguna?.Alamat || "Tidak tersedia"}</span>
+                                    <span className="text-start w-2/3">:{detailPengguna.Alamat || "Tidak tersedia"}</span>
                                 </li>
                                 <li className="flex justify-between">
                                     <span className="font-semibold text-start w-1/3">Alamat Penerima</span>
-                                    <span className="text-start w-2/3">:{detailPengguna?.Alamat_Penerima || "Tidak tersedia"}</span>
+                                    <span className="text-start w-2/3">:{detailPengguna.Alamat_Penerima || "Tidak tersedia"}</span>
                                 </li>
                             </ul>
                         </div>

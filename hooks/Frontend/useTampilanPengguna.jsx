@@ -36,9 +36,7 @@ function useVerifikasiLogin() {
                             ...prevState,
                             ...docSnap.data(),
                         }));
-                        console.log("Data pengguna ditemukan:", docSnap.data());
                     } else {
-                        console.warn("Data pengguna tidak ditemukan di Firestore.");
                         setApakahSudahLogin(false);
                     }
                 } catch (error) {

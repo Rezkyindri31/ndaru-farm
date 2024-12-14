@@ -8,7 +8,6 @@ const useNavbarAktif = (initialPath = "/Beranda") => {
     React.useEffect(() => {
         const handlePathnameUpdate = () => {
             const currentPath = window.location.pathname;
-            console.log("Current Path:", currentPath);
             setnavbarAktif(currentPath);
         };
         handlePathnameUpdate();

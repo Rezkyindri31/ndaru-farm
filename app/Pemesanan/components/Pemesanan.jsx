@@ -1,11 +1,13 @@
 import Image from 'next/image';
 import { RxCross2 } from "react-icons/rx";
 import { Typography } from "@material-tailwind/react";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css';
 import useNavbarAktif from "@/hooks/Frontend/useNavbarAktif";
 import useAmbilKeranjang from "@/hooks/Backend/useAmbilKeranjang";
 
 const PemesananProduk = () => {
-    const { handlenavbarAktif } = useNavbarAktif();
+    const { memuatPesanan, handlenavbarAktif } = useNavbarAktif();
     const { keranjang, memuat, hapusItemKeranjang, updateKuantitasKeranjang } = useAmbilKeranjang();
     const handleKuantitasChange = (value, product, index) => {
         const kuantitasBaru = parseInt(value, 10) || 0;
@@ -13,11 +15,22 @@ const PemesananProduk = () => {
     };
 
     // if (memuat) {
-    //     return <Typography variant="h1">Loading keranjang...</Typography>;
+    //     return (
+    //         <div>
+    //             < tr >
+    //                 <td colSpan="5">
+    //                     <Skeleton count={5} height={40} />
+    //                 </td>
+    //             </tr >
+    //         </div >);
     // }
 
     if (!keranjang || (!keranjang.Sayuran?.length && !keranjang.Sarana_Pertanian?.length)) {
-        return <Typography variant="h1">Keranjang Anda kosong.</Typography>;
+        return (
+            <div className='text-center border-2 border-blue-gray-800 rounded-lg shadow-xl p-1 my-12 mx-60 uppercase'>
+                <Typography variant="h2">Keranjang Anda kosong</Typography>
+            </div>
+        );
     }
 
     return (
@@ -101,6 +114,7 @@ const PemesananProduk = () => {
                             <button
                                 onClick={() => handlenavbarAktif("/KonfirmasiPesanan")}
                                 className="px-6 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 transition"
+                                disabled={memuatPesanan}
                             >
                                 Checkout
                             </button>

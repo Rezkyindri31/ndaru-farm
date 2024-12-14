@@ -1,13 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import "@/app/globals.css";
 import { FaInfoCircle } from "react-icons/fa";
 import { BsShop } from "react-icons/bs";
-
-import Selada from "@/assets/img/Produk/Selada.jpeg";
-import Pokcoy from "@/assets/img/Produk/Pokcoy.jpeg";
 import DialogDetailPesanan from "@/app/TrackingPesanan/components/dialogDetailPesanan";
+import useAmbilPemesanan from "@/hooks/Backend/useAmbilPemesanan";
+import { Typography } from "@material-tailwind/react";
 
 function PesananSaya() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -16,20 +15,21 @@ function PesananSaya() {
         setIsDialogOpen(value);
     };
 
+    const { pemesananData, transaksiData, penggunaData } = useAmbilPemesanan();
     return (
         <div className="py-10 px-4 lg:px-20">
-            <h1 className="text-3xl font-bold mb-6">Pesanan Saya</h1>
+            <Typography variant="h1" className="text-3xl font-bold mb-6">Pesanan Saya</Typography >
             <div className="space-y-6">
                 <div className="border p-6 rounded-lg shadow-md bg-white space-y-4 m-5">
                     <div className="flex justify-between items-center">
                         <div className="flex justify-center items-center space-x-1">
                             <BsShop size={29} color="white" className="bg-green-700 p-1 rounded-md" />
-                            <h2 className="text-lg font-semibold text-green-700">NDARU MART</h2>
+                            <Typography variant="h2" className="text-lg font-semibold text-green-700">Nomor Pemesanan {pemesananData?.ID_Pemesanan}</Typography>
                         </div>
                         <div className="flex justify-end items-center space-x-2">
-                            <p className="border border-green-700 p-1 rounded-md text-green-700">
-                                Pesanan Selesai
-                            </p>
+                            <Typography variant="paragraph" className="border border-green-700 p-1 rounded-md text-green-700">
+                                {transaksiData?.Status_Pembayaran}
+                            </Typography>
                             <FaInfoCircle
                                 size="24"
                                 color="green"
@@ -40,44 +40,30 @@ function PesananSaya() {
                     </div>
                     <hr className="border-blue-gray-300" />
                     <ul className="space-y-4">
-                        <li className="flex items-start text-sm">
-                            <Image
-                                src={Selada}
-                                width={60}
-                                height={60}
-                                className="rounded-md"
-                                alt="Selada"
-                            />
-                            <div className="ml-4 flex-1">
-                                <p className="font-bold text-lg">Selada</p>
-                                <p className="text-gray-500">Kategori: Sayuran</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-gray-700">x4</p>
-                                <p>Rp15.000</p>
-                            </div>
-                        </li>
-                        <li className="flex items-start text-sm">
-                            <Image
-                                src={Pokcoy}
-                                width={60}
-                                height={60}
-                                className="rounded-md"
-                                alt="Pokcoy"
-                            />
-                            <div className="ml-4 flex-1">
-                                <p className="font-bold text-lg">Pokcoy</p>
-                                <p className="text-gray-500">Kategori: Sayuran</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-gray-700">x3</p>
-                                <p>Rp12.000</p>
-                            </div>
-                        </li>
+                        {pemesananData?.Data_Pesanan?.map((item, index) => (
+                            <li key={index} className="flex items-start text-sm">
+                                <Image
+                                    src={item.Gambar}
+                                    width={60}
+                                    height={60}
+                                    className="rounded-md"
+                                    alt={item.Nama}
+                                />
+                                <div className="ml-4 flex-1">
+                                    <Typography variant="paragraph" className="font-bold text-lg">{item.Nama}</Typography>
+                                    <Typography variant="paragraph" className="text-gray-500">Kategori: Sayuran</Typography>
+                                </div>
+                                <div className="text-right">
+                                    <Typography variant="paragraph" className="text-gray-700">x{item.Kuantitas}</Typography>
+                                    <Typography variant="paragraph">Rp{item.Harga.toLocaleString()}</Typography>
+                                    <Typography variant="paragraph">Total: Rp{item.Total_Harga.toLocaleString()}</Typography>
+                                </div>
+                            </li>
+                        ))}
                     </ul>
                     <hr className="border-blue-gray-300" />
                     <div className="flex justify-end items-center mt-4">
-                        <p className="font-bold text-lg">Total Pesanan: Rp96.000</p>
+                        <Typography variant="paragraph" className="font-bold text-lg">Total Pesanan: Rp{pemesananData?.Total.toLocaleString()}</Typography>
                     </div>
                 </div>
             </div>
@@ -85,6 +71,9 @@ function PesananSaya() {
             <DialogDetailPesanan
                 isOpen={isDialogOpen}
                 handleClose={handleOpenDialog}
+                pemesananData={pemesananData}
+                transaksiData={transaksiData}
+                penggunaData={penggunaData}
             />
         </div>
     );

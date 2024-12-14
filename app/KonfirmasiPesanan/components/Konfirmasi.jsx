@@ -3,8 +3,11 @@ import React from "react";
 import "@/app/globals.css";
 import { Typography } from "@material-tailwind/react";
 import { Open_Sans } from "next/font/google";
+import Skeleton from 'react-loading-skeleton'
 import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
 import useAmbilKeranjang from "@/hooks/Backend/useAmbilKeranjang";
+import useBuatPemesanan from "@/hooks/Backend/useBuatPemesanan"; // Sesuaikan path
+
 
 const openSans = Open_Sans({
     subsets: ["latin"],
@@ -13,11 +16,28 @@ const openSans = Open_Sans({
 
 
 function KonfirmasiPemesanan() {
-    const { keranjang, memuat, hapusItemKeranjang, updateKuantitasKeranjang } = useAmbilKeranjang();
+    const { memuatPesanan, pembuatanPemesanan } = useBuatPemesanan();
+    const { keranjang, memuat } = useAmbilKeranjang();
     const { detailPengguna } = useTampilanPengguna();
-    if (!keranjang || (!keranjang.Sayuran?.length && !keranjang.Sarana_Pertanian?.length)) {
-        return <Typography variant="h1">Keranjang Anda kosong.</Typography>;
+    if (memuat) {
+        return (
+            <div colSpan="5">
+                <Skeleton count={5} height={40} />
+            </div>
+        );
     }
+
+    if (!keranjang || (!keranjang.Sayuran?.length && !keranjang.Sarana_Pertanian?.length)) {
+        return (
+            <div className='text-center border-2 border-blue-gray-800 rounded-lg shadow-xl p-1 my-12 mx-60 uppercase'>
+                <Typography variant="h2">Keranjang Anda kosong</Typography>
+            </div>
+        );
+    }
+
+    const handleCreatePemesanan = async () => {
+        await pembuatanPemesanan();
+    };
 
     return (
         <div className={`my-10 py-10 px-4 lg:px-20 ${openSans.className}`}>
@@ -66,7 +86,6 @@ function KonfirmasiPemesanan() {
                         </div>
                     </div>
                 </div>
-
                 <div>
                     <h2 className={`text-xl font-semibold mb-4 ${openSans.className}`}>Alamat Penerima</h2>
                     <div className="space-y-4 shadow-md">
@@ -86,7 +105,12 @@ function KonfirmasiPemesanan() {
                         </div>
                     </div>
                     <div className="flex mt-4 justify-end items-center ml-6">
-                        <button className={`w-full mx-5 py-2 bg-green-700 rounded-md font-bold text-white ${openSans.className} hover:bg-white hover:text-green-700 hover:border hover:border-green700 transition duration-300 ease-in-out `}>Buat Pesanan</button>
+                        <button
+                            onClick={handleCreatePemesanan}
+                            disabled={memuatPesanan}
+                            className={`w-full mx-5 py-2 bg-green-700 rounded-md font-bold text-white ${openSans.className} hover:bg-white hover:text-green-700 hover:border hover:border-green700 transition duration-300 ease-in-out `}>
+                            {memuatPesanan ? "Sedang Membuat Pemesanan" : "Buat Pemesanan"}
+                        </button>
                     </div>
                 </div>
             </div>
