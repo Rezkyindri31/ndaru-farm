@@ -13,19 +13,16 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
     const { detailPengguna } = useTampilanPengguna();
     const { memuatHapus, errorHapus, hapusPemesanan } = useHapusPemesanan();
 
-    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false); // State to manage confirmation dialog
+    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
-    // Open confirmation dialog
     const handleConfirmDialogOpen = () => {
         setIsConfirmDialogOpen(true);
     };
 
-    // Close confirmation dialog
     const handleConfirmDialogClose = () => {
         setIsConfirmDialogOpen(false);
     };
 
-    // Handle cancelation of order
     const handlePembatalanPesanan = async () => {
         if (!pemesananData?.ID_Pemesanan || !pemesananData?.ID_Transaksi) {
             return;
@@ -34,7 +31,7 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
         try {
             await hapusPemesanan(pemesananData.ID_Pemesanan, pemesananData.ID_Transaksi);
             handleClose();
-            setIsConfirmDialogOpen(false); // Close the confirmation dialog after successful deletion
+            setIsConfirmDialogOpen(false);
         } catch (error) {
             console.error("Gagal membatalkan pesanan:", error);
         }
@@ -151,6 +148,23 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                                         <li className="flex justify-between">
                                             <span className="font-semibold text-start w-1/2">Alamat Pengguna</span>
                                             <span className="text-start w-2/3">: {detailPengguna.Alamat || "Tidak tersedia"}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="grid grid-cols-1 items-center justify-between">
+                                    <Typography variant="h4" className="text-white font-bold uppercase underline underline-offset-8 ">Detail Penerima</Typography>
+                                    <ul className="mt-2 text-md text-black space-y-1">
+                                        <li className="flex justify-between">
+                                            <span className="font-semibold text-start w-1/2">Nama Pengguna</span>
+                                            <span className="text-start w-2/3">: {pemesananData?.Data_Pengguna?.Nama_Lengkap_Penerima || "Tidak tersedia"}</span>
+                                        </li>
+                                        <li className="flex justify-between">
+                                            <span className="font-semibold text-start w-1/2">Nomor Telepon Pengguna</span>
+                                            <span className="text-start w-2/3">: {pemesananData?.Data_Pengguna?.No_Telepon_Penerima || "Tidak tersedia"}</span>
+                                        </li>
+                                        <li className="flex justify-between">
+                                            <span className="font-semibold text-start w-1/2">Alamat Pengguna</span>
+                                            <span className="text-start w-2/3">: {pemesananData?.Data_Pengguna?.Alamat || "Tidak tersedia"}</span>
                                         </li>
                                     </ul>
                                 </div>
