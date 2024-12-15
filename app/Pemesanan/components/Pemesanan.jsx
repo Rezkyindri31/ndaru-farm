@@ -14,21 +14,10 @@ const PemesananProduk = () => {
         updateKuantitasKeranjang(index, kuantitasBaru, product.Harga);
     };
 
-    // if (memuat) {
-    //     return (
-    //         <div>
-    //             < tr >
-    //                 <td colSpan="5">
-    //                     <Skeleton count={5} height={40} />
-    //                 </td>
-    //             </tr >
-    //         </div >);
-    // }
-
     if (!keranjang || (!keranjang.Sayuran?.length && !keranjang.Sarana_Pertanian?.length)) {
         return (
             <div className='text-center border-2 border-blue-gray-800 rounded-lg shadow-xl p-1 my-12 mx-60 uppercase'>
-                <Typography variant="h2">Keranjang Anda kosong</Typography>
+                <Typography variant="h4">Keranjang Anda kosong</Typography>
             </div>
         );
     }

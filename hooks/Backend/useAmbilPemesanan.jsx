@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
 const useAmbilPemesanan = () => {
+    const [pemesananList, setPemesananList] = useState([]);
     const [pemesananData, setPemesananData] = useState(null);
     const [transaksiData, setTransaksiData] = useState(null);
     const [penggunaData, setPenggunaData] = useState(null);
@@ -28,28 +29,25 @@ const useAmbilPemesanan = () => {
 
                 if (querySnapshot.empty) {
                     setMemuatPemesanan(false);
-                    toast.error("Tidak ada pemesanan ditemukan.");
                     return;
                 }
+                const pemesananListData = querySnapshot.docs.map((pemesananDoc) => {
+                    return {
+                        ...pemesananDoc.data(),
+                        ID_Pemesanan: pemesananDoc.id,
+                    };
+                });
+                setPemesananList(pemesananListData);
 
-                const pemesananDoc = querySnapshot.docs[0];
-                const pemesananDataWithId = {
-                    ...pemesananDoc.data(),
-                    ID_Pemesanan: pemesananDoc.id,
-                };
-                setPemesananData(pemesananDataWithId);
-                if (pemesananDataWithId.ID_Transaksi) {
-                    await fetchTransaksiData(pemesananDataWithId.ID_Transaksi);
-                } else {
-                    toast.error("ID Transaksi tidak ditemukan di data pemesanan.");
+                for (const pemesanan of pemesananListData) {
+                    if (pemesanan.ID_Transaksi) {
+                        await fetchTransaksiData(pemesanan.ID_Transaksi);
+                    }
+
+                    if (pemesanan.ID_Pengguna) {
+                        await fetchPenggunaData(pemesanan.ID_Pengguna);
+                    }
                 }
-
-                if (pemesananDataWithId.ID_Pengguna) {
-                    await fetchPenggunaData(pemesananDataWithId.ID_Pengguna);
-                } else {
-                    toast.error("ID Transaksi tidak ditemukan di data pemesanan.");
-                }
-
             } catch (error) {
                 console.error("Gagal mengambil data pemesanan:", error);
                 toast.error("Gagal mengambil data pemesanan.");
@@ -66,7 +64,6 @@ const useAmbilPemesanan = () => {
 
                 if (querySnapshot.empty) {
                     setMemuatTransaksi(false);
-                    toast.error("Tidak ada transaksi yang ditemukan.");
                     return;
                 }
 
@@ -127,7 +124,7 @@ const useAmbilPemesanan = () => {
 
         fetchPemesanan();
     }, []);
-    return { pemesananData, memuatPemesanan, transaksiData, memuatTransaksi, penggunaData, memuatPengguna };
+    return { pemesananData, memuatPemesanan, transaksiData, memuatTransaksi, penggunaData, memuatPengguna, pemesananList };
 };
 
 export default useAmbilPemesanan;
