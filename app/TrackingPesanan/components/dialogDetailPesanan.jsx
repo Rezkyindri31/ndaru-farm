@@ -3,6 +3,8 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { Dialog, DialogHeader, DialogBody, Typography, Button, DialogFooter } from "@material-tailwind/react";
 import { FaTimes } from "react-icons/fa";
+import { IoIosSend } from "react-icons/io";
+import { HiTrash } from "react-icons/hi";
 import { LuPackagePlus, LuPackageCheck } from "react-icons/lu";
 import { LiaMoneyBillWaveSolid, LiaShippingFastSolid } from "react-icons/lia";
 import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
@@ -14,8 +16,8 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
     const { detailPengguna } = useTampilanPengguna();
     const { memuatHapus, errorHapus, hapusPemesanan } = useHapusPemesanan();
     const fileInputRef = useRef(null);
-    const [uploadedFileName, setUploadedFileName] = useState("");
     const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+    const [uploadedFile, setUploadedFile] = useState(null);
 
     const handleDownloadInvoice = () => {
         generateInvoicePDF(pemesananData);
@@ -52,20 +54,15 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            const fileName = file.name;
-            const fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+            // Simpan nama file dengan format dan batasan karakter
+            const fileName = file.name.length > 20
+                ? `${file.name.slice(0, 17)}...${file.name.split('.').pop()}`
+                : file.name;
 
-            const truncatedName = fileName.length > 15
-                ? `${fileName.substring(0, 12)}${fileExtension}`
-                : fileName;
-
-            setUploadedFileName(truncatedName);
-            console.log("File yang diunggah:", file);
+            setUploadedFile(fileName);
         }
     };
-    const buttonClassName = uploadedFileName
-        ? "bg-transparent border-2 border-light-blue-500 hover:shadow-md hover:bg-transparent text-light-blue-500 hover:scale-105"
-        : "bg-light-blue-500 border-2 border-light-blue-500 hover:text-light-blue-500 hover:border-2 hover:border-light-blue-500 hover:bg-transparent text-white hover:scale-95";
+
 
     return (
         <>
@@ -93,7 +90,6 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                     <h2 className="font-bold text-xl mb-6 text-center text-black">
                         Status Pengiriman
                     </h2>
-                    {/* Order Status Timeline */}
                     <div className="flex justify-between items-center">
                         <div className="flex flex-col items-center -mx-4">
                             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white">
@@ -213,13 +209,27 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                     </div>
                 </DialogBody>
                 <DialogFooter className="flex justify-between mb-2">
-                    <div className="space-x-5 ml-3">
-                        <Button
-                            className={buttonClassName}
-                            onClick={handleUploadClick}
-                        >
-                            {uploadedFileName || "Upload Bukti"}
-                        </Button>
+                    <div className="flex space-x-5 ml-3">
+                        {!uploadedFile && (
+                            <Button
+                                className=" bg-light-blue-500 border-2 border-light-blue-500 hover:text-light-blue-500 hover:border-2 hover:border-light-blue-500 hover:bg-transparent text-white hover:scale-95"
+                                onClick={handleUploadClick}
+                            >
+                                Upload Bukti
+                            </Button>
+                        )}
+                        {uploadedFile && (
+                            <div className="gap-2 text-light-blue-500 uppercase rounded-lg items-center flex">
+                                <Typography className="w-full border-2 border-light-blue-500 rounded-lg p-2">
+                                    {uploadedFile}
+                                </Typography>
+                                <IoIosSend className="w-14 h-10 p-1 bg-green-500 text-white rounded-lg cursor-pointer" />
+                                <HiTrash
+                                    className="w-14 h-10 p-1 bg-red-500 text-white rounded-lg cursor-pointer"
+                                    onClick={() => setUploadedFile(null)}
+                                />
+                            </div>
+                        )}
                         <input
                             type="file"
                             ref={fileInputRef}
