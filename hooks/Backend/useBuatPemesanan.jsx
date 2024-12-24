@@ -44,6 +44,7 @@ const useBuatPemesanan = () => {
                 Nama_Lengkap_Penerima: penggunaData.Nama_Lengkap_Penerima,
                 No_Telepon_Penerima: penggunaData.No_Telepon_Penerima,
                 Alamat_Penerima: penggunaData.Alamat_Penerima,
+                Email: penggunaData.Email,
             };
 
             const pemesananId = uuidv4().slice(0, 16);
