@@ -1,12 +1,19 @@
 "use client";
 import React from "react";
 import "@/app/globals.css";
-import { Typography } from "@material-tailwind/react";
+import {
+    Typography,
+    Menu,
+    Select,
+    Option,
+    Button,
+} from "@material-tailwind/react";
 import { Open_Sans } from "next/font/google";
 import Skeleton from 'react-loading-skeleton'
 import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
 import useAmbilKeranjang from "@/hooks/Backend/useAmbilKeranjang";
-import useBuatPemesanan from "@/hooks/Backend/useBuatPemesanan"; // Sesuaikan path
+import useBuatPemesanan from "@/hooks/Backend/useBuatPemesanan";
+import { FaChevronRight } from "react-icons/fa";
 
 
 const openSans = Open_Sans({
@@ -44,8 +51,8 @@ function KonfirmasiPemesanan() {
             <h1 className={`text-3xl font-bold mb-8 ${openSans.className}`}>Konfirmasi Pesanan</h1>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md border border-black">
-                    <h2 className={`text-xl font-semibold mb-4 ${openSans.className}`}>Detail Pesanan</h2>
-                    <ul className="space-y-4">
+                    <h2 className={`text-xl font-semibold mb-5 ${openSans.className}`}>Detail Pesanan</h2>
+                    <ul className="space-y-4 py-2 px-4">
                         {['Sayuran', 'Sarana_Pertanian']
                             .flatMap((kategori) => keranjang[kategori] || [])
                             .map((product, index) => (
@@ -61,7 +68,7 @@ function KonfirmasiPemesanan() {
                                 </li>
                             ))}
                     </ul>
-                    <div className="border-t mt-4 pt-4 space-y-2 text-sm">
+                    <div className="border-t mt-2 mb-4 px-2 py-4 space-y-3 text-sm">
                         <div className={`flex justify-between ${openSans.className}`}>
                             <span>Subtotal</span>
                             <span> {
@@ -87,30 +94,36 @@ function KonfirmasiPemesanan() {
                     </div>
                 </div>
                 <div>
-                    <h2 className={`text-xl font-semibold mb-4 ${openSans.className}`}>Alamat Penerima</h2>
-                    <div className="space-y-4 shadow-md">
-                        <div className="p-4 border rounded-lg border-black">
+                    <h3 className={`text-lg font-semibold mb-2 ${openSans.className}`}>Alamat Penerima</h3>
+                    <div className="space-y-4 shadow-md mb-2">
+                        <div className="px-4 py-2 border rounded-lg border-black">
                             <div className={`flex items-center justify-between ${openSans.className}`}>
-                                <span className="text-xl font-bold">Rumah</span>
+                                <span className="text-lg font-bold">Rumah</span>
                             </div>
-                            <p className={`mt-2 text-lg ${openSans.className}`}>
+                            <p className={`mt-1 text-md ${openSans.className}`}>
                                 {detailPengguna.Nama_Lengkap_Penerima || "Tidak tersedia"}
                             </p>
-                            <p className={`mt-1 text-lg ${openSans.className}`}>
+                            <p className={`mt-1 text-md ${openSans.className}`}>
                                 {detailPengguna.No_Telepon_Penerima || "Tidak tersedia"}
                             </p>
-                            <p className={`mt-1 text-lg ${openSans.className}`}>
+                            <p className={`mt-1 text-md ${openSans.className}`}>
                                 {detailPengguna.Alamat_Penerima || "Tidak tersedia"}
                             </p>
                         </div>
                     </div>
+                    <h3 className={`text-lg font-semibold mb-2 ${openSans.className}`}>Metode Pembayaran</h3>
+                    <Select size="lg" label="Pilih Metode Pembayaran" labelProps={{ className: "text-black" }} className="font-bold bg-green-700 bg-opacity-25">
+                        <Option className="">BCA Virtual Account (987654321012)</Option>
+                        <Option>BRI Virtual Account (8765432109876543)</Option>
+                        <Option>BNI Virtual Account (7654321098)</Option>
+                    </Select>
                     <div className="flex mt-4 justify-end items-center ml-6">
-                        <button
+                        <Button
                             onClick={handleCreatePemesanan}
                             disabled={memuatPesanan}
-                            className={`w-full mx-5 py-2 bg-green-700 rounded-md font-bold text-white ${openSans.className} hover:bg-white hover:text-green-700 hover:border hover:border-green700 transition duration-300 ease-in-out `}>
+                            className={`w-full mx-5 py-2 bg-green-700 border border-green-700 rounded-md font-bold text-white ${openSans.className} hover:bg-white hover:text-green-700 hover:border hover:border-green700 transition duration-300 ease-in-out `}>
                             {memuatPesanan ? "Sedang Membuat Pemesanan" : "Buat Pemesanan"}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

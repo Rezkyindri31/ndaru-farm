@@ -101,11 +101,11 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
 
                     </div>
                 </div>
-                <DialogBody className="mb-8 max-h-[600px] overflow-y-auto mx-5">
+                <DialogBody className=" max-h-[600px] overflow-y-auto mx-5">
                     <div className="text-base justify-center text-center font-bold">
                         <Toaster position="top-right" reverseOrder={false} />
                     </div>
-                    <h2 className="font-bold text-xl mb-6 text-center text-black">
+                    <h2 className="font-bold text-xl mb-4 text-center text-black">
                         Status Pengiriman
                     </h2>
                     <div className="flex justify-between items-center">
@@ -206,10 +206,10 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                             <span className="text-center text-sm">10-12-2024 - 08.30</span>
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-                        <div className="lg:col-span-1 bg-blue-gray-800 bg-opacity-15 shadow-lg p-6 rounded-lg">
-                            <Typography variant="h4" className="font-semibold mb-4 text-black uppercase underline underline-offset-8">Detail Pesanan</Typography>
-                            <ul className="space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
+                        <div className="lg:col-span-1 bg-blue-gray-800 bg-opacity-15 shadow-lg p-5 rounded-lg">
+                            <Typography variant="h4" className="font-semibold mb-4 text-black uppercase">Detail Pesanan</Typography>
+                            <ul className="space-y-4 px-4 py-2">
                                 {pemesananData?.Data_Pesanan?.map((item, index) => (
                                     <li key={index} className="flex justify-between items-center text-sm text-gray-700">
                                         <div className="flex items-center space-x-2">
@@ -229,7 +229,7 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                                     </li>
                                 ))}
                             </ul>
-                            <div className="border-t mt-4 pt-4 space-y-2 text-sm">
+                            <div className="border-t mt-4 px-2 py-4 space-y-3 text-sm">
                                 <div className="flex justify-between">
                                     <span className="text-black">Subtotal</span>
                                     <span className="text-black">Rp{pemesananData?.Sub_Total?.toLocaleString()}</span>
@@ -242,12 +242,16 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                                     <span className="text-black">Total</span>
                                     <span className="text-black">Rp{pemesananData?.Total?.toLocaleString()}</span>
                                 </div>
+                                <div className="flex justify-between font-bold text-md">
+                                    <span className="text-black">Metode Pembayaran</span>
+                                    <span className="text-black">BCA Virtual Account (987654321012)</span>
+                                </div>
                             </div>
                         </div>
                         <div className="space-y-4">
                             <div className="p-6 bg-green-700 bg-opacity-50 shadow-md rounded-lg space-y-8">
                                 <div className="grid grid-cols-1 items-center justify-between">
-                                    <Typography variant="h4" className="text-white font-bold uppercase underline underline-offset-8 ">Detail Pengguna</Typography>
+                                    <Typography variant="h4" className="text-white font-bold uppercase ">Detail Pengguna</Typography>
                                     <ul className="mt-2 text-md text-black space-y-1">
                                         <li className="flex justify-between">
                                             <span className="font-semibold text-start w-1/2">Nama Lengkap</span>
@@ -268,7 +272,7 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                                     </ul>
                                 </div>
                                 <div className="grid grid-cols-1 items-center justify-between">
-                                    <Typography variant="h4" className="text-white font-bold uppercase underline underline-offset-8 ">Detail Penerima</Typography>
+                                    <Typography variant="h4" className="text-white font-bold uppercase ">Detail Penerima</Typography>
                                     <ul className="mt-2 text-md text-black space-y-1">
                                         <li className="flex justify-between">
                                             <span className="font-semibold text-start w-1/2">Penerima</span>
