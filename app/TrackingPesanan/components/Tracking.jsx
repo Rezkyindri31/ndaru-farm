@@ -10,15 +10,14 @@ import { Typography } from "@material-tailwind/react";
 
 function PesananSaya() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [selectedPemesanan, setSelectedPemesanan] = useState(null); // State untuk menyimpan data pesanan yang dipilih
+    const [selectedPemesanan, setSelectedPemesanan] = useState(null);
 
     const handleOpenDialog = (value, pemesananData) => {
         setSelectedPemesanan(pemesananData);
         setIsDialogOpen(value);
     };
 
-    const { pemesananData, transaksiData, penggunaData, pemesananList } = useAmbilPemesanan();
-
+    const { pemesananData, transaksiData, penggunaData, pengirimanData, pemesananList } = useAmbilPemesanan();
     return (
         <div className="py-10 px-4 lg:px-20">
             <Typography variant="h1" className="text-3xl font-bold mb-6">Pesanan Saya</Typography >
@@ -35,14 +34,14 @@ function PesananSaya() {
                             <div className="flex justify-end items-center space-x-2">
                                 <Typography
                                     variant="paragraph"
-                                    className={`border p-1 rounded-md ${transaksiData?.Status_Pembayaran === 'Ditolak' || transaksiData?.Status_Pembayaran === 'Belum Lunas' ? 'border-red-700 text-red-700' : 'border-green-700 text-green-700'}`}
+                                    className={`border p-1 rounded-md ${pemesananData?.Status_Pemesanan === 'Belum Selesai' ? 'border-red-700 text-red-700' : 'border-green-700 text-green-700'}`}
                                 >
-                                    {transaksiData?.Status_Pembayaran}
+                                    {pemesananData?.Status_Pemesanan}
                                 </Typography>
                                 <FaInfoCircle
                                     size="24"
                                     color="green"
-                                    onClick={() => handleOpenDialog(true, pemesananData)} // Mengirimkan data pesanan ke dialog
+                                    onClick={() => handleOpenDialog(true, pemesananData)}
                                     className="cursor-pointer"
                                 />
                             </div>
@@ -82,9 +81,10 @@ function PesananSaya() {
             <DialogDetailPesanan
                 isOpen={isDialogOpen}
                 handleClose={() => setIsDialogOpen(false)}
-                pemesananData={selectedPemesanan} // Mengirim data pesanan ke dalam dialog
+                pemesananData={selectedPemesanan}
                 transaksiData={transaksiData}
                 penggunaData={penggunaData}
+                pengirimanData={pengirimanData}
             />
         </div>
     );

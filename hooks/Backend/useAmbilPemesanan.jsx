@@ -7,10 +7,12 @@ const useAmbilPemesanan = () => {
     const [pemesananList, setPemesananList] = useState([]);
     const [pemesananData, setPemesananData] = useState(null);
     const [transaksiData, setTransaksiData] = useState(null);
+    const [pengirimanData, setPengirimanData] = useState(null);
     const [penggunaData, setPenggunaData] = useState(null);
     const [memuatPemesanan, setMemuatPemesanan] = useState(false);
     const [memuatTransaksi, setMemuatTransaksi] = useState(false);
     const [memuatPengguna, setMemuatPengguna] = useState(false);
+    const [memuatPengiriman, setMemuatPengiriman] = useState(false);
 
     useEffect(() => {
         const fetchPemesanan = async () => {
@@ -46,6 +48,10 @@ const useAmbilPemesanan = () => {
 
                     if (pemesanan.ID_Pengguna) {
                         await fetchPenggunaData(pemesanan.ID_Pengguna);
+                    }
+
+                    if (pemesanan.ID_Pengiriman) {
+                        await fetchPengirimanData(pemesanan.ID_Pengiriman);
                     }
                 }
             } catch (error) {
@@ -121,10 +127,43 @@ const useAmbilPemesanan = () => {
             }
         };
 
+        const fetchPengirimanData = async (ID_Pengiriman) => {
+            setMemuatPengguna(true);
+            try {
+                const pengirimanRef = collection(firestore, "pengiriman");
+                const querySnapshot = await getDocs(pengirimanRef);
+
+                if (querySnapshot.empty) {
+                    setMemuatPengguna(false);
+                    toast.error("Tidak ada pengguna yang ditemukan.");
+                    return;
+                }
+
+                const pengirimanDoc = querySnapshot.docs.find((doc) => doc.id === ID_Pengiriman);
+
+                if (!pengirimanDoc) {
+                    setMemuatPengiriman(false);
+                    toast.error("Tidak ada pengguna yang cocok dengan ID tersebut.");
+                    return;
+                }
+
+                const pengirimanDataWithId = {
+                    ...pengirimanDoc.data(),
+                    ID_Pengiriman: pengirimanDoc.id,
+                };
+                setPengirimanData(pengirimanDataWithId);
+            } catch (error) {
+                console.error("Gagal mengambil data pengguna:", error);
+                toast.error("Gagal mengambil data pengguna.");
+            } finally {
+                setMemuatPengguna(false);
+            }
+        };
+
 
         fetchPemesanan();
     }, []);
-    return { pemesananData, memuatPemesanan, transaksiData, memuatTransaksi, penggunaData, memuatPengguna, pemesananList };
+    return { pemesananData, memuatPemesanan, transaksiData, memuatTransaksi, penggunaData, memuatPengguna, pengirimanData, memuatPengiriman, pemesananList };
 };
 
 export default useAmbilPemesanan;

@@ -9,26 +9,22 @@ import { LuPackagePlus, LuPackageCheck } from "react-icons/lu";
 import { LiaMoneyBillWaveSolid, LiaShippingFastSolid } from "react-icons/lia";
 import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
 import useHapusPemesanan from "@/hooks/Backend/usePembatalanPemesanan";
+import useKirimBuktiTransaksi from "@/hooks/Backend/usePengirimanBuktiTransaksi";
+import usePemesananSelesai from "@/hooks/Backend/usePemesananSelesai";
 import { generateInvoicePDF } from "@/app/TrackingPesanan/components/generateInvoice";
 import { Toaster } from "react-hot-toast";
 
-const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData }) => {
-    const { detailPengguna } = useTampilanPengguna();
-    const { memuatHapus, errorHapus, hapusPemesanan } = useHapusPemesanan();
-    const fileInputRef = useRef(null);
-    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-    const [uploadedFile, setUploadedFile] = useState(null);
 
+const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData, pengirimanData }) => {
+    const { detailPengguna } = useTampilanPengguna();
+    const { memuatHapus, errorHapus, hapusPemesanan, isConfirmDialogOpen,
+        setIsConfirmDialogOpen, handleConfirmDialogOpen,
+        handleConfirmDialogClose } = useHapusPemesanan();
+    const fileInputRef = useRef(null);
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const { memuatKirim, errorKirim, kirimBuktiTransaksi } = useKirimBuktiTransaksi();
     const handleDownloadInvoice = () => {
         generateInvoicePDF(pemesananData);
-    };
-
-    const handleConfirmDialogOpen = () => {
-        setIsConfirmDialogOpen(true);
-    };
-
-    const handleConfirmDialogClose = () => {
-        setIsConfirmDialogOpen(false);
     };
 
     const handlePembatalanPesanan = async () => {
@@ -45,6 +41,8 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
         }
     };
 
+
+
     const handleUploadClick = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
@@ -54,7 +52,6 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            // Simpan nama file dengan format dan batasan karakter
             const fileName = file.name.length > 20
                 ? `${file.name.slice(0, 17)}...${file.name.split('.').pop()}`
                 : file.name;
@@ -63,7 +60,22 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
         }
     };
 
+    const handleSendFile = () => {
+        if (uploadedFile && !memuatKirim) {
+            const ID_Transaksi = pemesananData?.ID_Transaksi;
+            const ID_Pemesanan = pemesananData?.ID_Pemesanan;
+            const fileBukti = fileInputRef.current.files[0];
 
+            if (fileBukti) {
+                kirimBuktiTransaksi(ID_Transaksi, ID_Pemesanan, fileBukti);
+            }
+        }
+    };
+
+    const handleUpdateStatus = async () => {
+        const ID_Pemesanan = pemesananData?.ID_Pemesanan;
+        await usePemesananSelesai(ID_Pemesanan);
+    };
     return (
         <>
             <Dialog open={isOpen} size="xl" handler={handleClose}>
@@ -80,7 +92,13 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                     <div className="flex mr-4">
                         <h2>No. Pesanan.  {pemesananData?.ID_Pemesanan}</h2>
                         <p className="text-black font-bold mx-4">|</p>
-                        <p className="text-green-500 font-bold">PESANAN SELESAI</p>
+                        <p
+                            className={`font-bold ${pemesananData?.Status_Pemesanan === "Belum Selesai" ? "text-red-500" : "text-green-500"
+                                }`}
+                        >
+                            {pemesananData?.Status_Pemesanan}
+                        </p>
+
                     </div>
                 </div>
                 <DialogBody className="mb-8 max-h-[600px] overflow-y-auto mx-5">
@@ -91,30 +109,93 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                         Status Pengiriman
                     </h2>
                     <div className="flex justify-between items-center">
-                        <div className="flex flex-col items-center -mx-4">
-                            <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white">
-                                <LiaMoneyBillWaveSolid size={30} />
-                            </div>
-                            <span className="mt-2 text-center text-green-500">
-                                Pembayaran Berhasil
-                            </span>
-                            <span className="text-center text-sm">10-12-2024 - 08.30</span>
-                        </div>
-                        <div className="flex-1 mb-12 -mx-6 h-2 rounded-md bg-green-500"></div>
                         <div className="flex flex-col items-center">
                             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white">
                                 <LuPackagePlus size={30} />
                             </div>
                             <span className="mt-2 text-center text-green-500">Pesanan Dibuat</span>
-                            <span className="text-center text-sm">10-12-2024 - 08.30</span>
+                            <span className="text-center text-sm"> {pemesananData?.Tanggal_Pemesanan
+                                ? new Date(pemesananData.Tanggal_Pemesanan).toLocaleString('id-ID', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                }).replace(',', ' -').replace('.', ':')
+                                : '...'}</span>
                         </div>
-                        <div className="flex-1 mb-12 -mx-6 h-2 rounded-md bg-green-500"></div>
+                        <div
+                            className={`flex-1 mb-12 -mx-6 h-2 rounded-md ${transaksiData?.Status_Pembayaran === "Belum Lunas"
+                                ? "bg-blue-gray-500 bg-opacity-55"
+                                : "bg-green-500"
+                                }`}
+                        ></div>
                         <div className="flex flex-col items-center">
-                            <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white">
+                            <div
+                                className={`w-16 h-16 rounded-full flex items-center justify-center ${transaksiData?.Status_Pembayaran === "Belum Lunas"
+                                    ? "bg-blue-gray-500 bg-opacity-45 text-blue-gray-600"
+                                    : "bg-green-500 text-white"
+                                    }`}
+                            >
+                                <LiaMoneyBillWaveSolid size={30} />
+                            </div>
+                            <span
+                                className={`mt-2 text-center ${transaksiData?.Status_Pembayaran === "Belum Lunas"
+                                    ? "text-blue-gray-500"
+                                    : "text-green-500"
+                                    }`}
+                            >
+                                Pembayaran Lunas
+                            </span>
+                            <span className="text-center text-sm">
+                                {transaksiData?.Tanggal_Pembayaran
+                                    ? new Date(transaksiData.Tanggal_Pembayaran)
+                                        .toLocaleString('id-ID', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit',
+                                        })
+                                        .replace(',', ' -')
+                                        .replace('.', ':')
+                                    : '...'}
+                            </span>
+                        </div>
+                        <div
+                            className={`flex-1 mb-12 -mx-6 h-2 rounded-md ${pengirimanData?.Status_Pengiriman === "Sedang Dikirim"
+                                ? "bg-green-500"
+                                : "bg-blue-gray-500 bg-opacity-55"
+                                }`}
+                        ></div>
+                        <div className="flex flex-col items-center">
+                            <div className={`w-16 h-16 rounded-full flex items-center justify-center ${pengirimanData?.Status_Pengiriman === "Sedang Dikirim"
+                                ? "bg-green-500 text-white"
+                                : "bg-blue-gray-500 bg-opacity-45 text-blue-gray-600"
+                                }`}>
                                 <LiaShippingFastSolid size={30} />
                             </div>
-                            <span className="mt-2 text-center text-green-500">Pesanan Dikirim</span>
-                            <span className="text-center text-sm">10-12-2024 - 08.30</span>
+                            <span className={`mt-2 text-center ${pengirimanData?.Status_Pengiriman === "Sedang Dikirim"
+                                ? "text-green-500"
+                                : "text-blue-gray-500"
+                                }`}>Pesanan Dikirim</span>
+                            <span className="text-center text-sm">
+                                {pengirimanData?.Tanggal_Pengiriman
+                                    ? new Date(pengirimanData.Tanggal_Pengiriman)
+                                        .toLocaleString('id-ID', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit',
+                                        })
+                                        .replace(',', ' -')
+                                        .replace('.', ':')
+                                    : '...'}
+                            </span>
                         </div>
                         <div className="flex-1 mb-12 -mx-6 h-2 rounded-md bg-blue-gray-500 bg-opacity-55"></div>
                         <div className="flex flex-col items-center">
@@ -123,7 +204,6 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                             </div>
                             <span className="mt-2 text-center text-blue-gray-600">Pesanan Selesai</span>
                             <span className="text-center text-sm">10-12-2024 - 08.30</span>
-
                         </div>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
@@ -210,9 +290,9 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                 </DialogBody>
                 <DialogFooter className="flex justify-between mb-2">
                     <div className="flex space-x-5 ml-3">
-                        {!uploadedFile && (
+                        {transaksiData?.Status_Pembayaran !== "Lunas" && !uploadedFile && (
                             <Button
-                                className=" bg-light-blue-500 border-2 border-light-blue-500 hover:text-light-blue-500 hover:border-2 hover:border-light-blue-500 hover:bg-transparent text-white hover:scale-95"
+                                className="bg-light-blue-500 border-2 border-light-blue-500 hover:text-light-blue-500 hover:border-2 hover:border-light-blue-500 hover:bg-transparent text-white hover:scale-95"
                                 onClick={handleUploadClick}
                             >
                                 Upload Bukti
@@ -223,10 +303,15 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                                 <Typography className="w-full border-2 border-light-blue-500 rounded-lg p-2">
                                     {uploadedFile}
                                 </Typography>
-                                <IoIosSend className="w-14 h-10 p-1 bg-green-500 text-white rounded-lg cursor-pointer" />
+                                <IoIosSend
+                                    className={`w-14 h-10 p-1 bg-green-500 text-white rounded-lg cursor-pointer ${memuatKirim || errorKirim ? "opacity-50 pointer-events-none" : ""}`}
+                                    onClick={handleSendFile}
+                                    disabled={memuatKirim || errorKirim}
+                                />
                                 <HiTrash
-                                    className="w-14 h-10 p-1 bg-red-500 text-white rounded-lg cursor-pointer"
+                                    className={`w-14 h-10 p-1 bg-red-500 text-white rounded-lg cursor-pointer ${memuatKirim || errorKirim ? "opacity-50 pointer-events-none" : ""}`}
                                     onClick={() => setUploadedFile(null)}
+                                    disabled={memuatKirim || errorKirim}
                                 />
                             </div>
                         )}
@@ -241,19 +326,31 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                         </Button>
                     </div>
                     <div className="space-x-5 mr-3">
+                        {
+                            transaksiData?.Status_Pembayaran !== "Lunas" && (
+                                <Button
+                                    className="border-2 border-red-800 text-red-800 hover:bg-red-800 hover:text-white"
+                                    onClick={handleConfirmDialogOpen}
+                                    disabled={memuatHapus}
+                                >
+                                    {memuatHapus ? "Memproses..." : "Pembatalan Pesanan"}
+                                </Button>
+                            )
+                        }
                         <Button
-                            className="border-2 border-red-800 text-red-800 hover:bg-red-800 hover:text-white"
-                            onClick={handleConfirmDialogOpen}
-                            disabled={memuatHapus}
+                            color="green"
+                            onClick={handleUpdateStatus}
+                            className={pemesananData?.Status_Pemesanan === "Selesai" ? "hidden" : ""}
                         >
-                            {memuatHapus ? "Memproses..." : "Pembatalan Pesanan"}
+                            Selesai Pesanan
                         </Button>
-                        <Button color="green" disabled>Selesai Pesanan</Button>
                     </div>
                 </DialogFooter>
-            </Dialog>
+            </Dialog >
 
-            <Dialog open={isConfirmDialogOpen} size="xs" handler={handleConfirmDialogClose}>
+
+            {/* Dialog Pembatalan Pemesanan */}
+            < Dialog open={isConfirmDialogOpen} size="xs" handler={handleConfirmDialogClose} >
                 <DialogHeader>Konfirmasi Pembatalan</DialogHeader>
                 <DialogBody>
                     <Typography className="text-center text-sm">
@@ -268,7 +365,7 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                         </Button>
                     </div>
                 </DialogBody>
-            </Dialog>
+            </Dialog >
         </>
     );
 };

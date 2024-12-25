@@ -59,6 +59,8 @@ const useBuatPemesanan = () => {
                 Total: keranjangData.Total,
                 Sub_Total: keranjangData.Sub_Total,
                 Biaya_Pengiriman: keranjangData.Biaya_Pengiriman,
+                Status_Pemesanan: "Belum Selesai",
+                Tanggal_Pemesanan: new Date().toISOString(),
             });
 
             const transaksiRef = doc(firestore, "transaksi", transaksiId);

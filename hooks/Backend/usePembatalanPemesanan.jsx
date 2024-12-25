@@ -5,6 +5,7 @@ import { doc, deleteDoc, getDoc } from "firebase/firestore";
 
 const useHapusPemesanan = () => {
     const [memuatHapus, setMemuatHapus] = useState(false);
+    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
     const [errorHapus, setErrorHapus] = useState(null);
 
     const hapusPemesanan = async (ID_Pemesanan, ID_Transaksi) => {
@@ -38,10 +39,22 @@ const useHapusPemesanan = () => {
         }
     };
 
+    const handleConfirmDialogOpen = () => {
+        setIsConfirmDialogOpen(true);
+    };
+
+    const handleConfirmDialogClose = () => {
+        setIsConfirmDialogOpen(false);
+    };
+
     return {
         memuatHapus,
         errorHapus,
         hapusPemesanan,
+        isConfirmDialogOpen,
+        setIsConfirmDialogOpen,
+        handleConfirmDialogOpen,
+        handleConfirmDialogClose
     };
 };
 
