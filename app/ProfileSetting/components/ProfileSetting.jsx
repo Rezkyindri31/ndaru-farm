@@ -4,7 +4,7 @@ import { Open_Sans } from "next/font/google";
 import { FaUserEdit } from "react-icons/fa";
 import toast, { Toaster } from "react-hot-toast";
 import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
-import useProfileEdit from "@/hooks/Backend/useEditProfile"; // Import the new hook
+import useProfileEdit from "@/hooks/Backend/useEditProfile";
 
 const openSans = Open_Sans({
     subsets: ["latin"],

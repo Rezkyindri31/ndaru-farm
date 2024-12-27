@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaMapMarkedAlt, FaClock, FaAddressBook } from "react-icons/fa";
 import "@/app/globals.css";
+import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
+import useKirimMasukan from "@/hooks/Backend/useMasukkanKomentar";
 import { Card, Input, Textarea, Button } from "@material-tailwind/react";
 
 function Kontak() {
+    const { detailPengguna } = useTampilanPengguna();
+    const { kirimMasukan, loading, pesan, setPesan } = useKirimMasukan();
+
+    const handleMasukSaran = async (e) => {
+        e.preventDefault();
+        await kirimMasukan({
+            Nama: detailPengguna?.Nama_Lengkap || "Anonim",
+            Email: detailPengguna?.Email || "Tidak Ada Email",
+            pesan,
+        });
+        setPesan("");
+    };
     return (
         <div className="mx-10 lg:py-10 z-10 relative flex flex-col lg:flex-row lg:space-x-10 justify-center items-start">
-            <div className="flex-1 space-y-10 border-2 border-secondary bg-gray rounded-xl px-7 py-12">
+            <div className="flex-1 space-y-10 border-2 border-secondary bg-white rounded-xl px-7 py-12">
                 <div className="flex flex-col items-start space-y-3">
                     <h1 className="text-2xl font-bold flex items-center">
                         <FaMapMarkedAlt className="mr-2 text-secondary" /> Alamat Toko
@@ -33,31 +47,36 @@ function Kontak() {
             <div className="flex-1 mt-10 lg:mt-0 border-2 border-secondary rounded-xl">
                 <Card className="py-12 px-10">
                     <h2 className="text-2xl font-bold text-center text-darkgray mb-6">Kirim Masukan</h2>
-                    <form className="space-y-4">
+                    <form className="space-y-4" onSubmit={handleMasukSaran}>
                         <Input
                             type="text"
                             label="Nama"
                             size="lg"
-                            className="bg-green-700"
+                            value={detailPengguna.Nama_Lengkap}
+                            readOnly
                         />
                         <Input
                             type="email"
                             label="Email"
                             size="lg"
-                            className="bg-green-700"
+                            value={detailPengguna.Email}
+                            readOnly
                         />
                         <Textarea
                             label="Pesan"
                             size="lg"
-                            className="bg-green-700"
+                            onChange={(e) => setPesan(e.target.value)}
+                            required
                         />
                         <div className="text-center w-full">
                             <Button
                                 color="green"
                                 className="bg-secondary border-2 font-bold text-md py-2 px-32 hover:bg-transparent hover:border-2 hover:border-secondary hover:text-secondary"
                                 ripple={true}
+                                type="submit"
+                                disabled={loading}
                             >
-                                Kirim
+                                {loading ? "Mengirim..." : "Kirim"}
                             </Button>
                         </div>
                     </form>

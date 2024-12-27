@@ -2,7 +2,6 @@
 import React from "react";
 import Image from "next/image";
 import { Typography, Button, IconButton } from "@/app/MTailwind";
-import { TiStarFullOutline, TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 import { BsCartPlusFill } from "react-icons/bs";
 import useStateSaranaPertanian from "@/hooks/Frontend/useTampilkanSaranaPertanian";
 import useVerifikasiLogin from '@/hooks/Backend/useVerifikasiLogin';
@@ -81,13 +80,6 @@ function SaranaPertanian() {
                         ))}
                     </div>
                     <div className="flex justify-center mt-4">
-                        <IconButton
-                            icon={<TiArrowLeftThick />}
-                            onClick={prev}
-                            disabled={activePage === 1}
-                            className="p-2"
-                            aria-label="Previous page"
-                        />
                         <div className="flex items-center space-x-2">
                             {Array.from({ length: totalPages }, (_, index) => (
                                 <Button
@@ -100,13 +92,6 @@ function SaranaPertanian() {
                                 </Button>
                             ))}
                         </div>
-                        <IconButton
-                            icon={<TiArrowRightThick />}
-                            onClick={next}
-                            disabled={activePage === totalPages}
-                            className="p-2"
-                            aria-label="Next page"
-                        />
                     </div>
                 </>
             ) : (

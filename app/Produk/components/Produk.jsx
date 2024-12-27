@@ -2,7 +2,6 @@
 import React from "react";
 import Image from "next/image";
 import { Typography, Button, IconButton, Popover, PopoverHandler, PopoverContent } from "@/app/MTailwind";
-import { TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 import {
     FaCircleInfo,
 } from "react-icons/fa6";
@@ -94,13 +93,6 @@ function Produk() {
                         ))}
                     </div>
                     <div className="flex justify-center mt-4">
-                        <IconButton
-                            icon={<TiArrowLeftThick />}
-                            onClick={prev}
-                            disabled={activePage === 1}
-                            className="p-2"
-                            aria-label="Previous page"
-                        />
                         <div className="flex items-center space-x-2">
                             {Array.from({ length: totalPages }, (_, index) => (
                                 <Button
@@ -113,13 +105,6 @@ function Produk() {
                                 </Button>
                             ))}
                         </div>
-                        <IconButton
-                            icon={<TiArrowRightThick />}
-                            onClick={next}
-                            disabled={activePage === totalPages}
-                            className="p-2"
-                            aria-label="Next page"
-                        />
                     </div>
                 </>
             ) : (
