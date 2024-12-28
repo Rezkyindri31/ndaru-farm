@@ -7,6 +7,7 @@ const updateStatusPemesanan = async (ID_Pemesanan) => {
         const pemesananRef = doc(firestore, "pemesanan", ID_Pemesanan);
         await updateDoc(pemesananRef, {
             Status_Pemesanan: "Selesai",
+            Tanggal_Pemesanan_Selesai: new Date().toISOString(),
         });
 
         toast.success("Status pemesanan berhasil diperbarui menjadi Selesai.");

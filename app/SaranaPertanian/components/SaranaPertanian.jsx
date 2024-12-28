@@ -14,14 +14,17 @@ function SaranaPertanian() {
         totalPages,
         getCurrentFasilitas,
         getItemProps,
-        next,
-        prev,
     } = useStateSaranaPertanian();
 
     const currentSarana = getCurrentFasilitas() || [];
+    const sortedSarana = currentSarana.sort((a, b) => {
+        const dateA = new Date(a.Tanggal_Dibuat);
+        const dateB = new Date(b.Tanggal_Dibuat);
+        return dateB - dateA;
+    });
     return (
         <div className="h-full my-16">
-            {currentSarana.length > 0 ? (
+            {sortedSarana.length > 0 ? (
                 <>
                     <div className="flex items-center justify-center gap-4 uppercase font-black pt-2">
                         <h1 className="text-4xl text-secondary underline underline-offset-8">Sarana Pertanian</h1>
@@ -33,7 +36,7 @@ function SaranaPertanian() {
                         </Typography>
                     </div>
                     <div className="saranapertanian-container grid grid-cols-1 gap-1 py-6 lg:grid-cols-3 lg:gap-6 justify-items-center px-5 lg:px-36 lg:py-4">
-                        {currentSarana.map((fasilitas) => (
+                        {sortedSarana.map((fasilitas) => (
                             <div key={fasilitas.id} className="relative flex flex-col my-6 bg-white border border-gray rounded-lg shadow-lg mx-5 p-12 w-auto transition-transform duration-300 ease-in-out hover:shadow-none hover:border-none hover:scale-110">
                                 <div className="relative h-72 m-2.5 overflow-hidden text-white rounded-md">
                                     <Image src={fasilitas.Gambar}

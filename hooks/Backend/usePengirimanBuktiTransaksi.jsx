@@ -3,7 +3,7 @@ import { firestore, storage } from "@/lib/firebaseConfig";
 import { toast } from "react-hot-toast";
 import { doc, updateDoc, getDoc, collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { v4 as uuidv4 } from "uuid"; // Import UUID to generate unique IDs
+import { v4 as uuidv4 } from "uuid";
 
 const useKirimBuktiTransaksi = () => {
     const [memuatKirim, setMemuatKirim] = useState(false);
@@ -20,6 +20,7 @@ const useKirimBuktiTransaksi = () => {
             if (!transaksiSnap.exists()) {
                 throw new Error(`Transaksi dengan ID ${ID_Transaksi} tidak ditemukan.`);
             }
+
             const storageRef = ref(storage, `Bukti_Transaksi/${ID_Transaksi}/${fileBukti.name}`);
             await uploadBytes(storageRef, fileBukti);
             const fileUrl = await getDownloadURL(storageRef);
@@ -60,5 +61,6 @@ const useKirimBuktiTransaksi = () => {
         kirimBuktiTransaksi,
     };
 };
+
 
 export default useKirimBuktiTransaksi;

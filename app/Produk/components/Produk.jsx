@@ -23,12 +23,18 @@ function Produk() {
     } = useStateProduk();
 
     const currentProducts = getCurrentProducts() || [];
+    const sortedProducts = currentProducts.sort((a, b) => {
+        const dateA = new Date(a.Tanggal_Dibuat);
+        const dateB = new Date(b.Tanggal_Dibuat);
+        return dateB - dateA;
+    });
+
     return (
         <div className="h-full my-16">
-            {currentProducts.length > 0 ? (
+            {sortedProducts.length > 0 ? (
                 <>
                     <div className="produk-container grid grid-cols-1 gap-1 py-6 lg:grid-cols-3 lg:gap-6 justify-items-center px-5 lg:px-36 lg:py-4">
-                        {currentProducts.map((product) => (
+                        {sortedProducts.map((product) => (
                             <div
                                 key={product.id}
                                 className="relative flex flex-col my-6 bg-white border border-gray rounded-lg shadow-lg mx-5 p-6 w-auto transition-all duration-300 ease-in-out hover:shadow-2xl hover:border-none hover:scale-105"

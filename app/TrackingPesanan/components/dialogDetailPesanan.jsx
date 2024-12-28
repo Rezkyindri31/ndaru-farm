@@ -165,22 +165,32 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                             </span>
                         </div>
                         <div
-                            className={`flex-1 mb-12 -mx-6 h-2 rounded-md ${pengirimanData?.Status_Pengiriman === "Sedang Dikirim"
+                            className={`flex-1 mb-12 -mx-6 h-2 rounded-md ${transaksiData?.Status_Pembayaran === "Lunas"
                                 ? "bg-green-500"
                                 : "bg-blue-gray-500 bg-opacity-55"
                                 }`}
                         ></div>
                         <div className="flex flex-col items-center">
-                            <div className={`w-16 h-16 rounded-full flex items-center justify-center ${pengirimanData?.Status_Pengiriman === "Sedang Dikirim"
-                                ? "bg-green-500 text-white"
-                                : "bg-blue-gray-500 bg-opacity-45 text-blue-gray-600"
+                            <div className={`w-16 h-16 rounded-full flex items-center justify-center 
+    ${transaksiData?.Status_Pembayaran === "Lunas"
+                                    ? (pengirimanData?.Status_Pengiriman === "Sedang Dikirim"
+                                        ? "bg-green-500 text-white"
+                                        : "bg-blue-gray-500 bg-opacity-45 text-blue-gray-600")
+                                    : "bg-blue-gray-500 bg-opacity-45 text-blue-gray-600"
                                 }`}>
                                 <LiaShippingFastSolid size={30} />
                             </div>
-                            <span className={`mt-2 text-center ${pengirimanData?.Status_Pengiriman === "Sedang Dikirim"
-                                ? "text-green-500"
-                                : "text-blue-gray-500"
-                                }`}>Pesanan Dikirim</span>
+
+                            <span className={`mt-2 text-center 
+    ${transaksiData?.Status_Pembayaran === "Lunas"
+                                    ? (pengirimanData?.Status_Pengiriman === "Sedang Dikirim"
+                                        ? "text-green-500"
+                                        : "text-blue-gray-500")
+                                    : "text-gray-500"
+                                }`}>
+                                Pesanan Dikirim
+                            </span>
+
                             <span className="text-center text-sm">
                                 {pengirimanData?.Tanggal_Pengiriman
                                     ? new Date(pengirimanData.Tanggal_Pengiriman)
@@ -197,13 +207,38 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                                     : '...'}
                             </span>
                         </div>
-                        <div className="flex-1 mb-12 -mx-6 h-2 rounded-md bg-blue-gray-500 bg-opacity-55"></div>
+                        <div
+                            className={`flex-1 mb-12 -mx-6 h-2 rounded-md ${pemesananData?.Status_Pemesanan === "Selesai"
+                                ? "bg-green-500"
+                                : "bg-blue-gray-500 bg-opacity-55"
+                                }`}
+                        ></div>
                         <div className="flex flex-col items-center">
-                            <div className="w-16 h-16 bg-blue-gray-500 bg-opacity-45 rounded-full flex items-center justify-center text-blue-gray-600">
+                            <div
+                                className={`w-16 h-16 rounded-full flex items-center justify-center ${pemesananData?.Status_Pemesanan === 'Belum Selesai'
+                                    ? 'bg-blue-gray-500 bg-opacity-45 text-blue-gray-600'
+                                    : 'bg-green-500 text-white'}
+  `}
+                            >
                                 <LuPackageCheck size={30} />
                             </div>
+
                             <span className="mt-2 text-center text-blue-gray-600">Pesanan Selesai</span>
-                            <span className="text-center text-sm">10-12-2024 - 08.30</span>
+                            <span className="text-center text-sm">
+                                {pemesananData?.Tanggal_Pemesanan_Selesai
+                                    ? new Date(pemesananData.Tanggal_Pemesanan_Selesai)
+                                        .toLocaleString('id-ID', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit',
+                                        })
+                                        .replace(',', ' -')
+                                        .replace('.', ':')
+                                    : '...'}
+                            </span>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
@@ -242,9 +277,9 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                                     <span className="text-black">Total</span>
                                     <span className="text-black">Rp{pemesananData?.Total?.toLocaleString()}</span>
                                 </div>
-                                <div className="flex justify-between font-bold text-md">
+                                <div className="flex justify-between font-bold text-md pt-3">
                                     <span className="text-black">Metode Pembayaran</span>
-                                    <span className="text-black">BCA Virtual Account (987654321012)</span>
+                                    <span className="text-black">{transaksiData?.Metode_Pembayaran}</span>
                                 </div>
                             </div>
                         </div>

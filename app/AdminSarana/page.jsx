@@ -1,32 +1,29 @@
 "use client";
 import { useState } from 'react';
 import { Button, Input, Textarea } from '@material-tailwind/react';
-import useMasukanSayuran from '@/hooks/Backend/useMasukkanSayuran';
+import useMasukanSaranaPertanian from '@/hooks/Backend/useMasukkanSaranaPertanian';
 
 const FormInputData = () => {
     const [nama, setNama] = useState('');
-    const [berat, setBerat] = useState('');
+    const [jenis, setJenis] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [gambar, setGambar] = useState(null);
     const [harga, setHarga] = useState('');
     const [kategori, setKategori] = useState('');
 
-    const { tambahData, loading, error } = useMasukanSayuran();
+    const { tambahData, loading, error } = useMasukanSaranaPertanian();
 
     // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Validate that an image has been selected
         if (!gambar) {
             alert("Gambar harus dipilih!");
             return;
         }
-
-        // Create the data object
         const data = {
             Nama: nama,
-            Berat: parseFloat(berat),
+            Jenis: jenis,
             Deskripsi: deskripsi,
             Harga: parseInt(harga),
             Kategori: kategori,
@@ -34,11 +31,10 @@ const FormInputData = () => {
         };
 
         try {
-            const id = await tambahData(data, gambar); // Pass image file to the hook
+            const id = await tambahData(data, gambar);
             alert(`Data berhasil disimpan dengan ID: ${id}`);
-            // Reset form after submission
             setNama('');
-            setBerat('');
+            setJenis('');
             setDeskripsi('');
             setHarga('');
             setKategori('');
@@ -64,21 +60,18 @@ const FormInputData = () => {
                         className="w-full"
                     />
                 </div>
-
                 <div className="mb-3">
-                    <label htmlFor="berat" className="block text-sm font-medium">Berat (kg)</label>
+                    <label htmlFor="nama" className="block text-sm font-medium">Jenis</label>
                     <Input
-                        id="berat"
-                        type="number"
-                        step="0.01"
-                        value={berat}
-                        onChange={(e) => setBerat(e.target.value)}
-                        placeholder="Masukkan Berat"
+                        id="jenis"
+                        type="text"
+                        value={jenis}
+                        onChange={(e) => setJenis(e.target.value)}
+                        placeholder="Masukkan Nama"
                         required
                         className="w-full"
                     />
                 </div>
-
                 <div className="mb-3">
                     <label htmlFor="deskripsi" className="block text-sm font-medium">Deskripsi</label>
                     <Textarea

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import "@/app/globals.css";
 import {
     Typography,
@@ -13,7 +13,6 @@ import Skeleton from 'react-loading-skeleton'
 import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
 import useAmbilKeranjang from "@/hooks/Backend/useAmbilKeranjang";
 import useBuatPemesanan from "@/hooks/Backend/useBuatPemesanan";
-import { FaChevronRight } from "react-icons/fa";
 
 
 const openSans = Open_Sans({
@@ -26,6 +25,8 @@ function KonfirmasiPemesanan() {
     const { memuatPesanan, pembuatanPemesanan } = useBuatPemesanan();
     const { keranjang, memuat } = useAmbilKeranjang();
     const { detailPengguna } = useTampilanPengguna();
+    const [metodePembayaran, setMetodePembayaran] = useState("");
+
     if (memuat) {
         return (
             <div colSpan="5">
@@ -43,7 +44,11 @@ function KonfirmasiPemesanan() {
     }
 
     const handleCreatePemesanan = async () => {
-        await pembuatanPemesanan();
+        if (!metodePembayaran) {
+            toast.error("Silakan pilih metode pembayaran.");
+            return;
+        }
+        await pembuatanPemesanan(metodePembayaran);
     };
 
     return (
@@ -96,7 +101,7 @@ function KonfirmasiPemesanan() {
                 <div>
                     <h3 className={`text-lg font-semibold mb-2 ${openSans.className}`}>Alamat Penerima</h3>
                     <div className="space-y-4 shadow-md mb-2">
-                        <div className="px-4 py-2 border rounded-lg border-black">
+                        <div className="px-6 py-4 border rounded-lg bg-white border-black">
                             <div className={`flex items-center justify-between ${openSans.className}`}>
                                 <span className="text-lg font-bold">Rumah</span>
                             </div>
@@ -112,10 +117,18 @@ function KonfirmasiPemesanan() {
                         </div>
                     </div>
                     <h3 className={`text-lg font-semibold mb-2 ${openSans.className}`}>Metode Pembayaran</h3>
-                    <Select size="lg" label="Pilih Metode Pembayaran" labelProps={{ className: "text-black" }} className="font-bold bg-green-700 bg-opacity-25">
-                        <Option className="">BCA Virtual Account (987654321012)</Option>
-                        <Option>BRI Virtual Account (8765432109876543)</Option>
-                        <Option>BNI Virtual Account (7654321098)</Option>
+                    <Select
+                        size="lg"
+                        label="Pilih Metode Pembayaran"
+                        labelProps={{ className: "hidden" }}
+                        className="font-bold bg-primary bg-opacity-25 border-0"
+                        value={metodePembayaran}
+                        onChange={(value) => setMetodePembayaran(value)}
+                    >
+                        <Option value="">Transfer Bank</Option>
+                        <Option value="BCA Virtual Account (987654321012)">BCA Virtual Account (987654321012)</Option>
+                        <Option value="BRI Virtual Account (8765432109876543)">BRI Virtual Account (8765432109876543)</Option>
+                        <Option value="BNI Virtual Account (7654321098)">BNI Virtual Account (7654321098)</Option>
                     </Select>
                     <div className="flex mt-4 justify-end items-center ml-6">
                         <Button

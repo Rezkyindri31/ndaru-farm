@@ -9,7 +9,7 @@ const useTampilanSaranaPertanian = () => {
     const [error, setError] = useState(null);
     const [activePage, setActivePage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
-    const productsPerPage = 9;
+    const productsPerPage = 6;
 
     useEffect(() => {
         const fetchInformasiSaranaPertanian = async () => {

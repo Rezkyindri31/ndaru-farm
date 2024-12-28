@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 const useBuatPemesanan = () => {
     const [memuatPesanan, setMemuatPesanan] = useState(false);
 
-    const pembuatanPemesanan = async () => {
+    const pembuatanPemesanan = async (metodePembayaran) => {
         setMemuatPesanan(true);
         try {
             const penggunaSaatIni = localStorage.getItem("ID");
@@ -66,6 +66,7 @@ const useBuatPemesanan = () => {
             const transaksiRef = doc(firestore, "transaksi", transaksiId);
             await setDoc(transaksiRef, {
                 Status_Pembayaran: "Belum Lunas",
+                Metode_Pembayaran: metodePembayaran
             });
 
             await updateDoc(keranjangRef, {
