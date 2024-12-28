@@ -17,39 +17,42 @@ function PesananSaya() {
         setIsDialogOpen(value);
     };
 
-    const { pemesananData, transaksiData, penggunaData, pengirimanData, pemesananList } = useAmbilPemesanan();
+    const { pemesananList, pemesananData, memuatPemesanan } = useAmbilPemesanan();
     return (
         <div className="py-10 px-4 lg:px-20">
             <Typography variant="h1" className="text-3xl font-bold mb-6">Pesanan Saya</Typography >
             <div className="space-y-6">
-                {pemesananList?.map((pemesananData, index) => (
+                {pemesananData.map((pemesanan, index) => (
                     <div key={index} className="border p-6 rounded-lg shadow-md bg-white space-y-4 m-5">
                         <div className="flex justify-between items-center">
                             <div className="flex justify-center items-center space-x-1">
                                 <BsShop size={29} color="white" className="bg-green-700 p-1 rounded-md" />
                                 <Typography variant="h2" className="text-lg font-semibold text-green-700">
-                                    Nomor Pemesanan {pemesananData?.ID_Pemesanan}
+                                    Nomor Pemesanan {pemesanan?.ID_Pemesanan}
                                 </Typography>
                             </div>
                             <div className="flex justify-end items-center space-x-2">
                                 <Typography
                                     variant="paragraph"
-                                    className={`border p-1 rounded-md ${pemesananData?.Status_Pemesanan === 'Belum Selesai' ? 'border-red-700 text-red-700' : 'border-green-700 text-green-700'}`}
+                                    className={`border p-1 rounded-md ${pemesanan?.Status_Pemesanan === "Belum Selesai"
+                                        ? "border-red-700 text-red-700"
+                                        : "border-green-700 text-green-700"
+                                        }`}
                                 >
-                                    {pemesananData?.Status_Pemesanan}
+                                    {pemesanan?.Status_Pemesanan}
                                 </Typography>
                                 <FaInfoCircle
                                     size="24"
                                     color="green"
-                                    onClick={() => handleOpenDialog(true, pemesananData)}
+                                    onClick={() => handleOpenDialog(true, pemesanan)}
                                     className="cursor-pointer"
                                 />
                             </div>
                         </div>
                         <hr className="border-blue-gray-300" />
                         <ul className="space-y-4">
-                            {pemesananData?.Data_Pesanan?.map((item, index) => (
-                                <li key={index} className="flex items-start text-sm">
+                            {pemesanan?.Data_Pesanan?.map((item, itemIndex) => (
+                                <li key={itemIndex} className="flex items-start text-sm">
                                     <Image
                                         src={item.Gambar}
                                         width={60}
@@ -72,7 +75,7 @@ function PesananSaya() {
                         <hr className="border-blue-gray-300" />
                         <div className="flex justify-end items-center mt-4">
                             <Typography variant="paragraph" className="font-bold text-lg">
-                                Total Pesanan: Rp{pemesananData?.Total.toLocaleString()}
+                                Total Pesanan: Rp{pemesanan?.Total.toLocaleString()}
                             </Typography>
                         </div>
                     </div>
@@ -82,9 +85,8 @@ function PesananSaya() {
                 isOpen={isDialogOpen}
                 handleClose={() => setIsDialogOpen(false)}
                 pemesananData={selectedPemesanan}
-                transaksiData={transaksiData}
-                penggunaData={penggunaData}
-                pengirimanData={pengirimanData}
+                transaksiData={selectedPemesanan?.transaksiData}
+                pengirimanData={selectedPemesanan?.pengirimanData}
             />
         </div>
     );

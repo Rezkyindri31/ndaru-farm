@@ -1,18 +1,12 @@
 import { useState, useEffect } from "react";
 import { firestore } from "@/lib/firebaseConfig";
 import { toast } from "react-hot-toast";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, query, where, getDocs } from "firebase/firestore";
 
 const useAmbilPemesanan = () => {
     const [pemesananList, setPemesananList] = useState([]);
-    const [pemesananData, setPemesananData] = useState(null);
-    const [transaksiData, setTransaksiData] = useState(null);
-    const [pengirimanData, setPengirimanData] = useState(null);
-    const [penggunaData, setPenggunaData] = useState(null);
+    const [pemesananData, setPemesananData] = useState([]);
     const [memuatPemesanan, setMemuatPemesanan] = useState(false);
-    const [memuatTransaksi, setMemuatTransaksi] = useState(false);
-    const [memuatPengguna, setMemuatPengguna] = useState(false);
-    const [memuatPengiriman, setMemuatPengiriman] = useState(false);
 
     useEffect(() => {
         const fetchPemesanan = async () => {
@@ -30,30 +24,41 @@ const useAmbilPemesanan = () => {
                 const querySnapshot = await getDocs(q);
 
                 if (querySnapshot.empty) {
+                    toast.error("Tidak ada data pemesanan ditemukan.");
                     setMemuatPemesanan(false);
                     return;
                 }
-                const pemesananListData = querySnapshot.docs.map((pemesananDoc) => {
-                    return {
-                        ...pemesananDoc.data(),
-                        ID_Pemesanan: pemesananDoc.id,
-                    };
-                });
+
+                const pemesananListData = querySnapshot.docs.map((doc) => ({
+                    ...doc.data(),
+                    ID_Pemesanan: doc.id,
+                }));
+
+                const detailedPemesanan = await Promise.all(
+                    pemesananListData.map(async (pemesanan) => {
+                        const transaksiData = pemesanan.ID_Transaksi
+                            ? await fetchDetailData("transaksi", pemesanan.ID_Transaksi)
+                            : null;
+
+                        const penggunaData = pemesanan.ID_Pengguna
+                            ? await fetchDetailData("pengguna", pemesanan.ID_Pengguna)
+                            : null;
+
+                        const pengirimanData = pemesanan.ID_Pengiriman
+                            ? await fetchDetailData("pengiriman", pemesanan.ID_Pengiriman)
+                            : null;
+
+                        return {
+                            ...pemesanan,
+                            transaksiData,
+                            penggunaData,
+                            pengirimanData,
+                        };
+                    })
+                );
+
                 setPemesananList(pemesananListData);
-
-                for (const pemesanan of pemesananListData) {
-                    if (pemesanan.ID_Transaksi) {
-                        await fetchTransaksiData(pemesanan.ID_Transaksi);
-                    }
-
-                    if (pemesanan.ID_Pengguna) {
-                        await fetchPenggunaData(pemesanan.ID_Pengguna);
-                    }
-
-                    if (pemesanan.ID_Pengiriman) {
-                        await fetchPengirimanData(pemesanan.ID_Pengiriman);
-                    }
-                }
+                setPemesananData(detailedPemesanan);
             } catch (error) {
                 console.error("Gagal mengambil data pemesanan:", error);
                 toast.error("Gagal mengambil data pemesanan.");
@@ -62,108 +67,26 @@ const useAmbilPemesanan = () => {
             }
         };
 
-        const fetchTransaksiData = async (ID_Transaksi) => {
-            setMemuatTransaksi(true);
+        const fetchDetailData = async (collectionName, documentId) => {
             try {
-                const transaksiRef = collection(firestore, "transaksi");
-                const querySnapshot = await getDocs(transaksiRef);
-
-                if (querySnapshot.empty) {
-                    setMemuatTransaksi(false);
-                    return;
+                const docRef = doc(firestore, collectionName, documentId);
+                const docSnapshot = await getDoc(docRef);
+                if (!docSnapshot.exists()) {
+                    toast.error(`Data dari koleksi ${collectionName} dengan ID tersebut tidak ditemukan.`);
+                    return null;
                 }
-
-                const transaksiDoc = querySnapshot.docs.find((doc) => doc.id === ID_Transaksi);
-
-                if (!transaksiDoc) {
-                    setMemuatTransaksi(false);
-                    toast.error("Tidak ada transaksi yang cocok dengan ID tersebut.");
-                    return;
-                }
-
-                const transaksiDataWithId = {
-                    ...transaksiDoc.data(),
-                    ID_Transaksi: transaksiDoc.id,
-                };
-                setTransaksiData(transaksiDataWithId);
+                return { ...docSnapshot.data(), ID: docSnapshot.id };
             } catch (error) {
-                console.error("Gagal mengambil data transaksi:", error);
-                toast.error("Gagal mengambil data transaksi.");
-            } finally {
-                setMemuatTransaksi(false);
+                console.error(`Gagal mengambil data dari koleksi ${collectionName}:`, error);
+                toast.error(`Gagal mengambil data dari koleksi ${collectionName}.`);
+                return null;
             }
         };
-
-        const fetchPenggunaData = async (ID_Pengguna) => {
-            setMemuatPengguna(true);
-            try {
-                const penggunaRef = collection(firestore, "pengguna");
-                const querySnapshot = await getDocs(penggunaRef);
-
-                if (querySnapshot.empty) {
-                    setMemuatPengguna(false);
-                    toast.error("Tidak ada pengguna yang ditemukan.");
-                    return;
-                }
-
-                const penggunaDoc = querySnapshot.docs.find((doc) => doc.id === ID_Pengguna);
-
-                if (!penggunaDoc) {
-                    setMemuatPengguna(false);
-                    toast.error("Tidak ada pengguna yang cocok dengan ID tersebut.");
-                    return;
-                }
-
-                const penggunaDataWithId = {
-                    ...penggunaDoc.data(),
-                    ID_Pengguna: penggunaDoc.id,
-                };
-                setPenggunaData(penggunaDataWithId);
-            } catch (error) {
-                console.error("Gagal mengambil data pengguna:", error);
-                toast.error("Gagal mengambil data pengguna.");
-            } finally {
-                setMemuatPengguna(false);
-            }
-        };
-
-        const fetchPengirimanData = async (ID_Pengiriman) => {
-            setMemuatPengguna(true);
-            try {
-                const pengirimanRef = collection(firestore, "pengiriman");
-                const querySnapshot = await getDocs(pengirimanRef);
-
-                if (querySnapshot.empty) {
-                    setMemuatPengguna(false);
-                    toast.error("Tidak ada pengguna yang ditemukan.");
-                    return;
-                }
-
-                const pengirimanDoc = querySnapshot.docs.find((doc) => doc.id === ID_Pengiriman);
-
-                if (!pengirimanDoc) {
-                    setMemuatPengiriman(false);
-                    toast.error("Tidak ada pengguna yang cocok dengan ID tersebut.");
-                    return;
-                }
-
-                const pengirimanDataWithId = {
-                    ...pengirimanDoc.data(),
-                    ID_Pengiriman: pengirimanDoc.id,
-                };
-                setPengirimanData(pengirimanDataWithId);
-            } catch (error) {
-                console.error("Gagal mengambil data pengguna:", error);
-                toast.error("Gagal mengambil data pengguna.");
-            } finally {
-                setMemuatPengguna(false);
-            }
-        };
-
 
         fetchPemesanan();
     }, []);
-    return { pemesananData, memuatPemesanan, transaksiData, memuatTransaksi, penggunaData, memuatPengguna, pengirimanData, memuatPengiriman, pemesananList };
+
+    return { pemesananList, pemesananData, memuatPemesanan };
 };
 
 export default useAmbilPemesanan;

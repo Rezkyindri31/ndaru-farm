@@ -32,13 +32,14 @@ const useKirimBuktiTransaksi = () => {
             });
 
             const pengirimanRef = collection(firestore, "pengiriman");
-            const pengirimanId = uuidv4();
             const newPengiriman = {
                 Status_Pengiriman: "Sedang Dikirim",
                 Tanggal_Pengiriman: new Date().toISOString(),
             };
 
-            await addDoc(pengirimanRef, newPengiriman);
+            const newPengirimanDocRef = await addDoc(pengirimanRef, newPengiriman);
+            const pengirimanId = newPengirimanDocRef.id;
+
             const pemesananRef = doc(firestore, "pemesanan", ID_Pemesanan);
             await updateDoc(pemesananRef, {
                 ID_Pengiriman: pengirimanId,
@@ -61,6 +62,5 @@ const useKirimBuktiTransaksi = () => {
         kirimBuktiTransaksi,
     };
 };
-
 
 export default useKirimBuktiTransaksi;
