@@ -16,6 +16,7 @@ import { Toaster } from "react-hot-toast";
 
 
 const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData, pengirimanData }) => {
+    const updatePemesananStatus = usePemesananSelesai();
     const { detailPengguna } = useTampilanPengguna();
     const { memuatHapus, errorHapus, hapusPemesanan, isConfirmDialogOpen,
         setIsConfirmDialogOpen, handleConfirmDialogOpen,
@@ -40,8 +41,6 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
             console.error("Gagal membatalkan pesanan:", error);
         }
     };
-
-
 
     const handleUploadClick = () => {
         if (fileInputRef.current) {
@@ -74,7 +73,7 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
 
     const handleUpdateStatus = async () => {
         const ID_Pemesanan = pemesananData?.ID_Pemesanan;
-        await usePemesananSelesai(ID_Pemesanan);
+        await updatePemesananStatus(ID_Pemesanan);
     };
     return (
         <>
