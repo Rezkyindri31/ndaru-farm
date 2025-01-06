@@ -85,13 +85,9 @@ export default function FormBiodataPengguna() {
         setIsLoading(true);
 
         try {
-            // Validasi form sebelum submit
             if (!formData.NIK || formData.NIK.length !== 16) {
                 throw new Error("NIK harus terdiri dari 16 digit angka.");
             }
-
-            // Simpan data ke Firestore (atau API lain sesuai kebutuhan)
-            // Contoh pseudo-submit:
             console.log("Mengirim data:", formData);
             toast.success("Data berhasil disimpan!");
             router.push("/Beranda");
