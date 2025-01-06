@@ -72,9 +72,17 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
     };
 
     const handleUpdateStatus = async () => {
-        const ID_Pemesanan = pemesananData?.ID_Pemesanan;
-        await updatePemesananStatus(ID_Pemesanan);
+        try {
+            const ID_Pemesanan = pemesananData?.ID_Pemesanan;
+            if (!ID_Pemesanan) throw new Error("ID Pemesanan tidak ditemukan.");
+            await updatePemesananStatus(ID_Pemesanan);
+            toast.success("Status pemesanan berhasil diperbarui.");
+        } catch (error) {
+            console.error("Gagal memperbarui status pemesanan:", error);
+            toast.error("Gagal memperbarui status pemesanan.");
+        }
     };
+
     return (
         <>
             <Dialog open={isOpen} size="xl" handler={handleClose}>
@@ -276,10 +284,10 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                                     <span className="text-black">Total</span>
                                     <span className="text-black">Rp{pemesananData?.Total?.toLocaleString()}</span>
                                 </div>
-                                {/* <div className="flex justify-between font-bold text-md pt-3">
+                                <div className="flex justify-between font-bold text-md pt-3">
                                     <span className="text-black">Metode Pembayaran</span>
                                     <span className="text-black">{transaksiData?.Metode_Pembayaran}</span>
-                                </div> */}
+                                </div>
                             </div>
                         </div>
                         <div className="space-y-4">
@@ -388,7 +396,6 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
             </Dialog >
 
 
-            {/* Dialog Pembatalan Pemesanan */}
             < Dialog open={isConfirmDialogOpen} size="xs" handler={handleConfirmDialogClose} >
                 <DialogHeader>Konfirmasi Pembatalan</DialogHeader>
                 <DialogBody>

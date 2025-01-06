@@ -53,9 +53,9 @@ function PesananSaya() {
                 Pesanan Saya
             </Typography>
             <div className="space-y-6">
-                {pemesananData.map((pemesanan, index) => (
+                {pemesananData.map((pemesanan) => (
                     <div
-                        key={pemesanan.ID_Pemesanan || index} // Pastikan key unik
+                        key={pemesanan.ID_Pemesanan}
                         className="border p-6 rounded-lg shadow-md bg-white space-y-4 m-5"
                     >
                         <div className="flex justify-between items-center">
@@ -94,7 +94,7 @@ function PesananSaya() {
                         <ul className="space-y-4">
                             {pemesanan.Data_Pesanan?.map((item, itemIndex) => (
                                 <li
-                                    key={`${pemesanan.ID_Pemesanan}-${itemIndex}`} // Unique key dengan kombinasi
+                                    key={`${pemesanan.ID_Pemesanan}-${itemIndex}`}
                                     className="flex items-start text-sm"
                                 >
                                     <Image
