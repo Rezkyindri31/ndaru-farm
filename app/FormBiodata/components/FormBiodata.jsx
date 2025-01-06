@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { formatNoIdentitas } from "@/utils/utilsNoIdentitas";
 import { formatHuruf } from "@/utils/utilsHanyaHuruf";
@@ -83,11 +83,7 @@ export default function FormBiodataPengguna() {
 
     const handleSubmit = async () => {
         setIsLoading(true);
-
         try {
-            if (!formData.NIK || formData.NIK.length !== 16) {
-                throw new Error("NIK harus terdiri dari 16 digit angka.");
-            }
             console.log("Mengirim data:", formData);
             toast.success("Data berhasil disimpan!");
             router.push("/Beranda");
