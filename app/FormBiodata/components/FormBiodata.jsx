@@ -1,20 +1,10 @@
-import React, { useState } from 'react';
-import { Stepper, Step, Textarea, Typography, Input, Button, Spinner, Radio } from '@/app/MTailwind';
-import toast from 'react-hot-toast';
-import { useRouter } from "next/navigation";
-import { FaUser, FaBuilding } from "react-icons/fa";
-import useStepperForm from "@/hooks/Frontend/useStepperForm";
-import useSubmitBiodata from "@/hooks/Backend/useFormBiodata";
-import { formatNoIdentitas } from "@/utils/utilsNoIdentitas";
-import { formatHuruf } from "@/utils/utilsHanyaHuruf";
-import { formatNoTelepon } from '@/utils/utilsNoTelepon';
+import React, { useState, useCallback } from "react";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
+import { formatNoIdentitas, formatHuruf, formatNoTelepon } from "@/utils/formatting";
 
-function FormBiodataPengguna() {
-    const pengarah = useRouter();
-    const { stepAktif, handleSelanjutnya, handleSebelumnya } = useStepperForm();
-    const { submitBiodata, isLoading } = useSubmitBiodata();
-    const [penggunaID, setPenggunaID] = useState(() => localStorage.getItem("ID"));
-    const [formDataPengguna, setFormDataPengguna] = useState({
+function useFormBiodataPengguna() {
+    const [formData, setFormData] = useState({
         NIK: "",
         Nama_Lengkap: "",
         No_Telepon: "",
@@ -25,261 +15,180 @@ function FormBiodataPengguna() {
         No_Telepon_Penerima: "",
         Alamat_Penerima: "",
     });
-    const handleSubmitBiodata = async (e) => {
-        e.preventDefault();
-        const requiredFields = [
-            "NIK",
-            "Nama_Lengkap",
-            "No_Telepon",
-            "Jenis_Kelamin",
-            "Tanggal_Lahir",
-            "Alamat",
-            "Nama_Lengkap_Penerima",
-            "No_Telepon_Penerima",
-            "Alamat_Penerima"
-        ];
 
-        for (const field of requiredFields) {
-            if (!formDataPengguna[field]) {
-                toast.error(`Harap isi seluruh form. Kolom ${field.replace("_", " ")} belum diisi.`);
-                return;
-            }
-        }
-
-        if (!penggunaID) {
-            toast.error("User ID tidak ditemukan.");
-            return;
-        }
-
-        await submitBiodata(penggunaID, formDataPengguna);
-        pengarah.push("/Beranda");
-    };
-
-    const handleInputChange = (e) => {
+    const handleInputChange = useCallback((e) => {
         const { name, value } = e.target;
+        let formattedValue = value;
+
         if (name === "NIK") {
-            const formattedInput = formatNoIdentitas(value);
-            setFormDataPengguna((prev) => ({
-                ...prev,
-                [name]: formattedInput,
-            }));
-            return;
+            formattedValue = formatNoIdentitas(value);
+        } else if (["Nama_Lengkap", "Nama_Lengkap_Penerima"].includes(name)) {
+            formattedValue = formatHuruf(value);
+        } else if (["No_Telepon", "No_Telepon_Penerima"].includes(name)) {
+            formattedValue = formatNoTelepon(value);
         }
 
-        if (["Nama_Lengkap_Penerima", "Nama_Lengkap"].includes(name)) {
-            const formattedInput = formatHuruf(value);
-            setFormDataPengguna((prev) => ({
-                ...prev,
-                [name]: formattedInput,
-            }));
-            return;
-        }
-        if (["No_Telepon_Penerima", "No_Telepon"].includes(name)) {
-            const formattedInput = formatNoTelepon(value);
-            setFormDataPengguna((prev) => ({
-                ...prev,
-                [name]: formattedInput,
-            }));
-            return;
-        }
-        setFormDataPengguna((prev) => ({
+        setFormData((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: formattedValue,
         }));
-    };
-    return (
-        <form onSubmit={handleSubmitBiodata}>
-            <div className="w-full px-24 py-4 ">
-                <Stepper
-                    activeStep={stepAktif}
-                    className="shadow-lg drop-shadow-2xl bg-secondary rounded-2xl h-16 justify-center gap-20"
-                >
-                    <Step onClick={() => handleSebelumnya()} disabled={stepAktif === 0}>
-                        <FaUser className="h-10 w-10" />
-                    </Step>
-                    <Step onClick={() => handleSelanjutnya()} disabled={stepAktif === 1}>
-                        <FaBuilding className="h-10 w-10" />
-                    </Step>
-                </Stepper>
+    }, []);
 
-                {stepAktif === 0 && (
-                    <div className="page-informasipribadi space-y-6">
-                        <div className="grid gap-6 lg:grid-cols-1 my-2 mt-12 ">
-                            <Typography variant='h2' className="text-center text-xl text-black font-semibold uppercase shadow-lg border-b-4 border-secondary p-1.5 rounded-lg ">Informasi Pribadi</Typography>
-                            <div>
-                                <Input
-                                    type="number"
-                                    placeholder="NIK"
-                                    name="NIK"
-                                    className="!border-2 !border-secondary bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                    labelProps={{
-                                        className: "hidden",
-                                    }}
-                                    containerProps={{ className: "min-w-[100px]" }}
-                                    value={formDataPengguna.NIK}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <Input
-                                    type="text"
-                                    placeholder="Nama Lengkap"
-                                    name="Nama_Lengkap"
-                                    className="!border-2 !border-secondary bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                    labelProps={{ className: "hidden" }}
-                                    containerProps={{ className: "min-w-[100px]" }}
-                                    value={formDataPengguna.Nama_Lengkap}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="flex items-center gap-10 text-xs !border-2 !border-secondary bg-white rounded-lg text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10">
-                                <h1 className="whitespace-nowrap text-sm text-blue-gray-400 ps-3">Jenis Kelamin</h1>
-                                <Radio
-                                    name="Jenis_Kelamin"
-                                    label="Laki-laki"
-                                    value="Laki-laki"
-                                    onChange={handleInputChange}
-                                />
-                                <Radio
-                                    name="Jenis_Kelamin"
-                                    label="Perempuan"
-                                    value="Perempuan"
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <div>
-                                <Input
-                                    type="number"
-                                    placeholder="Nomor Telepon Pengguna"
-                                    name="No_Telepon"
-                                    className="!border-2 !border-secondary bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                    labelProps={{
-                                        className: "hidden",
-                                    }}
-                                    containerProps={{ className: "min-w-[100px]" }}
-                                    value={formDataPengguna.No_Telepon}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="text-blue-gray-400 text-sm">
-                                    Tanggal Lahir Pengguna
-                                </label>
-                                <Input
-                                    type="date"
-                                    placeholder="Tanggal Lahir Pengguna"
-                                    name="Tanggal_Lahir"
-                                    className="!border-2 !border-secondary bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                    labelProps={{
-                                        className: "hidden",
-                                    }}
-                                    containerProps={{ className: "min-w-[100px]" }}
-                                    onChange={handleInputChange}
-                                    value={formDataPengguna.Tanggal_Lahir}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <Textarea
-                                    type="text"
-                                    placeholder="Alamat Tagihan"
-                                    name="Alamat"
-                                    className="!border-2 !border-secondary bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                    labelProps={{
-                                        className: "hidden",
-                                    }}
-                                    containerProps={{ className: "min-w-[100px] h-[150px]" }}
-                                    onChange={handleInputChange}
-                                    value={formDataPengguna.Alamat}
-                                    required
-                                />
-                            </div>
-                        </div>
+    return { formData, handleInputChange, setFormData };
+}
+
+function Stepper({ activeStep, steps }) {
+    return (
+        <div className="flex items-center mb-6">
+            {steps.map((step, index) => (
+                <div key={index} className="flex items-center">
+                    <div
+                        className={`rounded-full w-8 h-8 flex items-center justify-center text-white font-bold ${activeStep >= index
+                            ? "bg-blue-500"
+                            : "bg-gray-300"
+                            }`}
+                    >
+                        {index + 1}
                     </div>
-                )}
-                {stepAktif === 1 && (
-                    <div className="page-informasipribadi space-y-6">
-                        <div className="page-penerima space-y-6">
-                            <div className="grid gap-6 lg:grid-cols-1 my-2 mt-12 ">
-                                <Typography variant='h2' className="text-center text-xl text-black font-semibold uppercase shadow-lg border-b-4 border-secondary p-1.5 rounded-lg ">Informasi Pengiriman</Typography>
-                                <div>
-                                    <Input
-                                        type="text"
-                                        placeholder="Nama Lengkap Penerima"
-                                        name='Nama_Lengkap_Penerima'
-                                        className="!border-2 !border-secondary bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                        labelProps={{ className: "hidden" }}
-                                        containerProps={{ className: "min-w-[100px]" }}
-                                        value={formDataPengguna.Nama_Lengkap_Penerima}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                                <div>
-                                    <Input
-                                        type="tel"
-                                        placeholder="Nomor Telepon Penerima"
-                                        name="No_Telepon_Penerima"
-                                        className="!border-2 !border-secondary bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                        labelProps={{
-                                            className: "hidden",
-                                        }}
-                                        containerProps={{ className: "min-w-[100px]" }}
-                                        value={formDataPengguna.No_Telepon_Penerima}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <Textarea
-                                        type="text"
-                                        placeholder="Alamat Penerima"
-                                        name="Alamat_Penerima"
-                                        className="!border-2 !border-secondary bg-white text-gray-900 shadow-lg shadow-gray-900/5 ring-4 ring-transparent placeholder:text-gray-500 placeholder:opacity-100 focus:!border-gray-900 focus:!border-t-gray-900 focus:ring-gray-900/10"
-                                        labelProps={{
-                                            className: "hidden",
-                                        }}
-                                        containerProps={{ className: "min-w-[100px] h-[150px]" }}
-                                        value={formDataPengguna.Alamat_Penerima}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-                <div className="mt-10 flex justify-between">
-                    {stepAktif > 0 && (
-                        <Button
-                            onClick={handleSebelumnya}
-                            className="bg-black text-white"
-                        >
-                            Sebelumnya
-                        </Button>
-                    )}
-                    {stepAktif < 1 && (
-                        <Button
-                            onClick={handleSelanjutnya}
-                            className="bg-black text-white"
-                        >
-                            Selanjutnya
-                        </Button>
-                    )}
-                    {stepAktif === 1 && (
-                        <Button
-                            type="submit"
-                            className="bg-blue-600 text-white"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? "Sedang menyimpan..." : "Simpan Data"}
-                        </Button>
-                    )}
+                    {index < steps.length - 1 && <div className="w-8 h-[2px] bg-gray-300 mx-2" />}
                 </div>
+            ))}
+        </div>
+    );
+}
+
+export default function FormBiodataPengguna() {
+    const router = useRouter();
+    const { formData, handleInputChange, setFormData } = useFormBiodataPengguna();
+    const [activeStep, setActiveStep] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const steps = ["Data Diri", "Data Penerima"];
+
+    const handleNextStep = () => {
+        if (activeStep < steps.length - 1) {
+            setActiveStep((prev) => prev + 1);
+        } else {
+            handleSubmit();
+        }
+    };
+
+    const handlePreviousStep = () => {
+        if (activeStep > 0) {
+            setActiveStep((prev) => prev - 1);
+        }
+    };
+
+    const handleSubmit = async () => {
+        setIsLoading(true);
+
+        try {
+            // Validasi form sebelum submit
+            if (!formData.NIK || formData.NIK.length !== 16) {
+                throw new Error("NIK harus terdiri dari 16 digit angka.");
+            }
+
+            // Simpan data ke Firestore (atau API lain sesuai kebutuhan)
+            // Contoh pseudo-submit:
+            console.log("Mengirim data:", formData);
+            toast.success("Data berhasil disimpan!");
+            router.push("/Beranda");
+        } catch (error) {
+            toast.error(error.message || "Terjadi kesalahan saat menyimpan data.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="max-w-lg mx-auto p-6 bg-white rounded shadow-md">
+            <Stepper activeStep={activeStep} steps={steps} />
+
+            {activeStep === 0 && (
+                <div>
+                    <h2 className="text-xl font-bold mb-4">Data Diri</h2>
+                    <div className="mb-4">
+                        <label className="block mb-1">NIK</label>
+                        <input
+                            type="text"
+                            name="NIK"
+                            value={formData.NIK}
+                            onChange={handleInputChange}
+                            className="w-full border p-2 rounded"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-1">Nama Lengkap</label>
+                        <input
+                            type="text"
+                            name="Nama_Lengkap"
+                            value={formData.Nama_Lengkap}
+                            onChange={handleInputChange}
+                            className="w-full border p-2 rounded"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-1">No. Telepon</label>
+                        <input
+                            type="text"
+                            name="No_Telepon"
+                            value={formData.No_Telepon}
+                            onChange={handleInputChange}
+                            className="w-full border p-2 rounded"
+                            required
+                        />
+                    </div>
+                </div>
+            )}
+
+            {activeStep === 1 && (
+                <div>
+                    <h2 className="text-xl font-bold mb-4">Data Penerima</h2>
+                    <div className="mb-4">
+                        <label className="block mb-1">Nama Lengkap Penerima</label>
+                        <input
+                            type="text"
+                            name="Nama_Lengkap_Penerima"
+                            value={formData.Nama_Lengkap_Penerima}
+                            onChange={handleInputChange}
+                            className="w-full border p-2 rounded"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block mb-1">No. Telepon Penerima</label>
+                        <input
+                            type="text"
+                            name="No_Telepon_Penerima"
+                            value={formData.No_Telepon_Penerima}
+                            onChange={handleInputChange}
+                            className="w-full border p-2 rounded"
+                            required
+                        />
+                    </div>
+                </div>
+            )}
+
+            <div className="flex justify-between mt-6">
+                <button
+                    type="button"
+                    className="bg-gray-300 px-4 py-2 rounded"
+                    onClick={handlePreviousStep}
+                    disabled={activeStep === 0 || isLoading}
+                >
+                    Sebelumnya
+                </button>
+                <button
+                    type="button"
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    onClick={handleNextStep}
+                    disabled={isLoading}
+                >
+                    {activeStep === steps.length - 1 ? "Simpan" : "Selanjutnya"}
+                </button>
             </div>
-        </form >
-    )
-};
-export default FormBiodataPengguna;
+        </div>
+    );
+}
