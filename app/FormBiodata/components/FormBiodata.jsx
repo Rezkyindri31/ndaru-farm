@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
-import { formatNoIdentitas, formatHuruf, formatNoTelepon } from "@/utils/formatting";
+import { toast } from "react-hot-toast";
+import { formatNoIdentitas } from "@/utils/utilsNoIdentitas";
+import { formatHuruf } from "@/utils/utilsHanyaHuruf";
+import { formatNoTelepon } from "@/utils/utilsNoTelepon";
 
 function useFormBiodataPengguna() {
     const [formData, setFormData] = useState({
