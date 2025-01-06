@@ -11,7 +11,7 @@ import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
 import useHapusPemesanan from "@/hooks/Backend/usePembatalanPemesanan";
 import useKirimBuktiTransaksi from "@/hooks/Backend/usePengirimanBuktiTransaksi";
 import { generateInvoicePDF } from "@/app/TrackingPesanan/components/generateInvoice";
-import { toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 
 const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData, pengirimanData }) => {
