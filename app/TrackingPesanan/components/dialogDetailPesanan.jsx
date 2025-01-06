@@ -10,13 +10,11 @@ import { LiaMoneyBillWaveSolid, LiaShippingFastSolid } from "react-icons/lia";
 import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
 import useHapusPemesanan from "@/hooks/Backend/usePembatalanPemesanan";
 import useKirimBuktiTransaksi from "@/hooks/Backend/usePengirimanBuktiTransaksi";
-import usePemesananSelesai from "@/hooks/Backend/usePemesananSelesai";
 import { generateInvoicePDF } from "@/app/TrackingPesanan/components/generateInvoice";
-import { Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 
 const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData, pengirimanData }) => {
-    const updatePemesananStatus = usePemesananSelesai();
     const { detailPengguna } = useTampilanPengguna();
     const { memuatHapus, errorHapus, hapusPemesanan, isConfirmDialogOpen,
         setIsConfirmDialogOpen, handleConfirmDialogOpen,
@@ -68,18 +66,6 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
             if (fileBukti) {
                 kirimBuktiTransaksi(ID_Transaksi, ID_Pemesanan, fileBukti);
             }
-        }
-    };
-
-    const handleUpdateStatus = async () => {
-        try {
-            const ID_Pemesanan = pemesananData?.ID_Pemesanan;
-            if (!ID_Pemesanan) throw new Error("ID Pemesanan tidak ditemukan.");
-            await updatePemesananStatus(ID_Pemesanan);
-            toast.success("Status pemesanan berhasil diperbarui.");
-        } catch (error) {
-            console.error("Gagal memperbarui status pemesanan:", error);
-            toast.error("Gagal memperbarui status pemesanan.");
         }
     };
 
@@ -385,7 +371,6 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                         }
                         <Button
                             color="green"
-                            onClick={handleUpdateStatus}
                             disabled={pengirimanData?.Status_Pengiriman !== "Sedang Dikirim"}
                             className={pemesananData?.Status_Pemesanan === "Selesai" ? "hidden" : ""}
                         >
