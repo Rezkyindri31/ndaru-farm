@@ -24,7 +24,6 @@ const useAmbilPemesanan = () => {
                 const querySnapshot = await getDocs(q);
 
                 if (querySnapshot.empty) {
-                    toast.error("Tidak ada data pemesanan ditemukan.");
                     setMemuatPemesanan(false);
                     return;
                 }
