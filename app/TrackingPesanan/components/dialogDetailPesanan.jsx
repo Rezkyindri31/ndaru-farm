@@ -10,12 +10,14 @@ import { LiaMoneyBillWaveSolid, LiaShippingFastSolid } from "react-icons/lia";
 import useTampilanPengguna from "@/hooks/Frontend/useTampilanPengguna";
 import useHapusPemesanan from "@/hooks/Backend/usePembatalanPemesanan";
 import useKirimBuktiTransaksi from "@/hooks/Backend/usePengirimanBuktiTransaksi";
+import useUpdateStatusPemesanan from "@/hooks/Backend/usePemesananSelesai";
 import { generateInvoicePDF } from "@/app/TrackingPesanan/components/generateInvoice";
 import { Toaster } from "react-hot-toast";
 
 
 const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData, pengirimanData }) => {
     const { detailPengguna } = useTampilanPengguna();
+    const { updateStatusPemesanan, isLoading } = useUpdateStatusPemesanan();
     const { memuatHapus, errorHapus, hapusPemesanan, isConfirmDialogOpen,
         setIsConfirmDialogOpen, handleConfirmDialogOpen,
         handleConfirmDialogClose } = useHapusPemesanan();
@@ -67,6 +69,11 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                 kirimBuktiTransaksi(ID_Transaksi, ID_Pemesanan, fileBukti);
             }
         }
+    };
+
+    const handleSelesaikanPesanan = () => {
+        const ID_Pemesanan = pemesananData?.ID_Pemesanan;
+        updateStatusPemesanan(ID_Pemesanan);
     };
 
     return (
@@ -371,6 +378,7 @@ const DialogDetailPesanan = ({ isOpen, handleClose, pemesananData, transaksiData
                         }
                         <Button
                             color="green"
+                            onClick={handleSelesaikanPesanan}
                             disabled={pengirimanData?.Status_Pengiriman !== "Sedang Dikirim"}
                             className={pemesananData?.Status_Pemesanan === "Selesai" ? "hidden" : ""}
                         >
